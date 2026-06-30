@@ -1,6 +1,7 @@
 ---
 name: build-prd
 description: "Use after build-demo or review-demo is Approved when the user wants PRD creation and review handled as one loop. Runs create-prd, review-prd, and reruns create-prd when prd-review.md has Issues Found until the PRD review is Approved or blocked."
+license: MIT
 ---
 
 # build-prd

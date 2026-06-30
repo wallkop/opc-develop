@@ -1,6 +1,7 @@
 ---
 name: build-demo
 description: "Use after product-brainstorm when requirement.md exists and the user wants frontend prototype creation and review handled as one loop. Runs create-demo, review-demo, and reruns create-demo when demo-review.md has Issues Found until the running frontend prototype review is Approved or blocked."
+license: MIT
 ---
 
 # build-demo

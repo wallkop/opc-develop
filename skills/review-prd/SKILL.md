@@ -1,6 +1,7 @@
 ---
 name: review-prd
 description: "Use after create-prd to review prd.md in a fresh dedicated review subagent against requirement.md and the approved demo before technical design. Writes the PRD review with Approved or Issues Found. When the PRD review is Approved, automatically commit and push the current feature branch for PM-to-RD handoff."
+license: MIT
 ---
 
 # review-prd

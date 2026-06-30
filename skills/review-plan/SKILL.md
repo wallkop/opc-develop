@@ -1,6 +1,7 @@
 ---
 name: review-plan
 description: "Use after create-plan to review boundary-only plan files in a fresh dedicated review subagent against approved demo, PRD, technical, spec, testcases, project AGENTS.md, and commands. Assesses artifact references, allowed/forbidden change boundaries, plan indirectness, branch and acceptance compliance, parallelization, serial constraints, buildability from referenced artifacts, and integration readiness."
+license: MIT
 ---
 
 # review-plan

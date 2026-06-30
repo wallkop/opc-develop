@@ -1,6 +1,7 @@
 ---
 name: local-e2e-verify
 description: "Use after tdd-coding integration succeeds to run local black-box end-to-end, acceptance, smoke, regression, and runtime demo parity verification strictly from local-dev runbook, testing standard, approved demo, product testcases, and Runtime Log, DB, and Trace evidence entries."
+license: MIT
 ---
 
 # local-e2e-verify

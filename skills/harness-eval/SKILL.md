@@ -1,6 +1,7 @@
 ---
 name: harness-eval
 description: Evaluate a repository's engineering harness maturity with a reusable 0-5 score in 0.5 increments. Use when Codex is asked to assess, audit, score, benchmark, or improve project harness completeness, including AI agent rules, branch/release flow, documentation governance, API mock and storage mock maturity, fixture isolation, test strategy, local E2E, runtime evidence, CI gates, traceability, or verification readiness.
+license: MIT
 ---
 
 # Harness Eval

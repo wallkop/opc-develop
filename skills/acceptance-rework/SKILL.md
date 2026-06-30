@@ -1,6 +1,7 @@
 ---
 name: acceptance-rework
 description: "Use after local-e2e-verify when human acceptance feedback fails, is blocked, or requests changes. Records optional human acceptance feedback, classifies the earliest affected artifact layer, updates human-acceptance.md and progress.md, and routes rework back to the correct upstream skill instead of blindly rerunning loop-develop."
+license: MIT
 ---
 
 # acceptance-rework

@@ -1,6 +1,7 @@
 ---
 name: release-verify
 description: "Use after local verification is complete to execute release gates, build, CI/CD release, post-release automated acceptance, and rollback readiness strictly from deploy.md, rollback.md, testing.md, progress.md, and testcase reports. Human acceptance records are optional context, not a hard gate unless project runbooks explicitly require them."
+license: MIT
 ---
 
 # release-verify

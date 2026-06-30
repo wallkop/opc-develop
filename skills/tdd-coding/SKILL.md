@@ -1,6 +1,7 @@
 ---
 name: tdd-coding
 description: "Use after review-plan is fresh Approved to implement an approved Full plan tree with TDD through mandatory implementer subagents. Requires approved demo, PRD, technical, spec, plan, and black-box testcases as input; writes/runs implementation-facing unit and API tests; uses targeted review and risk-triggered code quality review; never runs black-box E2E, acceptance, or regression suites."
+license: MIT
 ---
 
 # tdd-coding

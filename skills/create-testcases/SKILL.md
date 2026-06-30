@@ -1,6 +1,7 @@
 ---
 name: create-testcases
 description: "Use after review-spec is Approved to create or update black-box product testcase files only: E2E, acceptance, and regression cases under docs/testcases product-module folders plus the feature testcase index. Do not create unit tests, API tests, white-box fixtures, TDD commands, or implementation test plans."
+license: MIT
 ---
 
 # create-testcases

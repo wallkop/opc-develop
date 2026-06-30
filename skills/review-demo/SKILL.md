@@ -1,6 +1,7 @@
 ---
 name: review-demo
 description: "Use after create-demo to review the running frontend prototype in a fresh dedicated review subagent against requirement.md, project visual expectations, frontend-only mock rules, preview evidence, and 80% fidelity before PRD creation. Writes the demo review with Approved or Issues Found."
+license: MIT
 ---
 
 # review-demo

@@ -1,6 +1,7 @@
 ---
 name: review-testcases
 description: "Use after create-testcases to review black-box feature testcases.md and real docs/testcases E2E, acceptance, and regression files in a fresh dedicated review subagent against approved demo, PRD, and spec before plan creation. Reject testcase artifacts that contain unit-test, API-test, white-box, mock, or TDD implementation design."
+license: MIT
 ---
 
 # review-testcases

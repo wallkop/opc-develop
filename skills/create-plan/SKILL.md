@@ -1,6 +1,7 @@
 ---
 name: create-plan
 description: "Use after review-testcases is Approved to create boundary-only feature plan workstream files and integration-plan.md. Builds a parallelizable plan tree with module/workstream split, development order, allowed/forbidden change boundaries, artifact references, branch rules, and local-e2e handoff; does not write API schemas, database design, RED/GREEN commands, or technical implementation details."
+license: MIT
 ---
 
 # create-plan

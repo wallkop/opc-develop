@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.4 - 2026-06-30
+
+- Adds the native Codex repository marketplace manifest.
+- Adds public security, contribution, publishing checklist, and submission copy documents.
+- Documents Codex marketplace installation from the GitHub repository.
+- Adds skill-level MIT license metadata for GitHub Agent Skills publishing.
+
 ## 0.1.3 - 2026-06-30
 
 - Removes the fixed datastore default.

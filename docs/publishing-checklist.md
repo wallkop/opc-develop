@@ -1,0 +1,51 @@
+# Publishing Checklist
+
+This checklist tracks public distribution channels for opc-develop.
+
+## Already Prepared
+
+- GitHub repository: `https://github.com/wallkop/opc-develop`
+- MIT license
+- English-first `README.md`
+- Chinese `README.zh-CN.md`
+- Workflow image: `assets/opc-develop-skills.png`
+- Codex plugin manifest: `.codex-plugin/plugin.json`
+- Claude Code plugin manifest: `.claude-plugin/plugin.json`
+- Claude marketplace manifest: `.claude-plugin/marketplace.json`
+- Codex repo marketplace manifest: `.agents/plugins/marketplace.json`
+- Security policy: `SECURITY.md`
+- Contribution guide: `CONTRIBUTING.md`
+- Submission copy: `docs/submission-copy.md`
+
+## Validation Commands
+
+```bash
+python3 shared/scripts/test_opc_artifacts.py
+python3 -m json.tool .codex-plugin/plugin.json >/dev/null
+python3 -m json.tool .claude-plugin/plugin.json >/dev/null
+python3 -m json.tool .claude-plugin/marketplace.json >/dev/null
+ruby -ryaml -e 'Dir["skills/*/agents/openai.yaml"].each { |f| YAML.load_file(f) }'
+claude plugin validate .
+claude plugin validate .claude-plugin/plugin.json
+claude plugin tag --dry-run .
+```
+
+## Channels
+
+| Channel | Status | Next Action |
+| --- | --- | --- |
+| GitHub repository | Live | Keep `main` and tags updated. |
+| Codex repo marketplace | Prepared in repo | Test from a clean Codex config or ask a peer to install from GitHub. |
+| Claude Code plugin marketplace | Prepared in repo | Submit through the Claude community marketplace flow after account access is ready. |
+| GitHub Agent Skills | Pending GitHub CLI auth and dry-run | Install/authenticate `gh`, run `gh skill publish --dry-run`, then publish if dependency layout is accepted. |
+| LobeHub Skills | Pending account/submission route | Submit suite-level listing using `docs/submission-copy.md`. |
+| SkillsHub.wtf | Pending API key | Register an agent, then submit a single suite-level skill entry. |
+| SkillsLLM | Pending form/account | Submit suite-level listing using `docs/submission-copy.md`. |
+| Agent Skills Hub | Pending PR | Submit repository link or supported catalog entry. |
+| awesome lists | Pending PR | Submit after repository metadata and security docs are in place. |
+
+## GitHub Agent Skills Risk
+
+opc-develop has 27 interdependent skills that rely on `shared/references/` and `shared/scripts/`. Before publishing through GitHub Agent Skills, verify whether `gh skill publish` and `gh skill install` preserve the repository-level shared resources.
+
+If GitHub installs each `skills/*/SKILL.md` folder independently without `shared/`, create a dedicated GitHub Agent Skills packaging layer before publishing.

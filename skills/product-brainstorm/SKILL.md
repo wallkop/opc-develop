@@ -1,6 +1,7 @@
 ---
 name: product-brainstorm
 description: "Use when starting a opc-develop feature from raw requirement input before demo, PRD, technical design, spec, plan, or coding. Runs an opc-adapted grilling gate to clarify product intent, domain language, tradeoffs, goals, non-goals, user paths, constraints, alternatives, blockers, then assigns the next numbered feature slug in {x}-{feature} format and writes the requirement document."
+license: MIT
 ---
 
 # product-brainstorm

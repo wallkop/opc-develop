@@ -20,4 +20,7 @@ __pycache__/
 
 # Codex local runtime/cache state must not be published from this repo.
 .codex/
-.agents/
+.agents/*
+!.agents/plugins/
+.agents/plugins/*
+!.agents/plugins/marketplace.json

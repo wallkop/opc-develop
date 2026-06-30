@@ -1,6 +1,7 @@
 ---
 name: harness-init
 description: "Use when a user wants to initialize, assess, or improve a project Harness by producing a guided planning document only. Triggers include harness initialization, AGENTS.md rules planning, documentation standards, local development runbooks, API mock and storage mock planning, automated verification gates, runtime evidence, Log/DB/Trace planning, release verification planning, or comparing a project's Harness maturity without directly editing the project."
+license: MIT
 ---
 
 # harness-init

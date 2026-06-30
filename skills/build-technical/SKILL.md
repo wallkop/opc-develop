@@ -1,6 +1,7 @@
 ---
 name: build-technical
 description: "Use after build-prd or review-prd is Approved when the user wants technical design creation and review handled as one loop. Runs create-technical, review-technical, and reruns create-technical when technical-review.md has Issues Found until the technical review is Approved or blocked."
+license: MIT
 ---
 
 # build-technical

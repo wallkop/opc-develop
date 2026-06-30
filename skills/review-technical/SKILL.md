@@ -1,6 +1,7 @@
 ---
 name: review-technical
 description: "Use after create-technical to review technical.md in a fresh dedicated review subagent before spec creation. Checks one committed route, SaaS/infrastructure choices, project datastore/database baseline compliance, public API input/output contracts, system boundaries, demo alignment, Runtime evidence strategy, and that micro implementation details are left to spec."
+license: MIT
 ---
 
 # review-technical

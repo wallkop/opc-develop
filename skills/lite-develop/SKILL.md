@@ -1,6 +1,7 @@
 ---
 name: lite-develop
 description: "Use for small or medium-low-risk product tweaks, bug fixes, UI copy/layout changes, and quick implementation iterations on the current branch. Classifies work as direct current-branch edit, isolated worktree from current branch, or Full flow; supports targeted checks, quick user acceptance, and optional merge/discard of the lite worktree back into the current branch without creating Full demo/PRD/technical/spec/plan/review/testcase artifacts."
+license: MIT
 ---
 
 # lite-develop

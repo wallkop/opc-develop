@@ -1,6 +1,7 @@
 ---
 name: create-spec
 description: "Use after review-technical is Approved to create the feature spec only. Converts approved PRD and technical.md into executable micro implementation contracts for AI: internal modules, local components such as sqlite/local storage/cache, state machines, internal errors, UI/demo parity, Runtime evidence points, verification mapping, and TDD seed; does not redefine SaaS choices or public API I/O."
+license: MIT
 ---
 
 # create-spec

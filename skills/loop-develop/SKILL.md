@@ -1,6 +1,7 @@
 ---
 name: loop-develop
 description: "Use after product confirmation, approved demo, approved PRD, and review-technical are Approved to run the long-task development loop only. Runs create-spec, review-spec, create-testcases, review-testcases, create-plan, review-plan, tdd-coding, and local-e2e-verify with targeted re-review after fixes. Does not create PRD, demo, technical design, or release."
+license: MIT
 ---
 
 # loop-develop

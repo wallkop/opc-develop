@@ -1,6 +1,7 @@
 ---
 name: create-demo
 description: "Use after product-brainstorm when requirement.md exists and a high-fidelity product demo is needed before PRD. Builds the demo directly in the real frontend codebase on the feature branch, uses frontend-only mocks for missing backend data, restarts local frontend/backend services, and returns a preview URL plus evidence."
+license: MIT
 ---
 
 # create-demo

@@ -1,6 +1,7 @@
 ---
 name: loop-design
 description: "Use after product-brainstorm when requirement.md exists and the user wants the pre-development design loop completed end-to-end. Runs build-demo, build-prd, and build-technical in order until demo, PRD, and technical reviews are Approved or blocked. Does not create spec, testcases, plan, code, local verification, acceptance, or release artifacts."
+license: MIT
 ---
 
 # loop-design

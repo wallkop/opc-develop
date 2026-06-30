@@ -1,6 +1,7 @@
 ---
 name: debug-failure
 description: "Use when unit tests, API tests, E2E, local verification, or human acceptance fail and the failure appears to be a pure implementation defect rather than a product, technical design, spec, testcase, or plan defect. Reproduces first, identifies root cause, adds a failing test or minimal reproduction before fixing, verifies with fresh evidence, and stops after three unsuccessful repair attempts."
+license: MIT
 ---
 
 # debug-failure

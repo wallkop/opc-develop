@@ -1,6 +1,7 @@
 ---
 name: finish-branch
 description: "Use when implementation work is complete and the current Git branch, linked worktree, or Codex App detached HEAD needs a safe finish path: local merge, push or PR handoff, keep branch, discard changes, remove worktree, or report a detached-head handoff. Follows project AGENTS.md, git-flow runbook, worktree isolation, and evidence-before-claim rules."
+license: MIT
 ---
 
 # finish-branch

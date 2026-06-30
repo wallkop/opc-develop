@@ -1,6 +1,7 @@
 ---
 name: create-technical
 description: "Use after review-prd is Approved to create the feature technical design for human architecture review. Commits to one technical route, SaaS/infrastructure choices such as datastore/database, cache, queue, object/blob storage, and providers, public API input/output contracts, system boundaries, migration, security, Runtime evidence, and gate strategy; leaves internal implementation details to spec."
+license: MIT
 ---
 
 # create-technical

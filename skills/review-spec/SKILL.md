@@ -1,6 +1,7 @@
 ---
 name: review-spec
 description: "Use after create-spec to review spec.md in a fresh dedicated review subagent before testcase creation. Checks executable internal implementation contracts, local component decisions, UI/demo parity, TDD seed readiness, no technical.md duplication, no SaaS decision leakage, and no public API I/O redefinition."
+license: MIT
 ---
 
 # review-spec

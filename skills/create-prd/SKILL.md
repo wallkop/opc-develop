@@ -1,6 +1,7 @@
 ---
 name: create-prd
 description: "Use after review-demo is Approved to create or revise the feature PRD from requirement.md, demo, and demo-review.md. Defines product behavior, scope, flows, rules, states, acceptance criteria, and non-goals."
+license: MIT
 ---
 
 # create-prd

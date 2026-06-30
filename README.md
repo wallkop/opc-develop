@@ -35,6 +35,7 @@ The intended operating loop:
 
 ## Contents
 
+- `.agents/plugins/marketplace.json` - Codex repository marketplace manifest.
 - `.codex-plugin/plugin.json` - Codex plugin manifest.
 - `.claude-plugin/plugin.json` - Claude Code plugin manifest.
 - `skills/` - atomic and orchestration skills.
@@ -43,6 +44,7 @@ The intended operating loop:
 - `shared/prompts/` - reviewer and implementer subagent prompts.
 - `shared/scripts/` - small artifact validation helpers.
 - `docs/` - platform-specific usage notes.
+- `SECURITY.md` and `CONTRIBUTING.md` - public distribution and contribution policies.
 
 ## Main Flows
 
@@ -58,13 +60,20 @@ The intended operating loop:
 
 ### Codex
 
-Use this repository as the canonical version source. Clone it into your Codex personal plugin source directory and enable the `opc-develop` personal plugin in Codex.
+Use this repository as a Codex plugin marketplace:
+
+```bash
+codex plugin marketplace add wallkop/opc-develop --ref main
+codex plugin add opc-develop@opc-develop
+```
+
+For local development, clone it into your Codex personal plugin source directory and enable the `opc-develop` personal plugin in Codex.
 
 ```bash
 git clone https://github.com/wallkop/opc-develop.git ~/plugins/opc-develop
 ```
 
-If your Codex setup uses a different personal plugin source directory, clone the repository there instead. For local development, keep this repository as the source of truth and let Codex install/cache from it.
+If your Codex setup uses a different personal plugin source directory, clone the repository there instead. Keep this repository as the source of truth and let Codex install/cache from it.
 
 ### Claude Code
 
