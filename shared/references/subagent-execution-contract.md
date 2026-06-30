@@ -6,6 +6,8 @@
 
 Implementer subagents are mandatory. If the current environment cannot start subagents, `tdd-coding` must stop and report a blocker instead of implementing plan tasks inline.
 
+When the environment provides named implementation agents, use the OPC plan implementer role for assigned plan files. If no named role exists, use the environment's native isolated subagent mechanism with the implementer prompt.
+
 The controller may read plans, decide worktree strategy, prepare context, dispatch subagents, answer `NEEDS_CONTEXT`, route blockers, run integration steps, and record progress. The controller must not directly implement tasks from `plan-XX-*.md`. The only implementation work the controller may perform is the explicit integration work described by `integration-plan.md` after all plan subagents and review gates are ready.
 
 Each implementer subagent receives only the context needed for its assigned plan: that plan file, relevant spec/testcase excerpts, required `AGENTS.md` rules, allowed commands, work directory or worktree, and language/output contracts. Do not provide unrelated conversation history, other plan internals unless required for dependencies, creator reasoning, or desired conclusions.

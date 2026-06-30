@@ -1,0 +1,20 @@
+{
+  "name": "opc-develop-marketplace",
+  "description": "Marketplace source for the opc-develop Claude Code plugin",
+  "owner": {
+    "name": "wallkop",
+    "email": "wallkop2026@zohomail.com"
+  },
+  "plugins": [
+    {
+      "name": "opc-develop",
+      "description": "Chinese-first product development workflow suite with Lite, Full, Harness, review, and release verification skills",
+      "version": "0.1.1",
+      "source": "./",
+      "author": {
+        "name": "wallkop",
+        "email": "wallkop2026@zohomail.com"
+      }
+    }
+  ]
+}

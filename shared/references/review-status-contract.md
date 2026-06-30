@@ -36,6 +36,8 @@ Use `review-trigger-policy.md` to choose full vs targeted review scope. After a 
 
 Every `review-*` skill must be performed by a fresh, dedicated review subagent. The main controller must not perform the review inline in its existing conversation context.
 
+When the environment provides named review agents, use the OPC artifact reviewer role for these review gates. If no named role exists, use the environment's native isolated subagent mechanism with the relevant reviewer prompt.
+
 The controller must provide the review subagent only the minimum necessary alignment context:
 
 1. The artifact under review.

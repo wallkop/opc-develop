@@ -1,0 +1,21 @@
+{
+  "name": "opc-develop",
+  "version": "0.1.1",
+  "description": "Chinese-first product development workflow suite with Lite, Full, Harness, review, and release verification skills",
+  "author": {
+    "name": "wallkop",
+    "email": "wallkop2026@zohomail.com"
+  },
+  "homepage": "https://github.com/wallkop/opc-develop",
+  "repository": "https://github.com/wallkop/opc-develop",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "product-development",
+    "harness",
+    "prd",
+    "tdd",
+    "review",
+    "release"
+  ]
+}

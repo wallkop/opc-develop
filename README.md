@@ -16,10 +16,13 @@ The suite is intentionally opinionated:
 ## Contents
 
 - `.codex-plugin/plugin.json` - Codex plugin manifest.
+- `.claude-plugin/plugin.json` - Claude Code plugin manifest.
 - `skills/` - atomic and orchestration skills.
+- `agents/` - Claude Code custom subagents for OPC review and implementation roles.
 - `shared/references/` - shared contracts, formats, and process rules.
 - `shared/prompts/` - reviewer and implementer subagent prompts.
 - `shared/scripts/` - small artifact validation helpers.
+- `docs/` - platform-specific usage notes.
 
 ## Main Flows
 
@@ -33,6 +36,8 @@ The suite is intentionally opinionated:
 
 ## Install
 
+### Codex
+
 Use this repository as the canonical version source. Clone it into your Codex personal plugin source directory and enable the `opc-develop` personal plugin in Codex.
 
 ```bash
@@ -40,6 +45,18 @@ git clone https://github.com/wallkop/opc-develop.git ~/plugins/opc-develop
 ```
 
 If your Codex setup uses a different personal plugin source directory, clone the repository there instead. For local development, keep this repository as the source of truth and let Codex install/cache from it.
+
+### Claude Code
+
+Use the same repository as a Claude Code plugin source:
+
+```bash
+claude --plugin-dir ~/plugins/opc-develop
+```
+
+Claude Code skills are invoked with the plugin namespace, for example `/opc-develop:product-brainstorm` or `/opc-develop:harness-eval`.
+
+See [docs/claude-code.md](docs/claude-code.md) for validation and marketplace-source notes.
 
 ## Update
 
