@@ -8,8 +8,8 @@ It is for human architecture review. It must explain and commit to the macro tec
 
 - Relevant existing modules and current behavior.
 - One explicit technical approach and rationale. Do not leave multiple viable approaches open.
-- Chosen technical components. SaaS / infrastructure components such as MySQL, Redis, MQ, COS/object storage, external APIs, model providers, auth services, and audit services must be decided here.
-- If a SaaS database is involved, it must be MySQL unless project rules or existing facts force a human escalation.
+- Chosen technical components. SaaS / infrastructure components such as datastore/database, cache, queue, object/blob storage, external APIs, model providers, auth services, and audit services must be decided here.
+- If a new or changed datastore/database is involved, it must follow project rules, existing architecture facts, or an explicit human-approved decision. If no baseline exists or facts conflict, block for human architecture review instead of inventing a default.
 - Public API input/output contracts: endpoint, method, request schema, response schema, status code, error code, auth/permission boundary, and external dependency failure semantics.
 - UI, data, storage, and state impacts at architecture level.
 - Demo-to-implementation mapping for UI-facing work: production components, routes, state owners, and any technical constraints that require approved demo deviations.

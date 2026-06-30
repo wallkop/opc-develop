@@ -22,7 +22,7 @@
 
 - 新增或修改 public API contract。
 - 权限、安全、审计、敏感信息、凭据、脱敏、数据泄露风险。
-- SaaS / 基础设施组件：MySQL、Redis、MQ、COS、对象存储、外部 API、模型 provider、鉴权服务等。
+- SaaS / 基础设施组件：datastore/database、cache、queue、object/blob storage、外部 API、模型 provider、鉴权服务等。
 - 数据一致性、事务、补偿、幂等、并发、race condition、迁移、回滚。
 - agent/tool/harness/runtime evidence/local-e2e 相关能力。
 - 跨模块或跨服务改动。

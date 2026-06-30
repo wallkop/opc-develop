@@ -9,7 +9,7 @@
     {
       "name": "opc-develop",
       "description": "Language-adaptive product development workflow suite with Lite, Full, Harness, review, and release verification skills",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "source": "./",
       "author": {
         "name": "wallkop",

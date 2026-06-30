@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3 - 2026-06-30
+
+- Removes the fixed datastore default.
+- Replaces fixed database defaults with a project architecture baseline rule for datastore/database decisions.
+- Replaces provider-specific object storage wording with generic object/blob storage terminology.
+
 ## 0.1.2 - 2026-06-30
 
 - Changes README default language to English and adds `README.zh-CN.md`.

@@ -1,6 +1,6 @@
 ---
 name: review-technical
-description: "Use after create-technical to review technical.md in a fresh dedicated review subagent before spec creation. Checks one committed route, SaaS/infrastructure choices, MySQL database rule, public API input/output contracts, system boundaries, demo alignment, Runtime evidence strategy, and that micro implementation details are left to spec."
+description: "Use after create-technical to review technical.md in a fresh dedicated review subagent before spec creation. Checks one committed route, SaaS/infrastructure choices, project datastore/database baseline compliance, public API input/output contracts, system boundaries, demo alignment, Runtime evidence strategy, and that micro implementation details are left to spec."
 ---
 
 # review-technical
@@ -32,7 +32,7 @@ This skill must run in a fresh dedicated review subagent. The main controller mu
 
 1. The main controller starts a fresh review subagent for this review only.
 2. Provide only the required inputs, applicable project technical docs, `reviewer-common.md`, and `technical-reviewer.md`; do not include creator chat history, suspected issues, desired outcome, or unrelated context.
-3. The review subagent checks PRD and approved demo alignment, one committed technical route, component selection, SaaS decisions, MySQL-only SaaS database rule, public API input/output contracts, module boundaries, data/API/UI impact, demo-to-implementation module mapping for UI-facing work, compatibility, migration, security, performance, operations, Runtime evidence, risks, and the boundary with `spec.md`.
+3. The review subagent checks PRD and approved demo alignment, one committed technical route, component selection, SaaS decisions, project datastore/database baseline compliance, public API input/output contracts, module boundaries, data/API/UI impact, demo-to-implementation module mapping for UI-facing work, compatibility, migration, security, performance, operations, Runtime evidence, risks, and the boundary with `spec.md`.
 4. For re-review after `Issues Found`, default to targeted fresh review against the previous blocking issues, changed `technical.md` sections, and directly affected boundary contracts unless the revision changes the design's main semantics.
 5. Write review report from the review subagent result without weakening its status or blocking issues.
 

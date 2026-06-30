@@ -11,8 +11,8 @@ Full 流程中的 `technical.md`、`spec.md`、`plan/*.md` 分别服务不同读
 ## technical.md Must Own
 
 - 唯一技术路线和组件选型。不得留下多个候选方案让后续 AI 决定。
-- SaaS / 基础设施组件决策：MySQL、Redis、MQ、COS、对象存储、外部 API、模型 provider、鉴权服务、审计服务等。
-- 涉及数据库时，SaaS 数据库必须是 MySQL；如项目军规禁止或另有既定事实，必须先阻塞并请求人类决策。
+- SaaS / 基础设施组件决策：datastore/database、cache、queue、object/blob storage、外部 API、模型 provider、鉴权服务、审计服务等。
+- 涉及新增或变更数据存储时，必须遵循项目既有架构基线、既定事实或已批准的人类架构决策；如果没有基线或存在冲突，必须先阻塞并请求人类决策，不能由 AI 隐式选择。
 - API 公共输入输出定义：endpoint、method、request schema、response schema、status code、error code、auth/permission boundary、外部依赖失败的公共响应语义。
 - 系统边界、source of truth、跨服务关系、数据一致性、事务、补偿、迁移、回滚、运行证据和 gate 分层策略。
 - UI-facing work 的 demo 到生产模块映射：真实路由、组件、状态 owner、设计系统约束和允许偏离点。
@@ -59,6 +59,6 @@ Full 流程中的 `technical.md`、`spec.md`、`plan/*.md` 分别服务不同读
 
 ## Routing Rules
 
-- 如果 create-spec 发现 API 公共输入输出或 SaaS 组件未在 technical 中明确，停止并路由回 `create-technical`。
+- 如果 create-spec 发现 API 公共输入输出、SaaS 组件或数据存储基线未在 technical 中明确，停止并路由回 `create-technical`。
 - 如果 create-plan 需要补技术细节才能让 worker 执行，停止并路由回 `create-spec` 或 `create-technical`，不要把细节写进 plan。
 - 如果 review 发现下游 artifact 与上游 Approved artifact 冲突，必须路由到最早受影响层级，而不是在当前层 patch around。

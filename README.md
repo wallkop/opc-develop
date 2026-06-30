@@ -13,7 +13,7 @@ opc-develop is a Codex / Claude Code skill suite for controlled AI-assisted prod
 - Maintains explicit demo parity, frontend mock inventory, and prototype mock retirement.
 - Uses independent review gates before downstream artifacts and implementation.
 - Treats Harness as a first-class concern: documentation, testcases, runtime evidence, local E2E, and release verification are part of the workflow.
-- Requires SaaS/infrastructure decisions in technical design; MySQL is the default SaaS database baseline unless target project rules require human escalation.
+- Requires SaaS/infrastructure decisions in technical design; data storage choices must follow the target project's existing or explicitly approved architecture baseline, and unresolved high-impact choices block for human review.
 
 ## Who It Is For
 

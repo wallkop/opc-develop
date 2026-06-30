@@ -1,6 +1,6 @@
 ---
 name: create-technical
-description: "Use after review-prd is Approved to create the feature technical design for human architecture review. Commits to one technical route, SaaS/infrastructure choices such as MySQL/Redis/MQ/COS/providers, public API input/output contracts, system boundaries, migration, security, Runtime evidence, and gate strategy; leaves internal implementation details to spec."
+description: "Use after review-prd is Approved to create the feature technical design for human architecture review. Commits to one technical route, SaaS/infrastructure choices such as datastore/database, cache, queue, object/blob storage, and providers, public API input/output contracts, system boundaries, migration, security, Runtime evidence, and gate strategy; leaves internal implementation details to spec."
 ---
 
 # create-technical
@@ -34,7 +34,7 @@ Approved `prd.md`, `requirement.md`, approved frontend prototype evidence, proto
 2. Verify current branch is the corresponding feature branch according to `branch-stage-contract.md`; do not switch branches.
 3. Inspect code paths enough to understand existing architecture.
 4. Commit to exactly one technical route and one component selection. Do not leave multiple viable options for downstream AI to choose.
-5. Put all SaaS / infrastructure decisions in `technical.md`, including MySQL, Redis, MQ, COS/object storage, external APIs, model providers, auth services, and audit services. If a SaaS database is involved, use MySQL or block for a human architecture decision.
+5. Put all SaaS / infrastructure decisions in `technical.md`, including datastore/database, cache, queue, object/blob storage, external APIs, model providers, auth services, and audit services. If a new or changed datastore/database is involved, follow the target project's existing architecture baseline or an explicit human-approved decision; if no baseline exists or existing facts conflict, block for a human architecture decision instead of choosing implicitly.
 6. Define public API input/output contracts in `technical.md`: endpoint, method, request schema, response schema, status code, error code, auth/permission boundary, and external dependency failure semantics.
 7. For UI-facing work, map the approved frontend prototype and PRD demo alignment contract to real frontend modules, routes, components, state owners, and design-system constraints.
 8. Define the real backend/API/storage contracts needed to replace frontend prototype mocks. Technical owns public API input/output and SaaS/storage choices; do not leave mock replacement decisions to downstream AI.

@@ -259,7 +259,8 @@ def test_full_flow_boundary_contracts_are_threaded() -> None:
     technical = (PLUGIN_ROOT / "shared/references/technical-format.md").read_text(encoding="utf-8")
     assert "One explicit technical approach" in technical
     assert "Public API input/output contracts" in technical
-    assert "MySQL" in technical
+    assert "datastore/database" in technical
+    assert "human architecture review" in technical
 
     spec = (PLUGIN_ROOT / "shared/references/spec-format.md").read_text(encoding="utf-8")
     assert "Internal implementation boundaries" in spec

@@ -1,6 +1,6 @@
 {
   "name": "opc-develop",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "opc-develop is a Codex and Claude Code skill suite for controlled Lite, Full, Harness, review, and release verification workflows.",
   "author": {
     "name": "wallkop"
