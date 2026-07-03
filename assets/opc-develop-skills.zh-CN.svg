@@ -1,0 +1,287 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1560" viewBox="0 0 1900 1560" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b26a00"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6a4fa3"/>
+    </marker>
+  </defs>
+
+  <rect width="1900" height="1560" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="52" y="88" font-family="Georgia, serif" font-size="52" font-style="italic" font-weight="bold" fill="#1a1a1a">OPC-Develop Skills</text>
+  <text x="660" y="88" font-family="Georgia, serif" font-size="26" font-style="italic" fill="#888">v0.2 · 循环工程</text>
+
+  <!-- Legend -->
+  <g font-size="20" fill="#333">
+    <rect x="1180" y="52" width="34" height="26" rx="6" fill="#7fd8d8" stroke="#5a4632" stroke-width="2"/>
+    <text x="1224" y="72">技能</text>
+    <rect x="1290" y="52" width="34" height="26" rx="6" fill="#dff4f4" stroke="#5a4632" stroke-width="2"/>
+    <text x="1334" y="72">机制</text>
+    <rect x="1478" y="52" width="34" height="26" rx="6" fill="#dcedc8" stroke="#5a4632" stroke-width="2"/>
+    <text x="1522" y="72">日常使用</text>
+    <circle cx="1650" cy="65" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="1650" y="72" text-anchor="middle" font-size="17" font-weight="bold" fill="#4a3000">1</text>
+    <text x="1674" y="72">人类触点</text>
+  </g>
+
+  <!-- ═══════════ HARNESS ROW ═══════════ -->
+  <rect x="50" y="130" width="160" height="150" rx="8" fill="#000"/>
+  <text x="130" y="196" text-anchor="middle" font-size="26" font-style="italic" font-weight="bold" fill="#fff">Harness</text>
+  <text x="130" y="228" text-anchor="middle" font-size="15" fill="#bbb">四个动词</text>
+  <text x="130" y="248" text-anchor="middle" font-size="15" fill="#bbb">皆可执行</text>
+
+  <!-- verb groups -->
+  <g>
+    <!-- run -->
+    <rect x="240" y="130" width="390" height="150" rx="10" fill="#666"/>
+    <text x="435" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">run</text>
+    <rect x="256" y="182" width="170" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="341" y="215" text-anchor="middle" font-size="18" fill="#222">一键启动</text>
+    <text x="341" y="240" text-anchor="middle" font-size="18" fill="#222">健康检查</text>
+    <rect x="442" y="182" width="170" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="527" y="215" text-anchor="middle" font-size="18" fill="#222">日志落盘</text>
+    <text x="527" y="240" text-anchor="middle" font-size="18" fill="#222">固定路径</text>
+    <!-- reset -->
+    <rect x="650" y="130" width="390" height="150" rx="10" fill="#666"/>
+    <text x="845" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">reset</text>
+    <rect x="666" y="182" width="170" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="751" y="215" text-anchor="middle" font-size="18" fill="#222">干净状态</text>
+    <text x="751" y="240" text-anchor="middle" font-size="18" fill="#222">幂等重置</text>
+    <rect x="852" y="182" width="170" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="937" y="215" text-anchor="middle" font-size="18" fill="#222">命名种子</text>
+    <text x="937" y="240" text-anchor="middle" font-size="18" fill="#222">场景目录</text>
+    <!-- observe -->
+    <rect x="1060" y="130" width="500" height="150" rx="10" fill="#666"/>
+    <text x="1310" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">observe</text>
+    <rect x="1076" y="182" width="148" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="1150" y="215" text-anchor="middle" font-size="18" fill="#222">结构化日志</text>
+    <text x="1150" y="240" text-anchor="middle" font-size="18" fill="#222">+ 关联 ID</text>
+    <rect x="1236" y="182" width="148" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="1310" y="215" text-anchor="middle" font-size="18" fill="#222">数据库只读</text>
+    <text x="1310" y="240" text-anchor="middle" font-size="18" fill="#222">查询配方</text>
+    <rect x="1396" y="182" width="148" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="1470" y="215" text-anchor="middle" font-size="18" fill="#222">状态</text>
+    <text x="1470" y="240" text-anchor="middle" font-size="18" fill="#222">dump</text>
+    <!-- drive -->
+    <rect x="1580" y="130" width="270" height="150" rx="10" fill="#666"/>
+    <text x="1715" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">drive</text>
+    <rect x="1596" y="182" width="238" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="1715" y="215" text-anchor="middle" font-size="18" fill="#222">Tier-1 E2E 用例</text>
+    <text x="1715" y="240" text-anchor="middle" font-size="18" fill="#222">← agent 探索蒸馏</text>
+  </g>
+
+  <!-- ═══════════ FLOW BANDS ═══════════ -->
+  <rect x="50" y="320" width="160" height="60" rx="8" fill="#000"/>
+  <text x="130" y="358" text-anchor="middle" font-size="24" font-style="italic" font-weight="bold" fill="#fff">流程</text>
+
+  <rect x="240" y="320" width="1240" height="60" rx="6" fill="#3f51a3"/>
+  <text x="860" y="358" text-anchor="middle" font-size="26" fill="#fff">Full 流程 — 本地构建 → 测试环境验收 → 生产发布（默认拦截）</text>
+
+  <line x1="1510" y1="320" x2="1510" y2="1080" stroke="#777" stroke-width="2" stroke-dasharray="8,7"/>
+
+  <rect x="1540" y="320" width="310" height="60" rx="6" fill="#5b8c2a"/>
+  <text x="1695" y="358" text-anchor="middle" font-size="26" fill="#fff">Lite</text>
+
+  <!-- ═══════════ PIPELINE ═══════════ -->
+  <!-- role brackets -->
+  <g stroke="#888" stroke-width="2" fill="none">
+    <path d="M 250 414 L 250 406 L 764 406 L 764 414"/>
+    <path d="M 781 414 L 781 406 L 1472 406 L 1472 414"/>
+  </g>
+  <text x="507" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">产品负责人（PM 或你）</text>
+  <text x="1126" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">架构师 / Builder（你）</text>
+
+  <!-- 7 skills: brainstorm demo prd architect build ship deploy -->
+  <g font-size="22" font-weight="bold" fill="#123">
+    <!-- brainstorm -->
+    <circle cx="330" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="330" y="440" text-anchor="middle" font-size="16" fill="#4a3000">1</text>
+    <rect x="250" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="330" y="498" text-anchor="middle">brainstorm</text>
+    <!-- demo -->
+    <circle cx="452" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="452" y="440" text-anchor="middle" font-size="16" fill="#4a3000">2</text>
+    <rect x="427" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="507" y="498" text-anchor="middle">demo</text>
+    <!-- prd -->
+    <circle cx="684" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="684" y="440" text-anchor="middle" font-size="16" fill="#4a3000">3</text>
+    <rect x="604" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="684" y="498" text-anchor="middle">prd</text>
+    <!-- architect -->
+    <circle cx="861" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="861" y="440" text-anchor="middle" font-size="16" fill="#4a3000">4</text>
+    <rect x="781" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="861" y="498" text-anchor="middle">architect</text>
+    <!-- build -->
+    <rect x="958" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="1038" y="498" text-anchor="middle">build</text>
+    <!-- ship -->
+    <circle cx="1215" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="1215" y="440" text-anchor="middle" font-size="16" fill="#4a3000">5</text>
+    <rect x="1135" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="1215" y="498" text-anchor="middle">ship</text>
+    <!-- deploy -->
+    <rect x="1312" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#8a1f1f" stroke-width="3"/>
+    <text x="1392" y="498" text-anchor="middle">deploy</text>
+  </g>
+
+  <!-- pipeline arrows -->
+  <g stroke="#444" stroke-width="2.5" fill="none">
+    <line x1="410" y1="491" x2="425" y2="491" marker-end="url(#arrow)"/>
+    <line x1="587" y1="491" x2="602" y2="491" marker-end="url(#arrow)"/>
+    <line x1="941" y1="491" x2="956" y2="491" marker-end="url(#arrow)"/>
+    <line x1="1118" y1="491" x2="1133" y2="491" marker-end="url(#arrow)"/>
+    <line x1="1295" y1="491" x2="1310" y2="491" marker-end="url(#arrow)"/>
+  </g>
+  <!-- handoff arrow prd -> architect (push/pull) -->
+  <line x1="764" y1="491" x2="779" y2="491" stroke="#b26a00" stroke-width="3.5" marker-end="url(#arrowAmber)"/>
+  <text x="772" y="543" text-anchor="middle" font-size="15" font-style="italic" fill="#b26a00">push → pull 交接</text>
+
+  <!-- tune self-loop on demo -->
+  <path d="M 480 458 C 472 428, 558 428, 550 458" stroke="#2e7d32" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="515" y="424" text-anchor="middle" font-size="15" fill="#2e7d32" font-style="italic">tune ∞</text>
+
+  <!-- artifacts under pipeline -->
+  <g font-size="16" fill="#555" text-anchor="middle">
+    <text x="330" y="556">requirement.md</text>
+    <text x="330" y="576">决策优先 ≤150 行</text>
+    <text x="507" y="556">真代码原型 +</text>
+    <text x="507" y="576">mock 清单</text>
+    <text x="684" y="556">prd.md (AC/PD)</text>
+    <text x="684" y="576">过门禁后推送</text>
+    <text x="861" y="556">intake → 风险spike →</text>
+    <text x="861" y="576">technical.md (TD)</text>
+    <text x="1038" y="556">契约 → TDD →</text>
+    <text x="1038" y="576">本地部署 → E2E</text>
+    <text x="1215" y="556">变更清单 → 测试环境</text>
+    <text x="1215" y="576">→ 回归 → 合并主干</text>
+    <text x="1392" y="556">生产 · 默认拦截</text>
+    <text x="1392" y="576">备份 · 观察窗口</text>
+  </g>
+
+  <!-- ═══════════ GATE BAND ═══════════ -->
+  <rect x="250" y="620" width="1230" height="96" rx="10" fill="#dff4f4" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="865" y="658" text-anchor="middle" font-size="23" font-weight="bold" fill="#123">门禁 — 每个工件：全新 reviewer subagent + rubric</text>
+  <text x="865" y="692" text-anchor="middle" font-size="19" fill="#345">L0 预检 (validate_artifacts.py) · 内容 SHA 新鲜度 (check_freshness.py) · 唯一状态令牌 · 2 轮止损</text>
+
+  <!-- gate diamonds connecting pipeline to gate band -->
+  <g fill="#fff" stroke="#5a4632" stroke-width="2">
+    <path d="M 330 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 507 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 684 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 861 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 1018 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 1058 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 1215 596 l 12 12 l -12 12 l -12 -12 z"/>
+  </g>
+  <text x="1038" y="640" text-anchor="middle" font-size="14" fill="#777" font-style="italic">×3 内部门禁</text>
+
+  <!-- ═══════════ FEEDBACK / REVISE ═══════════ -->
+  <rect x="250" y="760" width="1230" height="130" rx="10" fill="#fff8ec" stroke="#b26a00" stroke-width="2.5"/>
+  <text x="865" y="798" text-anchor="middle" font-size="23" font-weight="bold" fill="#7a4a00">反馈 — tune 调整 · revise 修订 · park 搁置</text>
+  <text x="865" y="832" text-anchor="middle" font-size="19" fill="#7a4a00">revise → 路由到最早出错层，下游批准 SHA 失效，向前重放</text>
+  <text x="865" y="862" text-anchor="middle" font-size="19" fill="#7a4a00">测试验收三分类：代码缺陷 → build（fix 模式）· 工件缺陷 → revise · 新需求 → brainstorm（不算返工）</text>
+
+  <!-- revise arrows back -->
+  <g stroke="#b26a00" stroke-width="2.5" fill="none" stroke-dasharray="7,5">
+    <path d="M 1215 760 C 1215 740, 1215 730, 1215 716" marker-end="url(#arrowAmber)" transform="rotate(180 1215 738)"/>
+    <path d="M 330 760 C 330 745, 330 740, 330 730" marker-end="url(#arrowAmber)" transform="rotate(180 330 745)"/>
+    <path d="M 684 760 C 684 745, 684 740, 684 730" marker-end="url(#arrowAmber)" transform="rotate(180 684 745)"/>
+    <path d="M 861 760 C 861 745, 861 740, 861 730" marker-end="url(#arrowAmber)" transform="rotate(180 861 745)"/>
+    <path d="M 1038 760 C 1038 745, 1038 740, 1038 730" marker-end="url(#arrowAmber)" transform="rotate(180 1038 745)"/>
+  </g>
+
+  <!-- ═══════════ LITE COLUMN ═══════════ -->
+  <rect x="1540" y="420" width="310" height="340" rx="12" fill="#dcedc8" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="1695" y="466" text-anchor="middle" font-size="26" font-weight="bold" fill="#2a4a10">lite</text>
+  <g font-size="18" fill="#365220" text-anchor="middle">
+    <text x="1695" y="506">80% 的日常路径</text>
+    <text x="1695" y="538">当前分支，零仪式</text>
+    <text x="1695" y="562">裸仓库可用</text>
+    <text x="1695" y="594">定向测试 +</text>
+    <text x="1695" y="618">前后对比证据</text>
+    <text x="1695" y="650">触发风险类别时</text>
+    <text x="1695" y="674">升级 Full 流程</text>
+    <text x="1695" y="706">已解决的失败也</text>
+    <text x="1695" y="730">写入错误账本</text>
+  </g>
+
+  <!-- oncall skill box on right -->
+  <rect x="1540" y="790" width="310" height="140" rx="12" fill="#fdecec" stroke="#8a1f1f" stroke-width="2.5"/>
+  <text x="1695" y="832" text-anchor="middle" font-size="24" font-weight="bold" fill="#6a1414">oncall</text>
+  <text x="1695" y="862" text-anchor="middle" font-size="17" fill="#5a2020">用 observe 动词诊断 →</text>
+  <text x="1695" y="886" text-anchor="middle" font-size="17" fill="#5a2020">诊断报告 → 回滚 / 热修复 /</text>
+  <text x="1695" y="910" text-anchor="middle" font-size="17" fill="#5a2020">缓解 → 长期优化方案</text>
+
+  <!-- harness skill box on right -->
+  <rect x="1540" y="950" width="310" height="120" rx="12" fill="#dff4f4" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="1695" y="994" text-anchor="middle" font-size="24" font-weight="bold" fill="#123">harness</text>
+  <text x="1695" y="1022" text-anchor="middle" font-size="17" fill="#345">靠实际执行为四动词打分</text>
+  <text x="1695" y="1046" text-anchor="middle" font-size="17" fill="#345">把缺口建成脚本 / 种子</text>
+
+  <!-- ═══════════ MEASURE BAND (LOOP C) ═══════════ -->
+  <rect x="50" y="1130" width="160" height="180" rx="8" fill="#000"/>
+  <text x="130" y="1205" text-anchor="middle" font-size="24" font-style="italic" font-weight="bold" fill="#fff">度量</text>
+  <text x="130" y="1237" text-anchor="middle" font-size="15" fill="#bbb">改进循环的</text>
+  <text x="130" y="1257" text-anchor="middle" font-size="15" fill="#bbb">那个循环</text>
+
+  <!-- ledgers -->
+  <rect x="240" y="1130" width="380" height="180" rx="12" fill="#f0f0f0" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="430" y="1168" text-anchor="middle" font-size="22" font-weight="bold" fill="#123">账本（追加式 JSONL）</text>
+  <text x="430" y="1202" text-anchor="middle" font-size="18" fill="#345">features/&lt;slug&gt;/ledger.jsonl</text>
+  <text x="430" y="1228" text-anchor="middle" font-size="17" fill="#666">门禁 · 返工路由 · 证据标签 · 缺口</text>
+  <text x="430" y="1262" text-anchor="middle" font-size="18" fill="#345">docs/opc/error-ledger.jsonl</text>
+  <text x="430" y="1288" text-anchor="middle" font-size="17" fill="#666">失败解决时刻记录根因</text>
+
+  <!-- retro -->
+  <rect x="700" y="1130" width="360" height="180" rx="12" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="880" y="1172" text-anchor="middle" font-size="24" font-weight="bold" fill="#123">retro（每周）</text>
+  <text x="880" y="1206" text-anchor="middle" font-size="18" fill="#234">token 与返工分布</text>
+  <text x="880" y="1232" text-anchor="middle" font-size="18" fill="#234">门禁往返次数 · change vs rework</text>
+  <text x="880" y="1258" text-anchor="middle" font-size="18" fill="#234">recurrence_scan → 候选规则</text>
+  <text x="880" y="1288" text-anchor="middle" font-size="18" font-style="italic" fill="#234">每条规则须人工批准</text>
+
+  <!-- outputs -->
+  <rect x="1140" y="1130" width="710" height="180" rx="12" fill="#efe9f7" stroke="#6a4fa3" stroke-width="2.5"/>
+  <text x="1495" y="1168" text-anchor="middle" font-size="22" font-weight="bold" fill="#3d2a66">在最低层固化规则 · 裁剪数据撑不住的流程</text>
+  <g font-size="18" fill="#3d2a66" text-anchor="middle">
+    <text x="1300" y="1210">rules.md + L0 hooks/lint</text>
+    <text x="1300" y="1236">（出处 + 退休审查）</text>
+    <text x="1495" y="1210">门禁降级</text>
+    <text x="1495" y="1236">（阻塞 → 抽查）</text>
+    <text x="1700" y="1210">harness 待办</text>
+    <text x="1700" y="1236">（gap 条目）</text>
+    <text x="1495" y="1284" font-style="italic">重流程，是无法度量时的无奈之举</text>
+  </g>
+
+  <!-- arrows into ledger and from retro -->
+  <g stroke="#444" stroke-width="2.5" fill="none">
+    <path d="M 640 890 C 560 960, 470 1040, 435 1126" marker-end="url(#arrow)"/>
+    <line x1="620" y1="1220" x2="696" y2="1220" marker-end="url(#arrow)"/>
+    <line x1="1060" y1="1220" x2="1136" y2="1220" marker-end="url(#arrow)"/>
+  </g>
+  <text x="500" y="1010" font-size="17" fill="#444" font-style="italic">每次门禁 / 返工 / 证据 / 缺口都追加</text>
+
+  <!-- retro feedback arrows (dashed purple) -->
+  <g stroke="#6a4fa3" stroke-width="2.5" fill="none" stroke-dasharray="7,5">
+    <path d="M 1495 1126 C 1495 1000, 1300 780, 1120 716" marker-end="url(#arrowPurple)"/>
+    <path d="M 1700 1126 C 1716 1110, 1702 1090, 1698 1076" marker-end="url(#arrowPurple)"/>
+  </g>
+  <text x="1400" y="960" font-size="17" fill="#6a4fa3" font-style="italic">收紧或放宽门禁</text>
+  <text x="1790" y="1094" font-size="17" fill="#6a4fa3" font-style="italic" text-anchor="middle">补建缺口</text>
+
+  <!-- ═══════════ FOOTER: enforcement stack ═══════════ -->
+  <rect x="240" y="1370" width="1610" height="140" rx="12" fill="#fafafa" stroke="#999" stroke-width="2"/>
+  <text x="270" y="1412" font-size="22" font-weight="bold" fill="#123">执法分层 — 每条规则都住进能容纳它的最低层</text>
+  <g font-size="19" fill="#345">
+    <text x="270" y="1450"><tspan font-weight="bold" fill="#0a3">L0 脚本与 hooks</tspan> — 新鲜度、结构、账本校验、状态解析（零 token、零漂移）</text>
+    <text x="270" y="1482"><tspan font-weight="bold" fill="#06c">L1 结构化工件</tspan> — AC-ID · TD/PD 记录 · 种子 · 账本（按需拉取）   ·   <tspan font-weight="bold" fill="#a40">L2 散文</tspan> — 一份 ~1.1k token 核心合同 + 角色包（最重链 ≈ 5.4k token）</text>
+  </g>
+</svg>
