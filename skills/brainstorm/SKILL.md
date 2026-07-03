@@ -35,8 +35,9 @@ judgment that is missing here.
    `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/next_feature_slug.py" "<name>" --features-dir <root>/docs/features`,
    create/enter `feature/<slug>` per `branch-worktree.md`, then write
    `docs/features/<slug>/requirement.md` per the format (≤150 lines, decision summary first).
-7. Initialize `docs/features/<slug>/ledger.jsonl` with a `decision` entry recording the risk
-   profile, and a `gap` entry for any harness verb already known missing.
+7. Initialize `docs/features/<slug>/ledger.jsonl` with a risk-profile decision entry —
+   `{"type":"decision","id":"RISK-PROFILE","door":"two-way","note":"<categories or none identified>"}` —
+   and a `gap` entry for any harness verb already known missing.
 8. Gate the requirement per `${CLAUDE_PLUGIN_ROOT}/shared/packs/gate-protocol.md` with
    `${CLAUDE_PLUGIN_ROOT}/shared/rubrics/requirement.md`.
 9. Human touchpoint: present the decision summary (≤1 page) for confirmation. Their feedback

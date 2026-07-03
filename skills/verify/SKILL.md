@@ -31,12 +31,15 @@ label; the harness caps what can be claimed, not optimism.
 4. **Demo parity**: exercise the contractual interactions from PRD Demo alignment against the
    real implementation; divergence is a finding (implementation defect or artifact defect —
    triage, don't assume).
-5. Gate the stage: fresh reviewer, `rubrics/e2e.md`, checking coverage, seeds, triangles, label
-   honesty, distillation, regression.
-6. **Acceptance touchpoint**: present the acceptance sheet — one line per AC: verdict, label,
-   evidence pointer, reproduction entry point; plus recorded gaps and their caps. The human
-   exercises what they choose and returns a verdict.
-7. **Triage the verdict** per `feedback-routing.md`: implementation defect → `build` (targeted);
+5. Write the acceptance sheet to `docs/features/<slug>/acceptance.md` — one line per AC:
+   verdict, label, evidence pointer, reproduction entry point; plus recorded gaps and their caps.
+   The sheet is immutable after the gate; human verdicts go to the ledger, not into the sheet.
+6. Gate the stage: fresh reviewer, `rubrics/e2e.md`, reviewing `acceptance.md` against coverage,
+   seeds, triangles, label honesty, distillation, regression.
+7. **Acceptance touchpoint**: present the gated acceptance sheet. The human exercises what they
+   choose and returns a verdict, recorded as ledger entries (`evidence` with `human accepted`,
+   or `rework`/`change`).
+8. **Triage the verdict** per `feedback-routing.md`: implementation defect → `build` (targeted);
    artifact defect → `revise` + cascade; taste change → `change` ledger entry → `brainstorm`
    fast path. Ledger everything; rework entries carry `routed_to`.
 

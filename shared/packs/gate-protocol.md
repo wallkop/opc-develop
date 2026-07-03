@@ -7,14 +7,18 @@ Every artifact gate follows the same anatomy, parameterized by a rubric file.
 1. **L0 precheck (scripts, before any subagent):**
    - `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/validate_artifacts.py" <artifact>` — structure,
      required sections, AC-ID integrity.
-   - `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/check_freshness.py" <upstream-review> ...` —
-     upstream approvals still fresh. Stale upstream ⇒ stop, route per `feedback-routing.md`.
+   - `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/check_freshness.py" <upstream-review>`
+     (once per upstream review) — upstream approvals still fresh. Stale upstream ⇒ stop, route
+     per `feedback-routing.md`.
    - Precheck failures return to the creator without spending a reviewer.
-2. **Fresh reviewer subagent.** Context given: the rubric for this artifact type
+2. **Fresh reviewer subagent** — prefer the `opc-reviewer` agent (read-only by tool restriction);
+   otherwise a fresh isolated subagent primed with
+   `${CLAUDE_PLUGIN_ROOT}/shared/prompts/reviewer.md`. Context given: the rubric for this artifact type
    (`shared/rubrics/<type>.md`), the artifact itself, the upstream artifacts it must align with
    (or their AC index), the diff when reviewing code. Context withheld: creator chat history,
    creator reasoning, suspected issues, desired outcome, unrelated conversation.
-3. **Review record** written to `docs/features/<slug>/reviews/<type>-review.md`:
+3. **Review record** written to `docs/features/<slug>/reviews/<type>-review.md` (per-contract
+   implementation reviews: `reviews/C-XX-implementation-review.md`):
    findings, per-AC verdicts where applicable, one status token, and one `Reviewed-SHA:` line per
    reviewed file (`git hash-object <file>`).
 4. **Ledger entry** via `opc_ledger.py`: gate type, status, rounds, SHA.

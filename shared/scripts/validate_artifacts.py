@@ -23,8 +23,8 @@ from pathlib import Path
 
 AC_DEF_RE = re.compile(r"^(?:[-*]\s*)?(?:~~)?(AC-\d+)(?:~~)?\s*:", re.M)
 AC_REF_RE = re.compile(r"\bAC-\d+\b")
-TD_RE = re.compile(r"^#{2,3}\s+(TD-\d+)\b.*?\[(ONE-WAY|one-way|two-way)\]", re.M)
-TD_ANY_RE = re.compile(r"^#{2,3}\s+(TD-\d+)\b", re.M)
+TD_RE = re.compile(r"^(?:#{2,3}\s+)?(TD-\d+)\s*:.*?\[(ONE-WAY|one-way|two-way)\]", re.M)
+TD_ANY_RE = re.compile(r"^(?:#{2,3}\s+)?(TD-\d+)\s*:", re.M)
 STATUS_RE = re.compile(r"^\*\*Status:\*\*\s+(Approved|Issues Found)\s*$", re.M)
 REVIEWED_RE = re.compile(r"^Reviewed-SHA:\s+\S+\s+[0-9a-f]{7,40}\s*$", re.M)
 

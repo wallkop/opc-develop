@@ -9,8 +9,9 @@ appendix the agents read. AC-IDs are the spine of the whole downstream flow.
 # PRD: <feature>
 
 ## Decision Sheet                     ← the human-facing part, ≤2 pages
-Key product decisions                 each with the five-piece set when contested
-                                      (options/tradeoffs/recommendation/reversibility/defer-cost)
+Key product decisions                 numbered PD-1, PD-2, ... — each with the five-piece set
+                                      when contested (options/tradeoffs/recommendation/
+                                      reversibility/defer-cost); ledger entries reference PD ids
 State machine summary                 states + transitions, diagram or table
 Permission model                      who can do what, one table
 

@@ -1,8 +1,9 @@
 # Rubric: E2E & acceptance readiness
 
-You are reviewing the verify stage's output: Tier-1 specs, the acceptance report, and evidence.
-Inputs: prd.md (AC list), the spec files, test run outputs, the feature ledger's evidence entries.
-End with one `**Status:**` line and `Reviewed-SHA:` lines for the acceptance report.
+You are reviewing the verify stage's output: Tier-1 specs, the acceptance sheet
+(`docs/features/<slug>/acceptance.md`), and evidence. Inputs: prd.md (AC list), the spec files,
+test run outputs, the feature ledger's evidence entries. End with one `**Status:**` line and
+`Reviewed-SHA:` lines for the acceptance sheet and spec files.
 
 ## Blocking checks
 

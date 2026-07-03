@@ -24,5 +24,8 @@ the inventory and any reviewed docs; record the preview URL/command you exercise
 
 ## Non-UI variant (runnable skeleton)
 
-Checks 1, 4, 5 apply unchanged; for 2-3, verify the skeleton exercises one real request/response
-chain with production-shaped data (a stub returning the real schema counts; a hardcoded print does not).
+Checks 1, 4, 5 apply unchanged. Checks 2-3 become: the skeleton exercises one real
+request/response or command chain with production-shaped data (a stub returning the real schema
+counts; a hardcoded print does not). Check 6 becomes: the skeleton's stubs are additive and
+isolated — inventoried like any mock, changing no existing production behavior outside the
+skeleton path.

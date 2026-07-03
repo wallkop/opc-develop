@@ -7,7 +7,7 @@ Enforcement lives at the lowest possible layer: script/hook (L0) > structured ar
 
 Reviews end with exactly one line: `**Status:** Approved` or `**Status:** Issues Found`.
 Implementers report exactly one of: `DONE`, `DONE_WITH_CONCERNS`, `NEEDS_CONTEXT`, `BLOCKED`.
-Tokens are machine-parsed (`scripts/parse_review_status.py`). Never translate, rephrase, or duplicate them.
+Tokens are machine-parsed (`shared/scripts/parse_review_status.py`). Never translate, rephrase, or duplicate them.
 
 ## Evidence Before Claim
 
@@ -37,7 +37,7 @@ wrong → `revise` upstream), taste change (artifact was right, intent moved →
 ## Freshness
 
 A review is valid only for the exact content it reviewed. Reviews record `Reviewed-SHA` per
-artifact (via `git hash-object`); `scripts/check_freshness.py` verifies. Never trust mtimes.
+artifact (via `git hash-object`); `shared/scripts/check_freshness.py` verifies. Never trust mtimes.
 Any `revise` invalidates downstream approvals automatically.
 
 ## Failure Philosophy
@@ -51,7 +51,7 @@ that belong to the human.
 ## Ledger
 
 Every gate outcome, rework routing, evidence label, resolved failure, and recorded gap appends one
-JSON line to the feature ledger (`docs/features/<slug>/ledger.jsonl`) via `scripts/opc_ledger.py`.
+JSON line to the feature ledger (`docs/features/<slug>/ledger.jsonl`) via `shared/scripts/opc_ledger.py`.
 Resolved failures also append root-cause records to `docs/opc/error-ledger.jsonl`.
 The ledger is the substrate for `retro`; unrecorded events are invisible to improvement.
 

@@ -17,7 +17,7 @@ Release with evidence, leave the workspace clean.
 ## Process
 
 1. Precheck: verify's gate fresh, acceptance verdict recorded, no unresolved `rework` entries in
-   the ledger. Read the project's release runbooks (deploy/rollback docs, CI config) — these
+   the ledger (resolution rule per `formats/ledger-format.md` conventions). Read the project's release runbooks (deploy/rollback docs, CI config) — these
    define the gates; this skill does not invent a release process.
 2. Run release gates: full test suite, build, lint/type checks, any project CI gates runnable
    locally. Record commands, exit codes, and labels.

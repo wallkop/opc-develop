@@ -170,13 +170,15 @@ class TestValidateArtifacts(unittest.TestCase):
     def test_technical_reversibility(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             tech = Path(tmp) / "technical.md"
+            # TD records as plain lines (per technical-format.md) and as headings both count
             tech.write_text(
-                "# T\n\n## Decision Records\n\n### TD-1: pick sqlite [two-way]\nok\n\n"
+                "# T\n\n## Decision Records\nTD-1: pick sqlite [two-way]\n  Context ...\n\n"
+                "### TD-2: queue choice [ONE-WAY]\nok\n\n"
                 "## Public Contracts\napi\n\n## Runtime Evidence Plan\nlogs\n"
             )
             self.assertEqual(run("validate_artifacts.py", str(tech)).returncode, 0)
             tech.write_text(
-                "# T\n\n## Decision Records\n\n### TD-1: pick sqlite\nok\n\n"
+                "# T\n\n## Decision Records\nTD-1: pick sqlite\nok\n\n"
                 "## Public Contracts\napi\n\n## Runtime Evidence Plan\nlogs\n"
             )
             res = run("validate_artifacts.py", str(tech))

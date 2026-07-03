@@ -25,7 +25,7 @@ routes, and integrates.
    `risk-spike.md` (blocked verdicts stop only the affected contracts).
 2. Choose dispatch mode per `tdd-implement.md`: parallel ⇒ one worktree per implementer;
    otherwise serial in place. Ledger a `dispatch` entry per contract with mode and isolation.
-3. Dispatch implementers (prefer the `opc-plan-implementer` agent; else the environment's
+3. Dispatch implementers (prefer the `opc-implementer` agent; else the environment's
    isolated subagent with `prompts/implementer.md`). Context per `tdd-implement.md`: paths and
    section pointers, not pasted documents.
 4. Per completed contract: verify the report against reality (diff, test output, RED/GREEN

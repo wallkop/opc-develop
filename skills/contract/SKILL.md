@@ -31,7 +31,7 @@ internal design detail and boundary discipline live together so a fresh subagent
    assignments, done-means checklist.
 4. Write `index.md`: dependency table, parallel-safety column, thin slice, ordered integration
    steps the controller will run.
-5. L0 precheck every file (`validate_artifacts.py --prd docs/features/<slug>/prd.md`), then gate
+5. L0 precheck every file (`validate_artifacts.py <contract-file> --prd docs/features/<slug>/prd.md`), then gate
    the tree with a fresh reviewer on `rubrics/impl-contract.md`. The reviewer reads contracts
    cold — buildability by a stranger is the bar. Fix and re-gate until Approved; ledger rounds.
 

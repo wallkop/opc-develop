@@ -8,7 +8,7 @@ timestamps); never hand-edit past lines.
 Common fields: `ts` (stamped by script), `feature`, `type`.
 
 ```jsonl
-{"type":"gate","gate":"prd","status":"Approved","rounds":2,"review":"reviews/prd-review.md","sha":{"prd.md":"ab12cd"}}
+{"type":"gate","gate":"prd","status":"Approved","rounds":2,"review":"reviews/prd-review.md","sha":{"prd.md":"ab12cd"},"isolation":"subagent"}
 {"type":"rework","routed_to":"implementation","source":"acceptance","trigger":"AC-3 fail","note":"..."}
 {"type":"change","source":"acceptance","note":"taste change: ...","routed_to":"brainstorm"}
 {"type":"evidence","ac":"AC-3","label":"local real service passed","evidence":"reports/e2e-0703.md"}
@@ -17,6 +17,15 @@ Common fields: `ts` (stamped by script), `feature`, `type`.
 {"type":"dispatch","contract":"C-01","mode":"worktree|serial","isolation":"subagent|self-implemented (no isolation)"}
 {"type":"park","note":"...","reason":"..."}
 ```
+
+Conventions:
+
+- `gate.isolation` is `subagent` normally, `self-reviewed (no isolation)` in degraded mode.
+- A `rework` entry counts as **resolved** once a later `gate` entry for the affected layer is
+  `Approved`, or (for `routed_to: implementation`) a later `evidence` entry covers the failing AC.
+  `ship` prechecks resolution by this rule.
+- Decision ids: `TD-n` for technical records, `PD-n` for PRD decision-sheet records,
+  `RISK-PROFILE` for the brainstorm risk classification.
 
 ## Error ledger — `docs/opc/error-ledger.jsonl` (project-wide)
 

@@ -43,7 +43,7 @@ Blocking issues → back to the implementer → targeted re-review. Stop-loss pe
 A failing test with an unclear cause gets debugging discipline before retry: reproduce first,
 form a hypothesis, read the runtime evidence (logs by correlation ID, DB state), identify root
 cause, then fix with a covering test. When resolved, append the root-cause record to the
-error-ledger (see `ledger-format.md`) — resolution time is capture time.
+error-ledger (see `formats/ledger-format.md`) — resolution time is capture time.
 
 ## Integration
 

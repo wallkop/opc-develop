@@ -30,7 +30,8 @@ The harness is executable capability, not documentation. Docs index; scripts pro
 
 ### Build (default when asked to initialize or improve)
 
-4. Backlog = assessment gaps + `gap` entries from feature ledgers (`opc_ledger.py summary`).
+4. Backlog = assessment gaps + `gap` entries read from the feature ledgers' JSONL directly
+   (`opc_ledger.py summary` shows only counts).
    Order by label-cap impact: what blocks `local real service passed` claims comes first;
    `reset`/seed usually beats new tooling.
 5. Build each capability as the executable thing itself — make targets, seed scripts with named
