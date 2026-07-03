@@ -20,8 +20,9 @@ duo the architect was not in the room when the requirement and PRD were shaped.
 ## Process
 
 1. **Intake** (skippable when the same person just ran `prd`): pull the feature branch; verify
-   PRD/demo gate freshness (`check_freshness.py`); read requirement.md and prd.md; exercise the
-   demo. Produce an intake note: what the feature does, the ACs that constrain architecture, and
+   PRD/demo gate freshness (`check_freshness.py`); read the owning domain's living spec
+   (`docs/opc/specs/`, when it exists) for the current system truth, then requirement.md and
+   prd.md; exercise the demo. Produce an intake note: what the feature does, the ACs that constrain architecture, and
    any understanding questions. Questions route to the product owner as `revise` (PRD/requirement
    wrong or incomplete) or get answered from artifacts — never silently self-answered.
 2. **Risk spike**: if the risk profile has categories and no `risk-spike.md` yet, run the

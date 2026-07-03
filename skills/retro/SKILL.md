@@ -17,11 +17,17 @@ is how measurements replace process.
 ## Process
 
 1. **Collect** (whatever exists; each source is optional):
-   - Feature ledgers: `opc_ledger.py summary` per active feature.
+   - Feature ledgers: `opc_ledger.py summary` per active feature. Cost approximation comes from
+     the ledgers themselves (`rounds`, optional `wall_secs`/`tokens_est` fields) — this is the
+     always-available baseline.
    - Error ledger: `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/recurrence_scan.py"
-     docs/opc/error-ledger.jsonl --json`.
+     docs/opc/error-ledger.jsonl --json` — **pre-grouping only** (exact string match). You must
+     then semantically cluster across the pre-groups, at least within each tag: two records with
+     the same root-cause meaning but different phrasing are one cluster. Label the report
+     honestly: script-detected vs semantically-judged recurrences.
    - Session data when available: Claude Code OTel metrics or `/insights` output, transcript
-     token usage. Absence is a note, not a blocker.
+     token usage. Absence is a note, not a blocker — but then say "estimated from ledger", not
+     "measured".
 2. **Compute the report** (one page, docs/opc/retro/<date>.md):
    - Token/effort distribution by phase; framework overhead trend.
    - Review round-trips per gate; gates with N consecutive zero-finding approvals flagged as

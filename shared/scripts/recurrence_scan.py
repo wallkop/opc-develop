@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Scan the error ledger for recurring failure patterns (retro's detection step).
+"""Pre-group the error ledger for retro's recurrence detection.
 
-Groups resolved-failure records by (tag, normalized pattern) and reports clusters with
->= --threshold occurrences (default 2). These clusters are rule-crystallization candidates.
+Groups resolved-failure records by (tag, normalized pattern string) and reports clusters with
+>= --threshold occurrences (default 2). This is exact-match PRE-GROUPING only: two semantically
+identical failures phrased differently will land in different groups. The retro agent must
+semantically cluster ACROSS the pre-groups (especially within a tag) before concluding anything
+is non-recurring — treat this script's output as a starting index, not the verdict.
 
 Usage:
   recurrence_scan.py docs/opc/error-ledger.jsonl [--threshold 2] [--json]

@@ -26,8 +26,14 @@ its own loop** so the process can shrink as data justifies it.
   it never silently upgrades a claim.
 - **Mechanical gates, not exhortations.** Review freshness is a `git hash-object` comparison
   (`check_freshness.py`), artifact structure is script-checked (`validate_artifacts.py`), ledger
-  writes are schema-validated (`opc_ledger.py`), status tokens are machine-parsed. All stdlib
-  Python, all covered by tests.
+  writes are schema-validated (`opc_ledger.py`), status tokens are machine-parsed, and "every
+  gate actually happened" is itself checkable (`check_gate_chain.py`, enforced at ship/deploy).
+  Reviews have a chain of custody: the reviewer writes its own review record; the controller
+  cross-checks and never transcribes. All stdlib Python, all covered by tests.
+- **A living spec, not artifact islands.** Each shipped feature's ACs, state machines,
+  permissions, and decision records fold into `docs/opc/specs/` at merge time — thirty features
+  later, "what does the system promise right now" has one answer, and new PRDs are checked
+  against it for conflicts.
 - **Token-lean by architecture.** One always-loaded core contract (~1.1k tokens) plus role packs
   pulled on demand. The heaviest invocation chain (build) is ≈5.4k framework tokens — roughly a
   quarter of comparable gate-heavy suites.
@@ -159,7 +165,7 @@ person just produced the PRD.
   contract, ledger schemas.
 - `shared/rubrics/` — seven gate rubrics, given to reviewers in full (the reviewer always holds
   the rulebook it enforces).
-- `shared/scripts/` — L0 tooling: `opc_ledger.py`, `check_freshness.py`,
+- `shared/scripts/` — L0 tooling: `opc_ledger.py`, `check_freshness.py`, `check_gate_chain.py`,
   `parse_review_status.py`, `validate_artifacts.py`, `recurrence_scan.py`,
   `next_feature_slug.py`; tested by `test_opc_scripts.py` (stdlib only).
 - `agents/` — `opc-reviewer` (read-only by tool restriction) and `opc-implementer`.
@@ -169,7 +175,7 @@ person just produced the PRD.
 Feature artifacts live in the **target project**, never in this plugin:
 `docs/features/<n>-<name>/` (requirement, demo notes + mock inventory, prd, technical,
 contracts/, reviews/, acceptance.md, ledger.jsonl) plus project-wide `docs/opc/`
-(error-ledger.jsonl, rules.md, retro reports).
+(specs/ — the living spec, error-ledger.jsonl, rules.md, incidents/, retro reports).
 
 ## Platform Notes
 
@@ -179,6 +185,19 @@ contracts/, reviews/, acceptance.md, ledger.jsonl) plus project-wide `docs/opc/`
   unavailable, gates and builds degrade honestly (`self-reviewed (no isolation)` /
   `self-implemented (no isolation)` ledger labels, surfaced at the next human touchpoint) rather
   than blocking or silently self-approving.
+
+## Start Small (day one)
+
+The full flow assumes a builder who owns product and architecture judgment, a project with a
+test environment, and a harness that supports isolated subagents. You don't need any of that to
+start:
+
+1. Install the plugin and use **`lite`** for your daily small changes — it works on a bare repo,
+   on the current branch, with zero ceremony, and already gives you honest evidence habits.
+2. Run **`harness`** once — it scores your project's run/reset/observe/drive capabilities by
+   executing them and builds the highest-leverage gaps as scripts and seeds.
+3. Adopt the full flow when a feature deserves it. Everything else (ledgers, retro, the gate
+   chain) accrues from use; nothing requires up-front ceremony.
 
 ## Install
 

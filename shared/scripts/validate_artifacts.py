@@ -21,7 +21,9 @@ import re
 import sys
 from pathlib import Path
 
-AC_DEF_RE = re.compile(r"^(?:[-*]\s*)?(?:~~)?(AC-\d+)(?:~~)?\s*:", re.M)
+AC_ACTIVE_RE = re.compile(r"^(?:[-*]\s*)?(AC-\d+)\s*:", re.M)
+AC_STRUCK_RE = re.compile(r"^(?:[-*]\s*)?~~\s*(AC-\d+)", re.M)
+AC_SECTION_RE = re.compile(r"^## Acceptance Criteria\s*$(.*?)(?=^## |\Z)", re.M | re.S)
 AC_REF_RE = re.compile(r"\bAC-\d+\b")
 TD_RE = re.compile(r"^(?:#{2,3}\s+)?(TD-\d+)\s*:.*?\[(ONE-WAY|one-way|two-way)\]", re.M)
 TD_ANY_RE = re.compile(r"^(?:#{2,3}\s+)?(TD-\d+)\s*:", re.M)
@@ -42,14 +44,26 @@ def check_requirement(text: str, findings: list[str]) -> None:
 def check_prd(text: str, findings: list[str]) -> None:
     if "## Decision Sheet" not in text:
         findings.append("missing '## Decision Sheet' section")
-    if "## Acceptance Criteria" not in text:
+    section = AC_SECTION_RE.search(text)
+    if not section:
         findings.append("missing '## Acceptance Criteria' section")
-    acs = AC_DEF_RE.findall(text)
-    if not acs:
+        return
+    # AC definitions only count inside the AC section; struck-through lines are retired ids
+    body = section.group(1)
+    struck = set(AC_STRUCK_RE.findall(body))
+    active = [
+        ac for ac in AC_ACTIVE_RE.findall(
+            "\n".join(l for l in body.splitlines() if not l.lstrip().lstrip("-* ").startswith("~~"))
+        )
+    ]
+    if not active and not struck:
         findings.append("no AC-N acceptance criteria defined")
-    dupes = {ac for ac in acs if acs.count(ac) > 1}
+    dupes = {ac for ac in active if active.count(ac) > 1}
     if dupes:
         findings.append(f"duplicate AC ids: {sorted(dupes)}")
+    reused = struck & set(active)
+    if reused:
+        findings.append(f"retired AC ids reused as active: {sorted(reused)} (never renumber)")
 
 
 def check_technical(text: str, findings: list[str]) -> None:
@@ -88,7 +102,11 @@ def check_review(text: str, findings: list[str]) -> None:
 
 
 def cross_check_acs(contract_text: str, prd_text: str, findings: list[str]) -> None:
-    prd_acs = set(AC_DEF_RE.findall(prd_text))
+    prd_acs: set[str] = set()
+    section = AC_SECTION_RE.search(prd_text)
+    if section:
+        body = section.group(1)
+        prd_acs = set(AC_ACTIVE_RE.findall(body)) | set(AC_STRUCK_RE.findall(body))
     for ref in set(AC_REF_RE.findall(contract_text)):
         if ref not in prd_acs:
             findings.append(f"references {ref}, which is not defined in the PRD")

@@ -18,8 +18,13 @@ The 80% path. Zero ceremony that doesn't pay for itself, same honesty rules.
 
 1. **Classify (fast)**: read the request and the touched surface.
    - Escalation triggers → recommend the full flow (human decides): any risk category from
-     `risk-readiness.md`, schema/public-API changes, permission changes, multi-module scope, or
+     `risk-readiness.md`, schema/public-API changes, permission changes, or
      "this keeps growing as I look at it".
+   - **Middle tier — structured lite**: multi-module scope or a change that wants TDD subagents
+     and a review gate but no demo/PRD ceremony → borrow exactly `build`'s phase B machinery
+     (load `packs/tdd-implement.md` + `rubrics/implementation.md`): a minimal boundary note
+     instead of a contract tree, implementer subagent(s) with RED/GREEN evidence, one merged
+     review gate, targeted regression. No feature directory, no other artifacts.
    - Otherwise pick: direct edit on the current branch (default) or a lite worktree (when tests/
      services need isolation).
 2. Read project AGENTS.md and applicable rules if present; proceed without them if absent

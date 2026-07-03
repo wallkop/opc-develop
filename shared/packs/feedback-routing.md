@@ -25,6 +25,19 @@ On `revise` of layer N:
 3. Replay forward: for each downstream artifact, either confirm it is unaffected (targeted re-review
    citing why) or update it and re-gate. Confirmations are cheap; skipping them is how drift starts.
 
+### Demo replay after mock retirement (honest limitation)
+
+The demo is a perishable artifact: once `build` retires its mocks, the prototype no longer exists
+in runnable form, so a post-build `revise` to requirement/PRD **cannot** replay the demo gate as
+originally run. The demo layer's replay is defined as, in order:
+1. cross-check the revision against PRD's Demo alignment section (which demo behaviors were
+   contractual), and
+2. verify demo parity **on the real implementation** — exercise the affected interactions there.
+
+Relatedly, the demo gate's `Reviewed-SHA` only ever covered documents (`mock-inventory.md`,
+`prototype.md`) — runtime behavior is not hashable. Demo freshness is document freshness; treat
+its guarantee accordingly and do not present it as equivalent to the other gates'.
+
 ## Acceptance Triage
 
 When the human rejects at acceptance, classify before routing — the three cases have different

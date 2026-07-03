@@ -10,6 +10,11 @@ one. Project AGENTS.md always wins over this pack.
 
 - Full-flow features live on `feature/<numbered-slug>` (e.g. `feature/7-export`), created by
   `brainstorm` when requirement.md is first written — not before, not later.
+- **Slug collision (multi-person)**: `next_feature_slug.py` numbers from the local checkout, so
+  two people starting features concurrently can draw the same number. Push the feature branch
+  right after creating it to reserve the slug; on a collision at push time, the later branch
+  renumbers (`git branch -m`, rename the feature dir, one commit) — artifact content never
+  changes, only the slug.
 - Never write feature artifacts directly on the trunk.
 - Lite work may stay on the current branch when the change is small and low-risk; a lite worktree
   from the current branch is the isolation option when tests/services need separation.

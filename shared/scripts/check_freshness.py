@@ -64,7 +64,7 @@ def main() -> int:
         if current is None:
             print("ERROR: git unavailable; cannot verify freshness", file=sys.stderr)
             return 2
-        if not current.startswith(recorded) and not recorded.startswith(current[: len(recorded)]):
+        if not current.startswith(recorded):
             stale.append(f"{match.group('path')}: recorded {recorded[:12]} != current {current[:12]}")
 
     if stale:

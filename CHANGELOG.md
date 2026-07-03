@@ -1,5 +1,42 @@
 # Changelog
 
+## 0.2.3 - 2026-07-03
+
+Hardening pass driven by an external structural review: chain of custody, gate-chain L0
+verification, living spec, and honest-limitation fixes.
+
+- **Review chain of custody closed**: the reviewer itself writes the review record (its one
+  permitted write) and repeats the status token in its returned text; the controller
+  cross-checks via `parse_review_status.py` and never transcribes a verdict. Degraded
+  (no-isolation) mode must disclose that the separation is gone.
+- **`check_gate_chain.py` (new L0)**: verifies a feature's full review chain — existence, single
+  Approved token, content-SHA freshness — including per-contract implementation reviews;
+  declared `--skip`s are printed, never silent. Wired into `ship` precheck and `deploy`
+  preflight; `harness` now proposes hook/CI wiring as a default recommendation (a decline is a
+  recorded gap).
+- **Living spec** (`docs/opc/specs/`, new format): each shipped feature's ACs (feature-qualified
+  ids), state machines, permission tables, and PD/TD references fold in at ship's merge stage;
+  conflicts are `revise`, not overwrites. `prd` checks it before writing ACs (new blocking
+  rubric check), `architect` intake and `oncall` read it first.
+- **Demo replay semantics defined**: after mock retirement the demo layer's replay degrades to
+  PRD Demo-alignment cross-check + demo parity on the real implementation; demo-gate freshness
+  is documented as document-level only.
+- **Retro honesty**: `recurrence_scan.py` repositioned as exact-match pre-grouping — semantic
+  clustering across pre-groups is the retro agent's job, and reports must label script-detected
+  vs judged recurrences; ledger entries gain optional `wall_secs`/`tokens_est` cost fields as
+  the telemetry-independent baseline.
+- **Rework resolution id'd**: `rework` entries carry `RW-n`; only an entry with
+  `"resolves":["RW-n"]` closes one — unrelated same-layer approvals no longer count.
+- **Deploy release set defined**: preflight names the set (trunk merges since last
+  `deploy-prod: ok`, or a human-declared list) and records it before checking anything.
+- **Structured-lite middle tier**: multi-module changes can borrow build's phase-B machinery
+  (implementer subagents + merged review gate) without demo/PRD ceremony.
+- Also: shared dev infra declared a serialized resource across concurrent features; slug
+  collision handling documented for duo mode; `validate_artifacts.py` AC parsing scoped to the
+  Acceptance Criteria section with retired-id reuse detection; `check_freshness.py` redundant
+  comparison removed; README gains a "Start Small (day one)" adoption path (lite + harness
+  first). Script tests: 16 → 21.
+
 ## 0.2.2 - 2026-07-03
 
 Pipeline realigned to the local → test → production boundary; production and incident response

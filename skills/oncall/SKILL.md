@@ -22,10 +22,11 @@ the log chain and state that prove it, no fix without a covering test.
 1. **Triage**: capture the symptom (alert, user report, anomaly), when it started, who is
    affected. Classify severity: data loss / money / security ⇒ propose rollback or kill-switch
    FIRST, investigate second; degraded-but-safe ⇒ investigate first.
-2. **Investigate through observe**: reconstruct the failing action's causal chain by correlation
-   ID; query state read-only; check traces; diff behavior against the last known-good release —
-   recent `release` ledger entries, merge commits, and release manifests are the change
-   candidates. Reproduce on local/test with the matching seed when possible.
+2. **Investigate through observe**: first establish expected behavior from the living spec
+   (`docs/opc/specs/`, when it exists) — regression vs works-as-specified is the first fork.
+   Reconstruct the failing action's causal chain by correlation ID; query state read-only; check
+   traces; diff behavior against the last known-good release — recent `release` ledger entries,
+   merge commits, and release manifests are the change candidates. Reproduce on local/test with the matching seed when possible.
 3. **Diagnostic report** — `docs/opc/incidents/<date>-<slug>.md`: timeline, blast radius, root
    cause with the evidence chain (log lines, queries, commits), contributing factors, and the
    options considered. No root cause ⇒ say so explicitly and record the leading hypotheses with

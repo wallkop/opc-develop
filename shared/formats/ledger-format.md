@@ -9,7 +9,8 @@ Common fields: `ts` (stamped by script), `feature`, `type`.
 
 ```jsonl
 {"type":"gate","gate":"prd","status":"Approved","rounds":2,"review":"reviews/prd-review.md","sha":{"prd.md":"ab12cd"},"isolation":"subagent"}
-{"type":"rework","routed_to":"implementation","source":"acceptance","trigger":"AC-3 fail","note":"..."}
+{"type":"rework","id":"RW-1","routed_to":"implementation","source":"acceptance","trigger":"AC-3 fail","note":"..."}
+{"type":"gate","gate":"implementation","status":"Approved","rounds":1,"resolves":["RW-1"]}
 {"type":"change","source":"acceptance","note":"taste change: ...","routed_to":"brainstorm"}
 {"type":"evidence","ac":"AC-3","label":"local real service passed","evidence":"reports/e2e-0703.md"}
 {"type":"decision","id":"TD-2","door":"two-way","decided_by":"agent","note":"..."}
@@ -22,13 +23,16 @@ Common fields: `ts` (stamped by script), `feature`, `type`.
 Conventions:
 
 - `gate.isolation` is `subagent` normally, `self-reviewed (no isolation)` in degraded mode.
-- A `rework` entry counts as **resolved** once a later `gate` entry for the affected layer is
-  `Approved`, or (for `routed_to: implementation`) a later `evidence` entry covers the failing AC.
-  `ship` prechecks resolution by this rule.
 - Decision ids: `TD-n` for technical records, `PD-n` for PRD decision-sheet records,
   `RISK-PROFILE` for the brainstorm risk classification.
 - Any entry may carry an optional `actor` field (e.g. `"actor":"pm"`, `"actor":"architect"`) —
   use it in multi-person features so `retro` can attribute rework routing by role.
+- Any entry may carry optional cost fields `wall_secs` and `tokens_est` — record them on `gate`
+  and `dispatch` entries when known; they are `retro`'s telemetry-independent cost baseline.
+- `rework` entries carry an `id` (`RW-1`, `RW-2`, … per feature). A rework is **resolved** only
+  by a later entry explicitly referencing it via `"resolves":["RW-1"]` (typically the fixing
+  gate or evidence entry) — an unrelated Approved on the same layer does not close it. `ship`'s
+  precheck enforces this.
 - `release` stages — `ship`: `manifest` → `env-test` → `deploy-test` → `regression-test` →
   `acceptance-test`; `deploy`: `preflight` → `env-prod` → `deploy-prod` → `regression-prod` →
   `watch`. Both resume after the last `ok` stage; `preflight` always re-runs.

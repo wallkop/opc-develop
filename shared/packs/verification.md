@@ -10,6 +10,11 @@ Prove the feature black-box on the local stack before anything leaves the machin
   **per the safety rules in `release-ops.md`** (backup before DDL on shared data, expand →
   migrate → contract, destructive changes need human confirmation when data is shared). Record
   what was applied in the ledger — these entries seed the release manifest later.
+- **Shared dev infra is a serialized resource across features**: before applying DDL/config to a
+  shared database or environment, check other active features' ledgers for un-reverted env
+  entries; two features mutating shared schema concurrently coordinate through the humans, not
+  by racing. (Feature-internal parallelism is already isolated by worktrees; this rule is about
+  two *features* building at once — the PM/architect duo case.)
 - Missing verbs ⇒ record `gap` entries and note the label caps they force.
 
 ## Agentic Pass → Distillation

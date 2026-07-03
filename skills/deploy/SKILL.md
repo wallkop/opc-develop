@@ -21,7 +21,12 @@ no verified precondition, no deploy.
 Resume after the last `release` ledger entry with `result: ok`.
 
 1. **preflight (fail-closed, all mandatory)**:
-   - test acceptance recorded `ok` in the ledger for every feature in this release;
+   - **define the release set first**: the features whose merge commits landed on the trunk
+     since the last `deploy-prod: ok` ledger entry (or release tag), or an explicit
+     human-declared list. Record the set — slugs + merge commits — in the ledger; everything
+     below is checked per feature in the set;
+   - test acceptance recorded `ok` in the ledger for every feature in the set, and
+     `check_gate_chain.py` passes for each;
    - all released code merged to the trunk (`develop` or per AGENTS.md) — verify the merge
      commits, not the claim;
    - release manifests complete for every feature: every DDL item has a rollback entry, every

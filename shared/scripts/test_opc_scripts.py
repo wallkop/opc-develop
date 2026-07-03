@@ -168,6 +168,70 @@ class TestRecurrence(unittest.TestCase):
             self.assertEqual(sorted(clusters[0]["features"]), ["1-a", "2-b"])
 
 
+class TestGateChain(unittest.TestCase):
+    def _feature(self, root: Path) -> Path:
+        subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+        feature = root / "docs/features/1-export"
+        (feature / "reviews").mkdir(parents=True)
+        (feature / "demo").mkdir()
+        for name in ("requirement.md", "prd.md", "technical.md", "acceptance.md"):
+            (feature / name).write_text(f"content of {name}\n")
+
+        def sha(rel: str) -> str:
+            return subprocess.run(
+                ["git", "hash-object", rel], cwd=root, capture_output=True, text=True
+            ).stdout.strip()
+
+        pairs = {
+            "requirement-review.md": "docs/features/1-export/requirement.md",
+            "demo-review.md": "docs/features/1-export/requirement.md",
+            "prd-review.md": "docs/features/1-export/prd.md",
+            "technical-review.md": "docs/features/1-export/technical.md",
+            "e2e-review.md": "docs/features/1-export/acceptance.md",
+        }
+        for review, artifact in pairs.items():
+            (feature / "reviews" / review).write_text(
+                f"ok\n\n**Status:** Approved\nReviewed-SHA: {artifact} {sha(artifact)}\n"
+            )
+        return feature
+
+    def test_intact_then_broken(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            feature = self._feature(root)
+            res = run("check_gate_chain.py", str(feature), "--repo-root", str(root))
+            self.assertEqual(res.returncode, 0, res.stderr)
+            self.assertIn("INTACT", res.stdout)
+            # stale artifact breaks the chain
+            (feature / "prd.md").write_text("changed\n")
+            res = run("check_gate_chain.py", str(feature), "--repo-root", str(root))
+            self.assertEqual(res.returncode, 1)
+            self.assertIn("stale", res.stderr)
+
+    def test_missing_review_and_skip(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            feature = self._feature(root)
+            (feature / "reviews/demo-review.md").unlink()
+            res = run("check_gate_chain.py", str(feature), "--repo-root", str(root))
+            self.assertEqual(res.returncode, 1)
+            self.assertIn("missing review: demo-review.md", res.stderr)
+            res = run("check_gate_chain.py", str(feature), "--repo-root", str(root), "--skip", "demo")
+            self.assertEqual(res.returncode, 0, res.stderr)
+            self.assertIn("SKIPPED", res.stdout)
+
+    def test_contract_reviews_expected(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            feature = self._feature(root)
+            (feature / "contracts").mkdir()
+            (feature / "contracts/C-01-export.md").write_text("c\n")
+            res = run("check_gate_chain.py", str(feature), "--repo-root", str(root))
+            self.assertEqual(res.returncode, 1)
+            self.assertIn("impl-contract-review.md", res.stderr)
+            self.assertIn("C-01-implementation-review.md", res.stderr)
+
+
 class TestValidateArtifacts(unittest.TestCase):
     def test_prd(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -179,6 +243,42 @@ class TestValidateArtifacts(unittest.TestCase):
             self.assertEqual(run("validate_artifacts.py", str(prd)).returncode, 0)
             prd.write_text("# PRD\n\nno sections\n")
             self.assertEqual(run("validate_artifacts.py", str(prd)).returncode, 1)
+
+    def test_prd_ac_section_scoping_and_struck(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            prd = Path(tmp) / "prd.md"
+            # AC-1 mentioned at line start in the appendix must not count as a duplicate definition
+            prd.write_text(
+                "# PRD\n\n## Decision Sheet\nstuff\n\n## Acceptance Criteria\n"
+                "AC-1: exports finish under 5s\n~~AC-2: old behavior~~\nAC-3: new behavior\n\n"
+                "## Appendix\nAC-1: is referenced here in prose\n"
+            )
+            res = run("validate_artifacts.py", str(prd))
+            self.assertEqual(res.returncode, 0, res.stderr)
+            # reusing a retired id as active is a finding
+            prd.write_text(
+                "# PRD\n\n## Decision Sheet\nstuff\n\n## Acceptance Criteria\n"
+                "~~AC-1: retired~~\nAC-1: reused\n\n## Appendix\n"
+            )
+            res = run("validate_artifacts.py", str(prd))
+            self.assertEqual(res.returncode, 1)
+            self.assertIn("retired", res.stderr)
+
+    def test_contract_ref_to_struck_ac_ok(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            contracts = Path(tmp) / "contracts"
+            contracts.mkdir()
+            prd = Path(tmp) / "prd.md"
+            prd.write_text(
+                "## Decision Sheet\nx\n\n## Acceptance Criteria\nAC-1: x\n~~AC-2: retired~~\n"
+            )
+            contract = contracts / "C-01-export.md"
+            contract.write_text(
+                "# C-01\n\n## Boundary\nACs owned: AC-1, AC-2\n\n## Internal Design\nd\n\n"
+                "## TDD Seed\ns\n\n## Done Means\nm\n"
+            )
+            res = run("validate_artifacts.py", str(contract), "--prd", str(prd))
+            self.assertEqual(res.returncode, 0, res.stderr)
 
     def test_technical_reversibility(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

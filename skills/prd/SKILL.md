@@ -21,8 +21,10 @@ judgment — the PM in a duo, the builder solo. Ends with a pushed branch anothe
 1. Precheck upstream freshness (`check_freshness.py` on the demo review). Stale ⇒ route per
    `feedback-routing.md`.
 2. From requirement.md, the exercised demo, and the mock inventory, write `prd.md` per the
-   format. ACs are the spine — every contractual demo behavior, acceptance signal, and edge case
-   maps to a numbered AC. The decision sheet stays ≤2 pages; contested decisions get numbered PD
+   format. Before writing ACs, check the owning domain's living spec (`docs/opc/specs/`, when it
+   exists) for conflicts with existing system behavior — a new AC that contradicts a live one
+   must declare the supersession explicitly. ACs are the spine — every contractual demo
+   behavior, acceptance signal, and edge case maps to a numbered AC. The decision sheet stays ≤2 pages; contested decisions get numbered PD
    records with the five-piece set; product one-way doors are tagged.
 3. Gate the PRD (fresh reviewer, `rubrics/prd.md`, L0 precheck via `validate_artifacts.py`).
    Fix-and-re-gate until Approved. Ledger each round.

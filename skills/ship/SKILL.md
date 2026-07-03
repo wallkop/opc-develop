@@ -22,8 +22,11 @@ approval, code merged to the project trunk — the precondition `deploy` will ch
 Resume after the last `release` ledger entry with `result: ok`; `manifest` re-collects when the
 diff moved.
 
-1. **Precheck**: build's e2e gate fresh, acceptance sheet exists, rework entries resolved,
-   project test-env runbooks read.
+1. **Precheck**: run
+   `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/check_gate_chain.py" docs/features/<slug>` —
+   the whole chain from requirement to e2e must be intact (declared `--skip`s are surfaced to
+   the human). Acceptance sheet exists, rework entries resolved (each open `RW-n` explicitly
+   referenced by a resolving entry), project test-env runbooks read.
 2. **manifest**: collect the release manifest per `release-ops.md` from the actual diff (build's
    phase-C ledger entries seed the DDL/config sections), cross-checked against technical.md.
    Drift routes `revise` before release. Write `release-manifest.md`; self-check; ledger.
@@ -43,7 +46,10 @@ diff moved.
      human decides whether this release proceeds without it or parks.
 6. **merge**: merge the feature branch into the project trunk (`develop` or per AGENTS.md flow),
    push, clean worktrees per `branch-worktree.md`. Record the merge commit in the ledger —
-   `deploy`'s preflight requires it.
+   `deploy`'s preflight requires it. Then **fold the feature's deltas into the living spec**
+   (`formats/living-spec-format.md`): ACs into the domain registry, state machines and
+   permission tables rebuilt to current truth, PD/TD references indexed. An AC conflict at merge
+   time is a `revise`, not an overwrite.
 
 ## Fail-open
 

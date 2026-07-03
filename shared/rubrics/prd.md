@@ -19,6 +19,8 @@ the mock inventory. End with one `**Status:**` line and `Reviewed-SHA:` lines pe
 8. **Decision sheet honesty**: contested decisions carry the five-piece set
    (`packs/decision-protocol.md`); one-way doors are tagged.
 9. **Edge cases mapped**: each edge case maps to an AC or an explicit out-of-scope note.
+10. **Living-spec consistency**: when `docs/opc/specs/` exists, check the owning domain's AC
+    registry — a new AC contradicting a live one without a declared supersession is blocking.
 
 ## Non-blocking
 
