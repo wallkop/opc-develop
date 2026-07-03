@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.2.2 - 2026-07-03
+
+Pipeline realigned to the local → test → production boundary; production and incident response
+become their own skills.
+
+- **`contract` and `verify` are no longer user-facing skills** — they are internal phases of
+  `build` (new packs `contracting.md` and `verification.md`; gates and rubrics unchanged).
+- **`build` completes everything local in one run**: contract partitioning → TDD implementers →
+  local deploy including this feature's migrations/config applied to the local/shared dev
+  environment under release-ops safety rules → full black-box regression → gated acceptance
+  sheet. No human touchpoint. Also the explicit re-entry point ("fix mode") for code defects
+  rejected at test acceptance.
+- **`ship` is test-environment only**: manifest → env-test → deploy-test → regression-test →
+  acceptance-test (touchpoint ⑤) → merge to trunk on approval. Verdict routing is now explicit:
+  code defect → `build` fix mode (ship resumes at deploy), artifact defect → `revise`, new need
+  → `brainstorm`.
+- **New `deploy` skill** — fail-closed production release: preflight (test acceptance recorded,
+  code merged to trunk, manifests complete, rollback proven) → env-prod with backups and
+  per-item confirmation → deploy per runbook → `@prod-safe` online regression → watch window.
+- **New `oncall` skill** — production diagnosis through the observe verbs, diagnostic report
+  with root cause and blast radius, then rollback / expedited hotfix (through build → ship →
+  deploy, RED evidence not skippable) / mitigation; always leaves an error-ledger record and a
+  long-term fix proposal.
+- Release stage vocabulary extended (`regression-test`, `preflight`); diagram and READMEs
+  updated to the 7-phase pipeline.
+
 ## 0.2.1 - 2026-07-03
 
 Collaboration split, build auto-chaining, and a staged release pipeline.

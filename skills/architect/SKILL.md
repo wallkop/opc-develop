@@ -48,4 +48,4 @@ caps. Cross-role revises carry an `actor` field in the ledger so ownership is vi
 ## Output
 
 Intake note, `risk-spike.md` when applicable, `technical.md` (gated), sign-off recorded, pushed
-branch. Next: `build` (which auto-runs `contract` first when contracts are missing).
+branch. Next: `build`.

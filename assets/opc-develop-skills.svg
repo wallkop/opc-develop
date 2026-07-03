@@ -81,7 +81,7 @@
   <text x="130" y="358" text-anchor="middle" font-size="24" font-style="italic" font-weight="bold" fill="#fff">Flow</text>
 
   <rect x="240" y="320" width="1240" height="60" rx="6" fill="#3f51a3"/>
-  <text x="860" y="358" text-anchor="middle" font-size="26" fill="#fff">Full Flow — one feature · five touchpoints · product → architecture handoff</text>
+  <text x="860" y="358" text-anchor="middle" font-size="26" fill="#fff">Full Flow — local build → test-env acceptance → fail-closed production deploy</text>
 
   <line x1="1510" y1="320" x2="1510" y2="1080" stroke="#777" stroke-width="2" stroke-dasharray="8,7"/>
 
@@ -91,88 +91,79 @@
   <!-- ═══════════ PIPELINE ═══════════ -->
   <!-- role brackets -->
   <g stroke="#888" stroke-width="2" fill="none">
-    <path d="M 250 414 L 250 406 L 698 406 L 698 414"/>
-    <path d="M 715 414 L 715 406 L 1473 406 L 1473 414"/>
+    <path d="M 250 414 L 250 406 L 764 406 L 764 414"/>
+    <path d="M 781 414 L 781 406 L 1472 406 L 1472 414"/>
   </g>
-  <text x="474" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">product owner (PM or you)</text>
-  <text x="1094" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">architect / builder (you)</text>
+  <text x="507" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">product owner (PM or you)</text>
+  <text x="1126" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">architect / builder (you)</text>
 
-  <!-- 8 skills: brainstorm demo prd architect contract build verify ship -->
-  <g font-size="21" font-weight="bold" fill="#123">
+  <!-- 7 skills: brainstorm demo prd architect build ship deploy -->
+  <g font-size="22" font-weight="bold" fill="#123">
     <!-- brainstorm -->
-    <circle cx="319" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
-    <text x="319" y="440" text-anchor="middle" font-size="16" fill="#4a3000">1</text>
-    <rect x="250" y="458" width="138" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="319" y="498" text-anchor="middle">brainstorm</text>
+    <circle cx="330" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="330" y="440" text-anchor="middle" font-size="16" fill="#4a3000">1</text>
+    <rect x="250" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="330" y="498" text-anchor="middle">brainstorm</text>
     <!-- demo -->
-    <circle cx="428" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
-    <text x="428" y="440" text-anchor="middle" font-size="16" fill="#4a3000">2</text>
-    <rect x="405" y="458" width="138" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="474" y="498" text-anchor="middle">demo</text>
+    <circle cx="452" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="452" y="440" text-anchor="middle" font-size="16" fill="#4a3000">2</text>
+    <rect x="427" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="507" y="498" text-anchor="middle">demo</text>
     <!-- prd -->
-    <circle cx="629" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
-    <text x="629" y="440" text-anchor="middle" font-size="16" fill="#4a3000">3</text>
-    <rect x="560" y="458" width="138" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="629" y="498" text-anchor="middle">prd</text>
+    <circle cx="684" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="684" y="440" text-anchor="middle" font-size="16" fill="#4a3000">3</text>
+    <rect x="604" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="684" y="498" text-anchor="middle">prd</text>
     <!-- architect -->
-    <circle cx="784" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
-    <text x="784" y="440" text-anchor="middle" font-size="16" fill="#4a3000">4</text>
-    <rect x="715" y="458" width="138" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="784" y="498" text-anchor="middle">architect</text>
-    <!-- contract -->
-    <rect x="870" y="458" width="138" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="939" y="498" text-anchor="middle">contract</text>
+    <circle cx="861" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="861" y="440" text-anchor="middle" font-size="16" fill="#4a3000">4</text>
+    <rect x="781" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="861" y="498" text-anchor="middle">architect</text>
     <!-- build -->
-    <rect x="1025" y="458" width="138" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="1094" y="498" text-anchor="middle">build</text>
-    <!-- verify -->
-    <circle cx="1249" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
-    <text x="1249" y="440" text-anchor="middle" font-size="16" fill="#4a3000">5</text>
-    <rect x="1180" y="458" width="138" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="1249" y="498" text-anchor="middle">verify</text>
+    <rect x="958" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="1038" y="498" text-anchor="middle">build</text>
     <!-- ship -->
-    <rect x="1335" y="458" width="138" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="1404" y="498" text-anchor="middle">ship</text>
+    <circle cx="1215" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="1215" y="440" text-anchor="middle" font-size="16" fill="#4a3000">5</text>
+    <rect x="1135" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="1215" y="498" text-anchor="middle">ship</text>
+    <!-- deploy -->
+    <rect x="1312" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#8a1f1f" stroke-width="3"/>
+    <text x="1392" y="498" text-anchor="middle">deploy</text>
   </g>
 
   <!-- pipeline arrows -->
   <g stroke="#444" stroke-width="2.5" fill="none">
-    <line x1="388" y1="491" x2="403" y2="491" marker-end="url(#arrow)"/>
-    <line x1="543" y1="491" x2="558" y2="491" marker-end="url(#arrow)"/>
-    <line x1="1008" y1="491" x2="1023" y2="491" marker-end="url(#arrow)"/>
-    <line x1="1163" y1="491" x2="1178" y2="491" marker-end="url(#arrow)"/>
-    <line x1="1318" y1="491" x2="1333" y2="491" marker-end="url(#arrow)"/>
+    <line x1="410" y1="491" x2="425" y2="491" marker-end="url(#arrow)"/>
+    <line x1="587" y1="491" x2="602" y2="491" marker-end="url(#arrow)"/>
+    <line x1="941" y1="491" x2="956" y2="491" marker-end="url(#arrow)"/>
+    <line x1="1118" y1="491" x2="1133" y2="491" marker-end="url(#arrow)"/>
+    <line x1="1295" y1="491" x2="1310" y2="491" marker-end="url(#arrow)"/>
   </g>
   <!-- handoff arrow prd -> architect (push/pull) -->
-  <line x1="698" y1="491" x2="713" y2="491" stroke="#b26a00" stroke-width="3.5" marker-end="url(#arrowAmber)"/>
-  <text x="706" y="543" text-anchor="middle" font-size="16" font-style="italic" fill="#b26a00">git push → pull</text>
-  <!-- auto-chain arrow contract via build -->
-  <line x1="853" y1="491" x2="868" y2="491" stroke="#444" stroke-width="2.5" marker-end="url(#arrow)"/>
-  <path d="M 900 458 C 920 440, 1110 440, 1130 458" stroke="#2e7d32" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
-  <text x="1015" y="440" text-anchor="middle" font-size="15" font-style="italic" fill="#2e7d32">build auto-runs contract</text>
+  <line x1="764" y1="491" x2="779" y2="491" stroke="#b26a00" stroke-width="3.5" marker-end="url(#arrowAmber)"/>
+  <text x="772" y="543" text-anchor="middle" font-size="15" font-style="italic" fill="#b26a00">push → pull</text>
 
   <!-- tune self-loop on demo -->
-  <path d="M 455 458 C 447 428, 533 428, 525 458" stroke="#2e7d32" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
-  <text x="490" y="424" text-anchor="middle" font-size="15" fill="#2e7d32" font-style="italic">tune ∞</text>
+  <path d="M 480 458 C 472 428, 558 428, 550 458" stroke="#2e7d32" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="515" y="424" text-anchor="middle" font-size="15" fill="#2e7d32" font-style="italic">tune ∞</text>
 
   <!-- artifacts under pipeline -->
   <g font-size="16" fill="#555" text-anchor="middle">
-    <text x="319" y="556">requirement.md</text>
-    <text x="319" y="576">decisions, ≤150 ln</text>
-    <text x="474" y="556">prototype +</text>
-    <text x="474" y="576">mock inventory</text>
-    <text x="629" y="556">prd.md</text>
-    <text x="629" y="576">(AC / PD ids)</text>
-    <text x="784" y="556">technical.md</text>
-    <text x="784" y="576">(TD ADRs)</text>
-    <text x="939" y="556">contracts/C-XX</text>
-    <text x="939" y="576">spec+plan merged</text>
-    <text x="1094" y="556">TDD RED/GREEN</text>
-    <text x="1094" y="576">mock retirement</text>
-    <text x="1249" y="556">Tier-1 E2E +</text>
-    <text x="1249" y="576">acceptance.md</text>
-    <text x="1404" y="556">manifest → test</text>
-    <text x="1404" y="576">→ prod + regression</text>
+    <text x="330" y="556">requirement.md</text>
+    <text x="330" y="576">decisions, ≤150 ln</text>
+    <text x="507" y="556">prototype +</text>
+    <text x="507" y="576">mock inventory</text>
+    <text x="684" y="556">prd.md (AC/PD)</text>
+    <text x="684" y="576">gate, then push</text>
+    <text x="861" y="556">intake → spike →</text>
+    <text x="861" y="576">technical.md (TD)</text>
+    <text x="1038" y="556">contracts → TDD →</text>
+    <text x="1038" y="576">local deploy → E2E</text>
+    <text x="1215" y="556">manifest → test env</text>
+    <text x="1215" y="576">→ regression → merge</text>
+    <text x="1392" y="556">prod · fail-closed</text>
+    <text x="1392" y="576">backup · watch</text>
   </g>
 
   <!-- ═══════════ GATE BAND ═══════════ -->
@@ -182,51 +173,58 @@
 
   <!-- gate diamonds connecting pipeline to gate band -->
   <g fill="#fff" stroke="#5a4632" stroke-width="2">
-    <path d="M 319 596 l 12 12 l -12 12 l -12 -12 z"/>
-    <path d="M 474 596 l 12 12 l -12 12 l -12 -12 z"/>
-    <path d="M 629 596 l 12 12 l -12 12 l -12 -12 z"/>
-    <path d="M 784 596 l 12 12 l -12 12 l -12 -12 z"/>
-    <path d="M 939 596 l 12 12 l -12 12 l -12 -12 z"/>
-    <path d="M 1094 596 l 12 12 l -12 12 l -12 -12 z"/>
-    <path d="M 1249 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 330 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 507 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 684 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 861 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 1018 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 1058 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 1215 596 l 12 12 l -12 12 l -12 -12 z"/>
   </g>
+  <text x="1038" y="640" text-anchor="middle" font-size="14" fill="#777" font-style="italic">×3 internal</text>
 
   <!-- ═══════════ FEEDBACK / REVISE ═══════════ -->
   <rect x="250" y="760" width="1230" height="130" rx="10" fill="#fff8ec" stroke="#b26a00" stroke-width="2.5"/>
   <text x="865" y="798" text-anchor="middle" font-size="23" font-weight="bold" fill="#7a4a00">feedback — tune · revise · park</text>
   <text x="865" y="832" text-anchor="middle" font-size="19" fill="#7a4a00">revise → earliest broken layer, downstream approvals go SHA-stale, replay forward</text>
-  <text x="865" y="862" text-anchor="middle" font-size="19" fill="#7a4a00">acceptance triage (local + test env): implementation defect → build · artifact defect → revise · taste change → brainstorm (not rework)</text>
+  <text x="865" y="862" text-anchor="middle" font-size="19" fill="#7a4a00">test-acceptance triage: code defect → build (fix mode) · artifact defect → revise · new need → brainstorm (not rework)</text>
 
   <!-- revise arrows back -->
   <g stroke="#b26a00" stroke-width="2.5" fill="none" stroke-dasharray="7,5">
-    <path d="M 1249 760 C 1249 740, 1249 730, 1249 716" marker-end="url(#arrowAmber)" transform="rotate(180 1249 738)"/>
-    <path d="M 319 760 C 319 745, 319 740, 319 730" marker-end="url(#arrowAmber)" transform="rotate(180 319 745)"/>
-    <path d="M 629 760 C 629 745, 629 740, 629 730" marker-end="url(#arrowAmber)" transform="rotate(180 629 745)"/>
-    <path d="M 784 760 C 784 745, 784 740, 784 730" marker-end="url(#arrowAmber)" transform="rotate(180 784 745)"/>
-    <path d="M 1094 760 C 1094 745, 1094 740, 1094 730" marker-end="url(#arrowAmber)" transform="rotate(180 1094 745)"/>
+    <path d="M 1215 760 C 1215 740, 1215 730, 1215 716" marker-end="url(#arrowAmber)" transform="rotate(180 1215 738)"/>
+    <path d="M 330 760 C 330 745, 330 740, 330 730" marker-end="url(#arrowAmber)" transform="rotate(180 330 745)"/>
+    <path d="M 684 760 C 684 745, 684 740, 684 730" marker-end="url(#arrowAmber)" transform="rotate(180 684 745)"/>
+    <path d="M 861 760 C 861 745, 861 740, 861 730" marker-end="url(#arrowAmber)" transform="rotate(180 861 745)"/>
+    <path d="M 1038 760 C 1038 745, 1038 740, 1038 730" marker-end="url(#arrowAmber)" transform="rotate(180 1038 745)"/>
   </g>
 
   <!-- ═══════════ LITE COLUMN ═══════════ -->
-  <rect x="1540" y="420" width="310" height="470" rx="12" fill="#dcedc8" stroke="#5a4632" stroke-width="2.5"/>
-  <text x="1695" y="470" text-anchor="middle" font-size="26" font-weight="bold" fill="#2a4a10">lite</text>
-  <g font-size="19" fill="#365220" text-anchor="middle">
-    <text x="1695" y="516">the 80% path</text>
-    <text x="1695" y="552">current branch,</text>
-    <text x="1695" y="578">zero ceremony</text>
-    <text x="1695" y="622">targeted tests +</text>
-    <text x="1695" y="648">before/after evidence</text>
-    <text x="1695" y="692">bare-repo compatible</text>
-    <text x="1695" y="736">escalates to Full on</text>
-    <text x="1695" y="762">risk triggers</text>
-    <text x="1695" y="806">resolved failures →</text>
-    <text x="1695" y="832">error ledger too</text>
+  <rect x="1540" y="420" width="310" height="340" rx="12" fill="#dcedc8" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="1695" y="466" text-anchor="middle" font-size="26" font-weight="bold" fill="#2a4a10">lite</text>
+  <g font-size="18" fill="#365220" text-anchor="middle">
+    <text x="1695" y="506">the 80% path</text>
+    <text x="1695" y="538">current branch, zero</text>
+    <text x="1695" y="562">ceremony, bare-repo OK</text>
+    <text x="1695" y="594">targeted tests +</text>
+    <text x="1695" y="618">before/after evidence</text>
+    <text x="1695" y="650">escalates to Full on</text>
+    <text x="1695" y="674">risk triggers</text>
+    <text x="1695" y="706">resolved failures →</text>
+    <text x="1695" y="730">error ledger too</text>
   </g>
 
+  <!-- oncall skill box on right -->
+  <rect x="1540" y="790" width="310" height="140" rx="12" fill="#fdecec" stroke="#8a1f1f" stroke-width="2.5"/>
+  <text x="1695" y="832" text-anchor="middle" font-size="24" font-weight="bold" fill="#6a1414">oncall</text>
+  <text x="1695" y="862" text-anchor="middle" font-size="17" fill="#5a2020">diagnose via observe verbs →</text>
+  <text x="1695" y="886" text-anchor="middle" font-size="17" fill="#5a2020">report → rollback / hotfix /</text>
+  <text x="1695" y="910" text-anchor="middle" font-size="17" fill="#5a2020">mitigate → long-term fix</text>
+
   <!-- harness skill box on right -->
-  <rect x="1540" y="920" width="310" height="120" rx="12" fill="#dff4f4" stroke="#5a4632" stroke-width="2.5"/>
-  <text x="1695" y="968" text-anchor="middle" font-size="24" font-weight="bold" fill="#123">harness</text>
-  <text x="1695" y="998" text-anchor="middle" font-size="18" fill="#345">score verbs by executing;</text>
-  <text x="1695" y="1022" text-anchor="middle" font-size="18" fill="#345">build gaps as scripts/seeds</text>
+  <rect x="1540" y="950" width="310" height="120" rx="12" fill="#dff4f4" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="1695" y="994" text-anchor="middle" font-size="24" font-weight="bold" fill="#123">harness</text>
+  <text x="1695" y="1022" text-anchor="middle" font-size="17" fill="#345">score verbs by executing;</text>
+  <text x="1695" y="1046" text-anchor="middle" font-size="17" fill="#345">build gaps as scripts/seeds</text>
 
   <!-- ═══════════ MEASURE BAND (LOOP C) ═══════════ -->
   <rect x="50" y="1130" width="160" height="180" rx="8" fill="#000"/>
@@ -274,7 +272,7 @@
   <!-- retro feedback arrows (dashed purple) -->
   <g stroke="#6a4fa3" stroke-width="2.5" fill="none" stroke-dasharray="7,5">
     <path d="M 1495 1126 C 1495 1000, 1300 780, 1120 716" marker-end="url(#arrowPurple)"/>
-    <path d="M 1700 1126 C 1720 1100, 1700 1070, 1697 1046" marker-end="url(#arrowPurple)"/>
+    <path d="M 1700 1126 C 1716 1110, 1702 1090, 1698 1076" marker-end="url(#arrowPurple)"/>
   </g>
   <text x="1400" y="960" font-size="17" fill="#6a4fa3" font-style="italic">tighten or relax gates</text>
   <text x="1790" y="1094" font-size="17" fill="#6a4fa3" font-style="italic" text-anchor="middle">build gaps</text>

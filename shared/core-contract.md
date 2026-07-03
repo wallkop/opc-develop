@@ -76,7 +76,9 @@ Read a pack only when your current role needs it:
 - `packs/decision-protocol.md` — presenting decisions to the human; doors; decision-spikes.
 - `packs/feedback-routing.md` — handling tune/revise/park in detail; stale cascade; acceptance triage.
 - `packs/evidence.md` — evidence triangle; RED/GREEN fields; prohibited claims.
+- `packs/contracting.md` — partitioning work into implementation contracts (build phase A).
 - `packs/tdd-implement.md` — dispatching implementers; status protocol; controller duties.
+- `packs/verification.md` — local deploy, agentic pass, Tier-1 distillation (build phase C).
 - `packs/mock-retirement.md` — prototype mock inventory and retirement lifecycle.
 - `packs/risk-readiness.md` — risk categories, spikes, thin-slice gates.
 - `packs/branch-worktree.md` — branch rules, worktree mechanics, destructive-op confirmation.

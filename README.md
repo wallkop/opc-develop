@@ -81,19 +81,24 @@ The intended operating loop:
    records, and explicitly approves anything tagged `[ONE-WAY]`. Contested choices arrive with
    options, tradeoffs, a recommendation, reversibility, and the cost of deferring — or they
    don't arrive at all.
-5. **Hand off execution with confidence** (`build`, which auto-runs `contract` first). Work is
-   partitioned into self-sufficient implementation contracts (gated for cold-reader
-   buildability); implementer subagents run TDD with captured RED/GREEN evidence; every contract
-   passes a merged compliance + quality review; `verify` assembles an evidence triangle
-   (interface assertion + correlation-ID log chain + state assertion) per AC and distills every
-   important check into a committed spec.
-6. **Accept, ship, and measure** (`verify` touchpoint → `ship` → `retro`). You judge a one-line-
-   per-AC acceptance sheet with honest labels. `ship` runs the staged release pipeline: release
-   manifest (DDL, env vars, config — collected from the diff, gated against technical.md) →
-   test-environment deploy → test acceptance → production with rollback readiness → online
-   regression. Rejections at any acceptance triage into implementation defects, artifact
-   defects, and taste changes. `retro` closes the loop weekly: where tokens went, which gates
-   earn their keep, which mistakes repeat.
+5. **Hand off everything local in one run** (`build`). Internally it partitions the work into
+   gated implementation contracts, dispatches TDD implementer subagents with captured RED/GREEN
+   evidence, runs a merged compliance + quality review per contract, applies this feature's
+   migrations/config to the local or shared dev environment under safety rules, deploys locally,
+   and runs the full black-box regression — evidence triangles (interface assertion +
+   correlation-ID log chain + state assertion) per AC, distilled into committed Tier-1 specs,
+   ending in a gated acceptance sheet. No human touchpoint; the output is evidence.
+6. **Accept on the test environment** (`ship`). Release manifest (DDL, env vars, config —
+   collected from the diff, gated against technical.md) → test-env deploy → automated regression
+   there → the test-acceptance touchpoint. Your verdict routes mechanically: code defect →
+   `build` (fix mode; ship resumes at deploy), artifact defect → `revise` upstream, new need →
+   `brainstorm`. Approval merges the branch to the trunk.
+7. **Release to production separately** (`deploy`), fail-closed: preflight verifies test
+   acceptance + trunk merge + complete manifests + rollback readiness before anything runs;
+   then production env changes with backups, the deploy, prod-safe online regression, and a
+   watch window. `oncall` handles anything that breaks in production: diagnostic report, then
+   rollback / expedited hotfix / mitigation. `retro` closes the loop weekly: where tokens went,
+   which gates earn their keep, which mistakes repeat.
 
 ## The Feedback Model
 
@@ -118,10 +123,10 @@ as rework). Attribution is the agent's job; arbitration is yours.
 | `demo` | experienceable prototype in the real codebase + mock inventory | ② play until the feel is right |
 | `prd` | PRD (AC/PD ids), gated, then push = product→architecture handoff | ③ product sign-off |
 | `architect` | intake → risk spikes → technical design (TD records), gated | ④ architecture sign-off |
-| `contract` | partition into self-sufficient implementation contracts, gated (auto-run by `build`) | — |
-| `build` | auto-runs `contract` if needed; dispatch implementers, TDD evidence, merged reviews, mock retirement, integration | — |
-| `verify` | agentic pass → Tier-1 specs, evidence triangles, acceptance sheet | ⑤ accept or reject |
-| `ship` | release manifest → test env deploy → test acceptance → prod + online regression → branch cleanup | test acceptance + deploy confirm |
+| `build` | everything local: contracts → TDD implementers → local deploy (incl. dev-env DDL/config) → black-box regression → acceptance sheet | — |
+| `ship` | release manifest → test-env deploy → automated regression → test acceptance → merge to trunk | ⑤ test acceptance |
+| `deploy` | fail-closed production release: preflight, env changes with backups, deploy, prod-safe regression, watch | confirm every destructive step |
+| `oncall` | production diagnosis → report → rollback / expedited hotfix / mitigation → long-term proposal | choose the path |
 | `lite` | small/low-risk changes on the current branch, zero ceremony, bare-repo OK | quick before/after check |
 | `retro` | weekly loop report + rule crystallization + gate pruning proposals | approve rules and prunings |
 | `harness` | score the four verbs by executing; build gaps as scripts/seeds/conventions | — |
@@ -144,7 +149,7 @@ person just produced the PRD.
 
 ## Repository Layout
 
-- `skills/` — the 11 skills (each ≤ ~90 lines; detail lives in packs).
+- `skills/` — the 11 skills (each ≤ ~95 lines; detail lives in packs).
 - `shared/core-contract.md` — the one always-loaded contract: status tokens, evidence labels,
   feedback taxonomy, freshness, failure philosophy, ledger duty, isolation.
 - `shared/packs/` — nine on-demand rule packs (gate protocol, decision protocol, feedback
@@ -217,10 +222,10 @@ Restart Claude Code / Codex or reload plugins afterwards.
 | `demo` | create-demo, review-demo, build-demo |
 | `prd` | create/review/build-prd, loop-design (product half) |
 | `architect` | create/review/build-technical, loop-design (technical half) |
-| `contract` | create/review-spec, create/review-testcases, create/review-plan |
-| `build` | tdd-coding, debug-failure, loop-develop |
-| `verify` | local-e2e-verify, acceptance-rework |
-| `ship` | release-verify, finish-branch |
+| `build` | create/review-spec, create/review-testcases, create/review-plan, tdd-coding, debug-failure, loop-develop, local-e2e-verify (contracting and verification are internal phases) |
+| `ship` | acceptance-rework, finish-branch, release-verify (test half) |
+| `deploy` | release-verify (production half) |
+| `oncall` | — (new) |
 | `lite` | lite-develop |
 | `retro` | — (new) |
 | `harness` | harness-init, harness-eval |

@@ -29,8 +29,9 @@ Conventions:
   `RISK-PROFILE` for the brainstorm risk classification.
 - Any entry may carry an optional `actor` field (e.g. `"actor":"pm"`, `"actor":"architect"`) —
   use it in multi-person features so `retro` can attribute rework routing by role.
-- `release` stages: `manifest` → `env-test` → `deploy-test` → `acceptance-test` → `env-prod` →
-  `deploy-prod` → `regression-prod` → `watch`; ship resumes after the last `ok` stage.
+- `release` stages — `ship`: `manifest` → `env-test` → `deploy-test` → `regression-test` →
+  `acceptance-test`; `deploy`: `preflight` → `env-prod` → `deploy-prod` → `regression-prod` →
+  `watch`. Both resume after the last `ok` stage; `preflight` always re-runs.
 
 ## Error ledger — `docs/opc/error-ledger.jsonl` (project-wide)
 

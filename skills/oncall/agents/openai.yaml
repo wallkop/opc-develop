@@ -1,0 +1,6 @@
+interface:
+  display_name: "oncall"
+  short_description: "Diagnose production issues, hotfix safely, propose long-term fixes"
+  default_prompt: "Use $oncall to investigate the production issue through logs, DB, and recent releases, write a diagnostic report with root cause and blast radius, and execute rollback, an expedited hotfix, or mitigation."
+policy:
+  allow_implicit_invocation: true

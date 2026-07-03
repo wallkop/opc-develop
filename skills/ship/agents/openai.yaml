@@ -1,6 +1,6 @@
 interface:
   display_name: "ship"
-  short_description: "Release with evidence and finish the branch"
-  default_prompt: "Use $ship to run release gates, confirm rollback readiness, deploy per project runbooks, smoke-check, and close out branches and worktrees safely."
+  short_description: "Deploy to the test environment and run test acceptance"
+  default_prompt: "Use $ship to collect and gate the release manifest, deploy to the test environment, run automated regression there, and route the human's test-acceptance verdict; approval merges the branch to trunk."
 policy:
   allow_implicit_invocation: false

@@ -1,6 +1,6 @@
 {
   "name": "opc-develop",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Loop-engineering product development suite: taste-first design flow (brainstorm/demo/design), contract-based TDD build, evidence-labeled black-box verify, ledger-driven retro, and executable harness capabilities",
   "author": {
     "name": "wallkop",

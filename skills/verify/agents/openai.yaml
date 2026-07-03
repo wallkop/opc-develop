@@ -1,6 +1,0 @@
-interface:
-  display_name: "verify"
-  short_description: "Prove the feature black-box and run acceptance"
-  default_prompt: "Use $verify to drive every AC agentically, distill Tier-1 E2E specs on named seeds, assemble evidence triangles with honest labels, and run the acceptance touchpoint."
-policy:
-  allow_implicit_invocation: false

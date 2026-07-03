@@ -15,7 +15,7 @@ Classify every feature at `brainstorm` (record in requirement.md; `none identifi
 
 ## Risk Spike
 
-Any category present ⇒ a time-boxed spike before `contract`: the smallest experiment that proves the
+Any category present ⇒ a time-boxed spike before `build`'s contracting phase: the smallest experiment that proves the
 risky capability actually works in this project (real provider call, prototype worker, migration
 dry-run). Output: `docs/features/<slug>/risk-spike.md` — what was tried, evidence with authenticity
 labels, verdict (ready / ready-with-constraints / blocked). A spike that only reasons without

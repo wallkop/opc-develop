@@ -1,13 +1,13 @@
 ---
 name: ship
-description: "Use after verify's local acceptance passes to run the staged release pipeline: collect and gate the release manifest (DDL, env vars, config, services), apply environment changes with backups, deploy to the test environment, run the test-environment human acceptance touchpoint, release to production with rollback readiness, run online regression, then finish the branch. Resumes from the last completed stage after rework."
+description: "Use after build's local verification passes to put the feature in front of the human on the test environment: collect and gate the release manifest (DDL, env vars, config, services) against technical.md, apply environment changes and deploy to test, run automated regression there, then run the test-acceptance touchpoint and route its verdict — code defects re-enter build, artifact defects revise upstream, approval merges the branch to the trunk. Production is deploy's job, not ship's."
 license: MIT
 ---
 
 # ship
 
-Release is a pipeline of stages, each leaving ledger evidence. Rejections at test acceptance
-triage exactly like any other feedback; ship resumes at the failed stage instead of restarting.
+Test environment only. Ship ends with a human verdict on a really-deployed feature and, on
+approval, code merged to the project trunk — the precondition `deploy` will check.
 
 ## Load
 
@@ -19,42 +19,40 @@ triage exactly like any other feedback; ship resumes at the failed stage instead
 
 ## Stages
 
-Check the ledger's `release` entries first and resume after the last stage with `result: ok`.
+Resume after the last `release` ledger entry with `result: ok`; `manifest` re-collects when the
+diff moved.
 
-1. **Precheck**: verify's gate fresh, local acceptance recorded, rework entries resolved
-   (`formats/ledger-format.md` conventions), project release runbooks read — they define the
-   deploy mechanics; this skill defines the sequence and evidence.
-2. **manifest**: collect the release manifest per `release-ops.md` — migrations/DDL, env vars,
-   config, new services/jobs, third-party changes, backfills — from the actual diff, cross-checked
-   against technical.md's public contracts and schema changes. Anything in code but not in
-   technical.md is drift: route `revise` before releasing it. Write
-   `docs/features/<slug>/release-manifest.md`; run its self-check; ledger the stage.
-3. **test env + deploy**: apply manifest items to the test environment in order (backup before
-   DDL per `release-ops.md` safety rules), deploy, run the smoke subset, record evidence with
-   honest labels.
-4. **test acceptance (touchpoint)**: hand the human the test-environment entry point plus the
-   acceptance sheet and manifest. Their verdict triages per `feedback-routing.md`:
-   implementation defect → `build`; artifact defect → `revise` + cascade; new need or taste
-   change → `change` entry → `brainstorm` for the next increment (this release either proceeds
-   without it or parks — the human picks). After fixes land and verify re-runs, ship resumes here.
-5. **production**: rollback readiness proven (previous version identifiable, down path for every
-   DDL item, or explicit human ack of a `[ONE-WAY]` migration), explicit human confirmation,
-   then env changes + deploy per runbook.
-6. **online regression**: run the prod-safe Tier-1 subset against production (read-only evidence
-   triangle: interface + logs + state queries); watch the documented signals for the runbook's
-   watch window; record `external provider passed` / real-surface labels only for what actually ran there.
-7. **finish**: merge/PR per project flow, remove worktrees, close out per `branch-worktree.md`;
-   final ledger entries; suggest `retro`.
+1. **Precheck**: build's e2e gate fresh, acceptance sheet exists, rework entries resolved,
+   project test-env runbooks read.
+2. **manifest**: collect the release manifest per `release-ops.md` from the actual diff (build's
+   phase-C ledger entries seed the DDL/config sections), cross-checked against technical.md.
+   Drift routes `revise` before release. Write `release-manifest.md`; self-check; ledger.
+3. **env-test + deploy-test**: apply manifest items to the test environment in order (backup
+   before DDL per safety rules), deploy per runbook.
+4. **regression-test**: run the Tier-1 suite against the test environment; evidence triangles
+   with test-env labels; smoke the documented signals. Failures here are triaged before any
+   human is summoned.
+5. **acceptance-test (touchpoint)**: hand the human the test-environment entry point, the
+   acceptance sheet, and the manifest. Route the verdict:
+   - **Approved** → next stage.
+   - **Code defect** → re-enter **`build`** (fix mode) with the rejection notes; after build
+     refreshes its evidence, ship resumes at stage 3.
+   - **Artifact defect** → `revise` at `prd`/`architect` + stale cascade; the flow replays
+     forward and ship resumes at stage 2 (manifest re-collects).
+   - **New need / taste change** → `change` entry → `brainstorm` for the next increment; the
+     human decides whether this release proceeds without it or parks.
+6. **merge**: merge the feature branch into the project trunk (`develop` or per AGENTS.md flow),
+   push, clean worktrees per `branch-worktree.md`. Record the merge commit in the ledger —
+   `deploy`'s preflight requires it.
 
 ## Fail-open
 
-Missing deploy/rollback runbooks: never improvise production mechanics — record the gap, deliver
-the manifest + a concrete release checklist, and stop at the handoff. Missing test environment:
-the acceptance touchpoint runs on the best available surface with its label cap stated.
-Destructive-class actions (prod deploy, DDL against shared data, force operations) always require
-explicit human confirmation — this is the phase where fail-closed dominates.
+Missing test environment: run the acceptance touchpoint on the best available surface with its
+label cap stated, and say so on the sheet. Missing deploy runbook for test: record the gap,
+deliver the manifest + checklist, stop at handoff. Shared-data DDL keeps its confirmation rule
+even on test.
 
 ## Output
 
-`release-manifest.md`, staged `release` ledger entries with evidence, released feature (or a
-clean handoff), tidy branch state.
+`release-manifest.md`, staged `release` ledger entries, human test-acceptance verdict, feature
+merged to trunk on approval. Next: `deploy` when you choose to release to production.

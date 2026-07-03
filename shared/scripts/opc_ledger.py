@@ -30,8 +30,8 @@ FEATURE_TYPES = {
 }
 
 RELEASE_STAGES = {
-    "manifest", "env-test", "deploy-test", "acceptance-test",
-    "env-prod", "deploy-prod", "regression-prod", "watch",
+    "manifest", "env-test", "deploy-test", "regression-test", "acceptance-test",
+    "preflight", "env-prod", "deploy-prod", "regression-prod", "watch",
 }
 
 EVIDENCE_LABELS = {

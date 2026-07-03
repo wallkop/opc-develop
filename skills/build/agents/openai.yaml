@@ -1,6 +1,6 @@
 interface:
   display_name: "build"
-  short_description: "Implement the contract tree with TDD evidence"
-  default_prompt: "Use $build to dispatch implementer subagents per contract, enforce RED/GREEN evidence, run merged per-contract reviews, retire mocks, and integrate. Requires isolated subagent support for full isolation; degrades honestly otherwise."
+  short_description: "Contract, implement, locally deploy, and verify in one run"
+  default_prompt: "Use $build to partition the approved design into gated contracts, implement them via TDD subagents with RED/GREEN evidence, apply local env changes, and run the full black-box regression to a gated acceptance sheet."
 policy:
   allow_implicit_invocation: false

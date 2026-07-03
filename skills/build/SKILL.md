@@ -1,61 +1,71 @@
 ---
 name: build
-description: "Use after the contract gate is Approved to implement the contract tree: dispatches one implementer subagent per contract (worktrees when parallel, serial otherwise), enforces TDD with RED/GREEN evidence, runs the merged per-contract review gate, retires prototype mocks with a final residual audit, applies debugging discipline to failures, and integrates. Never runs black-box E2E."
+description: "Use after the architecture sign-off to complete everything local in one run: partition the work into gated implementation contracts, implement them via TDD implementer subagents with RED/GREEN evidence and mock retirement, apply migrations/config to the local or shared dev environment, deploy locally, and run the full black-box regression with evidence triangles — ending with a gated acceptance sheet ready for ship. Also the re-entry point for fixing code defects rejected at test acceptance."
 license: MIT
 ---
 
 # build
 
-The controller phase. Implementers implement; the controller dispatches, verifies evidence,
-routes, and integrates.
+Everything that can be finished on the builder's machine, finished in one invocation:
+contract → implement → locally deploy → verify. No human touchpoint; the output is evidence.
 
 ## Load
 
 - `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`
+- `${CLAUDE_PLUGIN_ROOT}/shared/packs/contracting.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/tdd-implement.md`
+- `${CLAUDE_PLUGIN_ROOT}/shared/packs/verification.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/evidence.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/branch-worktree.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/mock-retirement.md`
-- For gates: `packs/gate-protocol.md` + `rubrics/implementation.md`
+- For gates: `packs/gate-protocol.md` + `rubrics/impl-contract.md`, `rubrics/implementation.md`,
+  `rubrics/e2e.md`
 - Implementer prompt: `${CLAUDE_PLUGIN_ROOT}/shared/prompts/implementer.md`
 
-## Process
+## Phase A — Contract (skipped when fresh)
 
-0. **Auto-chain**: if `docs/features/<slug>/contracts/` is missing, or its gate is stale against
-   the current PRD/technical revisions, run the `contract` skill first, then continue — one
-   invocation covers both phases since neither has a human touchpoint.
-1. Precheck: contract-gate freshness (`check_freshness.py`), readiness blockers from
-   `risk-spike.md` (blocked verdicts stop only the affected contracts).
-2. Choose dispatch mode per `tdd-implement.md`: parallel ⇒ one worktree per implementer;
-   otherwise serial in place. Ledger a `dispatch` entry per contract with mode and isolation.
-3. Dispatch implementers (prefer the `opc-implementer` agent; else the environment's
-   isolated subagent with `prompts/implementer.md`). Context per `tdd-implement.md`: paths and
-   section pointers, not pasted documents.
-4. Per completed contract: verify the report against reality (diff, test output, RED/GREEN
-   fields), then run the merged review gate — fresh reviewer, `rubrics/implementation.md`, actual
-   diff + tests. Blocking issues → implementer → targeted re-review. Stop-loss: 2 rounds, then
-   escalate per `gate-protocol.md`.
-5. Failures with unclear cause get debugging discipline (`tdd-implement.md`): reproduce →
-   hypothesis → runtime evidence (correlation-ID logs, DB state) → root cause → fix with a
-   covering test. On resolution, append the root-cause record to `docs/opc/error-ledger.jsonl`
-   via `opc_ledger.py` — resolution time is capture time; skipping this starves `retro`.
-6. Handle status tokens: `NEEDS_CONTEXT` → supply or route `revise` if the contract is wrong;
-   `BLOCKED` → ledger and escalate; `DONE_WITH_CONCERNS` → resolve the concern before counting
-   the contract done.
-7. Integration: after all contracts pass their gates, run the index's integration steps, then the
-   final mock-residual audit when any prototype mock existed (fresh reviewer + grep/static
-   evidence per `mock-retirement.md`). Merge worktrees back per `branch-worktree.md`.
-8. Ledger throughout: gate results, rework routings, dispatch records, evidence labels for
-   implementation-facing checks (typically `mock passed` / `seeded passed` — never higher from
-   this phase).
+1. Precheck PRD/technical gate freshness. If `contracts/` is missing or stale, partition and
+   gate the contract tree per `contracting.md`. Readiness blockers from `risk-spike.md` stop
+   only the affected contracts.
+
+## Phase B — Implement
+
+2. Dispatch mode per `tdd-implement.md`: parallel ⇒ one worktree per implementer; else serial.
+   Ledger `dispatch` entries.
+3. Dispatch implementers (prefer `opc-implementer`; else isolated subagent with
+   `prompts/implementer.md`) with paths and section pointers, not pasted documents.
+4. Per completed contract: verify the report against reality (diff, tests, RED/GREEN fields),
+   run the merged review gate (`rubrics/implementation.md`). Blocking issues → implementer →
+   targeted re-review; 2-round stop-loss.
+5. Failures with unclear cause get debugging discipline; resolved root causes append to the
+   error ledger — resolution time is capture time.
+6. Integration steps from the contract index, then the final mock-residual audit when any
+   prototype mock existed.
+
+## Phase C — Local verify
+
+7. Local deploy per `verification.md`: stack up, reset + seed, apply this feature's
+   migrations/DDL and config to the local/shared dev environment under `release-ops.md` safety
+   rules (backup before DDL on shared data; destructive changes need human confirmation).
+8. Agentic pass over every AC → evidence triangles → distill into committed Tier-1 specs → full
+   regression run → demo parity check.
+9. Write the acceptance sheet (`acceptance.md`) and gate the phase (`rubrics/e2e.md`).
+
+## Re-entry (fix mode)
+
+When `ship`'s test acceptance rejects with implementation defects: re-enter here with the
+rejection notes. Scope to the affected contracts/ACs — targeted fixes, targeted re-review,
+re-run the affected Tier-1 specs plus regression, refresh the acceptance sheet. `ship` then
+resumes from its deploy stage. Artifact defects and new needs do not enter build — they route to
+`prd`/`architect` (revise) or `brainstorm` (change) per `feedback-routing.md`.
 
 ## Fail-open
 
-No subagent support: degrade per `tdd-implement.md` (inline, one contract at a time, full TDD
-evidence, `self-implemented (no isolation)` labels) and surface the degradation at the next
-touchpoint. Missing commands/runbooks: discover, record `gap`, continue.
+No subagent support: degrade per `tdd-implement.md` with `self-implemented (no isolation)`
+labels. Missing runbooks/commands: discover, record `gap`, continue. Shared-infra destructive
+changes are the fail-closed exception.
 
 ## Output
 
-Implemented feature with unit/API tests, per-contract review records, mock residual audit,
-error-ledger records for resolved failures, ledger trail. Next: `verify`.
+Implemented feature with tests, contract tree, per-contract review records, mock residual audit,
+committed Tier-1 specs, gated `acceptance.md`, ledger trail. Next: `ship`.

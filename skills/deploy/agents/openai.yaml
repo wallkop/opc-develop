@@ -1,0 +1,6 @@
+interface:
+  display_name: "deploy"
+  short_description: "Fail-closed production release with rollback readiness"
+  default_prompt: "Use $deploy to run the fail-closed production release: preflight checks, environment changes with backups and per-item rollback, the deploy per runbook, prod-safe online regression, and a watch window."
+policy:
+  allow_implicit_invocation: false

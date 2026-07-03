@@ -50,4 +50,4 @@ error-ledger (see `formats/ledger-format.md`) — resolution time is capture tim
 When all contracts are done, the controller performs the integration steps from the impl-contract
 index, runs implementation-facing checks, and runs the final mock-residual audit when any prototype
 mock existed (fresh reviewer + grep/static evidence per `mock-retirement.md`). Black-box E2E,
-acceptance, and regression belong to `verify`, not here.
+acceptance, and regression belong to `build`'s local-verification phase (`verification.md`), not here.

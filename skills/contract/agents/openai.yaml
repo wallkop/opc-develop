@@ -1,6 +1,0 @@
-interface:
-  display_name: "contract"
-  short_description: "Decompose approved design into implementation contracts"
-  default_prompt: "Use $contract to partition the feature into self-sufficient per-workstream implementation contracts with boundaries, TDD seeds, and mock retirement, then gate the tree."
-policy:
-  allow_implicit_invocation: true

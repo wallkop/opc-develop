@@ -1,6 +1,7 @@
 # Release Ops
 
-Manifest collection, environment-change safety, and online regression rules for `ship`.
+Manifest collection, environment-change safety, and regression rules shared by `ship` (test
+environment), `deploy` (production), and `build`'s local env changes.
 
 ## Release Manifest — `docs/features/<slug>/release-manifest.md`
 
@@ -54,7 +55,11 @@ Manifest collection, environment-change safety, and online regression rules for 
 
 ## Stage Ledger
 
-Each stage appends `{"type":"release","stage":"<manifest|env-test|deploy-test|acceptance-test|
-env-prod|deploy-prod|regression-prod|watch>","result":"ok|failed|blocked", ...evidence fields}`.
+Each stage appends `{"type":"release","stage":"<stage>","result":"ok|failed|blocked",
+...evidence fields}`. Stage vocabulary:
+
+- `ship`: `manifest` → `env-test` → `deploy-test` → `regression-test` → `acceptance-test` → merge
+- `deploy`: `preflight` → `env-prod` → `deploy-prod` → `regression-prod` → `watch`
+
 Resume = skip stages whose latest entry is `ok` and whose inputs are unchanged since (manifest
-re-collects when the diff moved).
+re-collects when the diff moved; preflight always re-runs — it is a check, not work).
