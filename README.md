@@ -2,74 +2,153 @@
 
 [简体中文](README.zh-CN.md)
 
-opc-develop is a Claude Code / Codex skill suite for AI-assisted product development by builders
-who own the product, design, and engineering judgment themselves. It captures your taste in three
-artifacts (requirement, PRD + demo, technical design), hands execution to agents under mechanical
-gates, and — unlike most workflow suites — **measures its own loop** so the process can shrink as
-the data justifies it.
+opc-develop is a Claude Code / Codex skill suite for AI-assisted product development, built for
+builders who personally own the product judgment, design taste, and engineering taste behind a
+project. It captures your taste in three artifacts (requirement, PRD + demo, technical design),
+hands execution to agents under mechanical gates — and, unlike most workflow suites, **measures
+its own loop** so the process can shrink as data justifies it.
 
 ![OPC-Develop skills workflow](assets/opc-develop-skills.png)
 
-## Design Principles (v0.2)
+## Highlights
 
-1. **Alignment by feedback, not feedforward.** Three nested loops: task-level evidence (TDD
-   RED/GREEN, evidence triangles), feature-level gates (fresh reviewers with rubrics, SHA-based
-   freshness), and loop-level measurement (`retro` mines ledgers and proposes improvements).
-2. **Enforcement lives at the lowest layer.** Scripts and structural validation (L0) over
-   pulled-on-demand artifacts (L1) over prose (L2). One always-loaded core contract (~1k tokens);
-   everything else loads per role.
-3. **Demo first: data fake, feeling real.** Taste is verified by experience. The prototype lives
-   in the real codebase; every mock is inventoried and retired before done.
-4. **Honest evidence.** Every verification claim carries an authenticity label (`mock passed` …
-   `long-run passed`). Missing harness capability caps the label instead of blocking the work.
-5. **Fail open with recorded gaps.** Bare repositories work. Only destructive actions fail closed.
-6. **Self-evolution.** Resolved failures append to an error ledger; `retro` detects recurrences
-   and crystallizes rules at the lowest enforcement layer — with human approval and retirement
-   review.
+- **Three nested feedback loops instead of prose front-loading.** Task-level evidence (TDD
+  RED/GREEN, evidence triangles), feature-level gates (rubric-fed fresh reviewers, content-SHA
+  freshness), and loop-level measurement (`retro` mines ledgers and proposes improvements).
+- **Demo first: data fake, feeling real.** A high-fidelity prototype inside the real frontend
+  codebase before any PRD — taste is verified by experience, not by reading. Every mock is
+  inventoried at creation and retired before done, with a final residual audit.
+- **AC-ID spine.** PRD acceptance criteria are numbered once and referenced — never restated — by
+  the technical design, implementation contracts, E2E specs, reviews, and the acceptance sheet.
+- **Honest evidence, always labeled.** Every verification claim carries an authenticity label
+  (`mock passed` → `seeded passed` → `local real service passed` → `external provider passed` →
+  `human accepted` → `long-run passed`). A missing harness capability caps the achievable label;
+  it never silently upgrades a claim.
+- **Mechanical gates, not exhortations.** Review freshness is a `git hash-object` comparison
+  (`check_freshness.py`), artifact structure is script-checked (`validate_artifacts.py`), ledger
+  writes are schema-validated (`opc_ledger.py`), status tokens are machine-parsed. All stdlib
+  Python, all covered by tests.
+- **Token-lean by architecture.** One always-loaded core contract (~1.1k tokens) plus role packs
+  pulled on demand. The heaviest invocation chain (build) is ≈5.4k framework tokens — roughly a
+  quarter of comparable gate-heavy suites.
+- **Self-evolution with governance.** Resolved failures append root causes to an error ledger;
+  `retro` detects recurrences and proposes rules at the lowest enforcement layer (lint/hook first,
+  prose last) — every rule needs human approval, records its provenance, and faces retirement
+  review.
+- **Fail open with recorded gaps.** Missing runbooks, services, or subagent support degrade
+  honestly (recorded gap + capped labels) instead of blocking. Bare repositories work, including
+  the lite path. Only destructive actions — deploys, force-pushes, deletions, publication — fail
+  closed.
 
-## The Skills
+## Who It Is For
 
-Full flow (one feature, four human touchpoints):
+opc-develop is built for builders, especially OPC (one-person company) founders and solo
+operators, who can evaluate whether a requirement is structurally sound, whether an interaction
+feels right, and whether an architecture will age well. The suite protects those judgments; it
+does not replace them.
 
-| Skill | Phase | You do |
+**It is not a good fit** for pure implementation roles, or for work where the hard part is team
+coordination and roadmap negotiation. The suite deliberately concentrates human attention on four
+decision points; if you cannot judge product structure or architecture depth at those points, the
+workflow will feel demanding rather than helpful.
+
+## Operating Philosophy
+
+The human stays responsible for context, taste, product structure, and architectural direction.
+The agent does the execution once direction is sharp — and the loop itself is instrumented so you
+can see where tokens, rework, and repeated mistakes actually go.
+
+The intended operating loop:
+
+0. **Make the project legible first.** Run `harness` to score and build the four verbs — *run*
+   (one-command stack + logs to a fixed path), *reset* (idempotent clean state + named seed
+   scenarios), *observe* (structured logs with correlation IDs, read-only DB recipes, state
+   dumps), *drive* (committed Tier-1 E2E specs, authored by agentic exploration). Capabilities
+   are scored by executing them, never by reading documents.
+1. **Give the agent the raw idea and let it grill you** (`brainstorm`). One question at a time,
+   each with a recommended answer, until the idea becomes a ≤150-line decision-first
+   `requirement.md` with domain language, non-goals, tradeoffs, risk profile, and acceptance
+   signals — on its own numbered feature branch.
+2. **Experience it before specifying it** (`demo`). The agent builds a prototype inside the real
+   frontend (or a runnable skeleton for non-UI features) against frontend-only mocks. You play
+   with it; the tune-loop is free and unlimited. Cheap `revise` here beats expensive rework later.
+3. **Sign the two decision sheets** (`design`). The agent writes the full PRD (numbered ACs,
+   state machine, permissions) and technical design (ADR-style TD records, public contracts,
+   runtime evidence plan); you read only the decision surfaces and explicitly approve anything
+   tagged `[ONE-WAY]`. Contested choices arrive with options, tradeoffs, a recommendation,
+   reversibility, and the cost of deferring — or they don't arrive at all.
+4. **Hand off execution with confidence** (`contract` → `build` → `verify`). Work is partitioned
+   into self-sufficient implementation contracts; implementer subagents run TDD with captured
+   RED/GREEN evidence; every contract passes a merged compliance + quality review; black-box
+   verification assembles an evidence triangle (interface assertion + correlation-ID log chain +
+   state assertion) per AC and distills every important check into a committed spec.
+5. **Accept, ship, and measure** (`verify` touchpoint → `ship` → `retro`). You judge a one-line-
+   per-AC acceptance sheet with honest labels; rejection triage separates implementation defects,
+   artifact defects, and taste changes. `ship` releases with rollback readiness. `retro` closes
+   the loop weekly: where tokens went, which gates earn their keep, which mistakes repeat.
+
+## The Feedback Model
+
+All human feedback, at every touchpoint, classifies as exactly one of:
+
+| Class | Meaning | Cost |
 |---|---|---|
-| `brainstorm` | grilling → requirement.md | answer questions, confirm a 1-page decision summary |
-| `demo` | prototype in the real codebase | play with it until the feel is right |
-| `design` | PRD (AC-IDs) + technical (decision records) | read two decision sheets, approve one-way doors |
-| `contract` | implementation contracts (spec+plan merged) | — |
-| `build` | TDD implementation via subagents | — |
-| `verify` | black-box E2E, evidence triangles, acceptance sheet | spot-check and give a verdict |
-| `ship` | release gates, deploy, rollback readiness, branch cleanup | confirm the deploy |
+| `tune` | same intent, different execution — iterate in place | free, unlimited, unrecorded |
+| `revise` | an upstream artifact was wrong — fix at the earliest broken layer, downstream approvals go SHA-stale, replay forward | one ledger entry |
+| `park` | stop this line of work cleanly | one ledger entry |
 
-Always available:
+Acceptance rejections triage further: **implementation defect** (code ≠ artifact → targeted fix),
+**artifact defect** (code = artifact, artifact wrong → revise + cascade), **taste change**
+(artifact was right, intent moved → new increment via `brainstorm`, recorded as `change`, never
+as rework). Attribution is the agent's job; arbitration is yours.
 
-- `lite` — the 80% path: small changes, current branch, zero ceremony, bare-repo compatible.
-- `retro` — weekly loop-engineering report: token distribution, rework routing, recurring errors,
-  rule crystallization proposals.
-- `harness` — assess (by executing, not reading) and build the project's run/reset/observe/drive
-  capabilities: seeds, agent-legible logs, state dumps, E2E scaffolding.
+## Skills
 
-## Feedback Model
+| Skill | Use | Human touchpoint |
+|---|---|---|
+| `brainstorm` | raw idea → grilled, decision-first requirement + feature branch | ① confirm the 1-page summary |
+| `demo` | experienceable prototype in the real codebase + mock inventory | ② play until the feel is right |
+| `design` | PRD (AC-IDs) + technical design (TD records), both gated | ③ sign the decision sheets |
+| `contract` | partition into self-sufficient implementation contracts, gated | — |
+| `build` | dispatch implementers, TDD evidence, merged reviews, mock retirement, integration | — |
+| `verify` | agentic pass → Tier-1 specs, evidence triangles, acceptance sheet | ④ accept or reject |
+| `ship` | release gates, rollback readiness, deploy, branch cleanup | confirm the deploy |
+| `lite` | small/low-risk changes on the current branch, zero ceremony, bare-repo OK | quick before/after check |
+| `retro` | weekly loop report + rule crystallization + gate pruning proposals | approve rules and prunings |
+| `harness` | score the four verbs by executing; build gaps as scripts/seeds/conventions | — |
 
-All human feedback classifies as **tune** (iterate in place, free), **revise** (route to the
-earliest broken layer, cascade staleness via content-SHA checks), or **park**. Acceptance
-rejections triage into implementation defect / artifact defect / taste change — the last is a new
-increment, never rework.
+## Repository Layout
 
-## Ledgers
+- `skills/` — the 10 skills (each ≤ ~90 lines; detail lives in packs).
+- `shared/core-contract.md` — the one always-loaded contract: status tokens, evidence labels,
+  feedback taxonomy, freshness, failure philosophy, ledger duty, isolation.
+- `shared/packs/` — nine on-demand rule packs (gate protocol, decision protocol, feedback
+  routing, evidence, TDD implementation, mock retirement, risk & readiness, branch & worktree,
+  harness verbs).
+- `shared/formats/` — artifact format specs: requirement, PRD, technical, implementation
+  contract, ledger schemas.
+- `shared/rubrics/` — seven gate rubrics, given to reviewers in full (the reviewer always holds
+  the rulebook it enforces).
+- `shared/scripts/` — L0 tooling: `opc_ledger.py`, `check_freshness.py`,
+  `parse_review_status.py`, `validate_artifacts.py`, `recurrence_scan.py`,
+  `next_feature_slug.py`; tested by `test_opc_scripts.py` (stdlib only).
+- `agents/` — `opc-reviewer` (read-only by tool restriction) and `opc-implementer`.
+- `shared/prompts/` — reviewer and implementer subagent prompts.
+- `.claude-plugin/`, `.codex-plugin/`, `.agents/` — platform manifests.
 
-Every gate outcome, rework routing, evidence label, and gap appends to
-`docs/features/<slug>/ledger.jsonl`; resolved failures append root causes to
-`docs/opc/error-ledger.jsonl`. `retro` turns these into decisions: which gates to downgrade,
-which rules to crystallize, which artifact layers earn their cost.
+Feature artifacts live in the **target project**, never in this plugin:
+`docs/features/<n>-<name>/` (requirement, demo notes + mock inventory, prd, technical,
+contracts/, reviews/, acceptance.md, ledger.jsonl) plus project-wide `docs/opc/`
+(error-ledger.jsonl, rules.md, retro reports).
 
 ## Platform Notes
 
-- **Claude Code**: full support. Reviews and implementation run in isolated subagents
-  (`opc-reviewer` is read-only by tool restriction).
-- **Codex / other harnesses**: skills work; where isolated subagents are unavailable, gates and
-  builds degrade honestly (`self-reviewed (no isolation)` labels surfaced at the next human
-  touchpoint) instead of blocking or silently self-approving.
+- **Claude Code** — full support: isolated reviewer/implementer subagents, `${CLAUDE_PLUGIN_ROOT}`
+  path resolution, tool-restricted reviewer.
+- **Codex and other harnesses** — skills and scripts work; where isolated subagents are
+  unavailable, gates and builds degrade honestly (`self-reviewed (no isolation)` /
+  `self-implemented (no isolation)` ledger labels, surfaced at the next human touchpoint) rather
+  than blocking or silently self-approving.
 
 ## Install
 
@@ -79,8 +158,9 @@ which rules to crystallize, which artifact layers earn their cost.
 claude --plugin-dir ~/plugins/opc-develop
 ```
 
-Skills are invoked with the plugin namespace, e.g. `/opc-develop:brainstorm`,
-`/opc-develop:lite`, `/opc-develop:retro`. See [docs/claude-code.md](docs/claude-code.md).
+Invoke with the plugin namespace: `/opc-develop:brainstorm`, `/opc-develop:lite`,
+`/opc-develop:retro`. Or register as a marketplace source — see
+[docs/claude-code.md](docs/claude-code.md).
 
 ### Codex
 
@@ -89,16 +169,20 @@ codex plugin marketplace add wallkop/opc-develop --ref main
 codex plugin add opc-develop@opc-develop
 ```
 
-## Layout
+For local development, clone into your personal plugin source directory:
 
-- `skills/` — the 10 skills.
-- `shared/core-contract.md` — the one always-loaded contract.
-- `shared/packs/` — role-specific rule packs, loaded on demand.
-- `shared/formats/` — artifact format specs (requirement, PRD, technical, impl-contract, ledger).
-- `shared/rubrics/` — gate rubrics; given to reviewers in full.
-- `shared/scripts/` — L0 tooling: ledger append/summary, SHA freshness, status parsing, artifact
-  validation, recurrence scan, feature slugs. Stdlib-only; `test_opc_scripts.py` covers them.
-- `agents/`, `shared/prompts/` — reviewer and implementer subagent definitions.
+```bash
+git clone https://github.com/wallkop/opc-develop.git ~/plugins/opc-develop
+```
+
+## Update
+
+```bash
+cd ~/plugins/opc-develop
+git pull --ff-only
+```
+
+Restart Claude Code / Codex or reload plugins afterwards.
 
 ## Migrating from v0.1
 
@@ -115,20 +199,21 @@ codex plugin add opc-develop@opc-develop
 | `retro` | — (new) |
 | `harness` | harness-init, harness-eval |
 
-v0.1 feature artifacts remain readable; new features use the v0.2 artifact formats
-(`shared/formats/`).
+v0.1 feature artifacts remain readable; new features use the v0.2 formats. The biggest behavioral
+changes: reviews are SHA-fresh instead of mtime-fresh, missing project documents record gaps
+instead of blocking, and parallel implementation always uses worktrees.
 
-## Who It Is For
+## Publishing And Discovery
 
-Builders — especially solo operators — who can judge whether a requirement is sound, an
-interaction feels right, and an architecture will age well. The suite protects those judgments;
-it does not replace them. If you want an agent to own product taste for you, this is the wrong tool.
+GitHub is the canonical source for history, tags, diffs, issues, and release notes. Marketplace
+directories are discovery surfaces that link back to this repository.
 
 ## Safety Notes
 
-Keep feature artifacts, ledgers, credentials, and logs in the target project repository — never
-in this plugin. Deploys, force-pushes, deletions, and external publication always require explicit
-human confirmation.
+This repository must not contain project-specific business artifacts, credentials, private logs,
+`.env` files, or generated feature documents — those belong in the target project. Destructive
+actions (deploys to shared surfaces, force-pushes, deletions with unmerged work, external
+publication) always require explicit human confirmation, regardless of prior approvals.
 
 ## License
 

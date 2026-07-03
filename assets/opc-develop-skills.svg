@@ -1,0 +1,265 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1560" viewBox="0 0 1900 1560" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b26a00"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6a4fa3"/>
+    </marker>
+  </defs>
+
+  <rect width="1900" height="1560" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="52" y="88" font-family="Georgia, serif" font-size="52" font-style="italic" font-weight="bold" fill="#1a1a1a">OPC-Develop Skills</text>
+  <text x="660" y="88" font-family="Georgia, serif" font-size="26" font-style="italic" fill="#888">v0.2 · loop engineering</text>
+
+  <!-- Legend -->
+  <g font-size="20" fill="#333">
+    <rect x="1180" y="52" width="34" height="26" rx="6" fill="#7fd8d8" stroke="#5a4632" stroke-width="2"/>
+    <text x="1224" y="72">skill</text>
+    <rect x="1290" y="52" width="34" height="26" rx="6" fill="#dff4f4" stroke="#5a4632" stroke-width="2"/>
+    <text x="1334" y="72">mechanism</text>
+    <rect x="1478" y="52" width="34" height="26" rx="6" fill="#dcedc8" stroke="#5a4632" stroke-width="2"/>
+    <text x="1522" y="72">daily use</text>
+    <circle cx="1650" cy="65" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="1650" y="72" text-anchor="middle" font-size="17" font-weight="bold" fill="#4a3000">1</text>
+    <text x="1674" y="72">human touchpoint</text>
+  </g>
+
+  <!-- ═══════════ HARNESS ROW ═══════════ -->
+  <rect x="50" y="130" width="160" height="150" rx="8" fill="#000"/>
+  <text x="130" y="196" text-anchor="middle" font-size="26" font-style="italic" font-weight="bold" fill="#fff">Harness</text>
+  <text x="130" y="228" text-anchor="middle" font-size="15" fill="#bbb">four verbs,</text>
+  <text x="130" y="248" text-anchor="middle" font-size="15" fill="#bbb">executable</text>
+
+  <!-- verb groups -->
+  <g>
+    <!-- run -->
+    <rect x="240" y="130" width="390" height="150" rx="10" fill="#666"/>
+    <text x="435" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">run</text>
+    <rect x="256" y="182" width="170" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="341" y="215" text-anchor="middle" font-size="18" fill="#222">one-command</text>
+    <text x="341" y="240" text-anchor="middle" font-size="18" fill="#222">up · health</text>
+    <rect x="442" y="182" width="170" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="527" y="215" text-anchor="middle" font-size="18" fill="#222">logs tee to</text>
+    <text x="527" y="240" text-anchor="middle" font-size="18" fill="#222">fixed path</text>
+    <!-- reset -->
+    <rect x="650" y="130" width="390" height="150" rx="10" fill="#666"/>
+    <text x="845" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">reset</text>
+    <rect x="666" y="182" width="170" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="751" y="215" text-anchor="middle" font-size="18" fill="#222">clean state,</text>
+    <text x="751" y="240" text-anchor="middle" font-size="18" fill="#222">idempotent</text>
+    <rect x="852" y="182" width="170" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="937" y="215" text-anchor="middle" font-size="18" fill="#222">named seed</text>
+    <text x="937" y="240" text-anchor="middle" font-size="18" fill="#222">scenarios</text>
+    <!-- observe -->
+    <rect x="1060" y="130" width="500" height="150" rx="10" fill="#666"/>
+    <text x="1310" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">observe</text>
+    <rect x="1076" y="182" width="148" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="1150" y="215" text-anchor="middle" font-size="18" fill="#222">logs +</text>
+    <text x="1150" y="240" text-anchor="middle" font-size="18" fill="#222">corr-ID</text>
+    <rect x="1236" y="182" width="148" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="1310" y="215" text-anchor="middle" font-size="18" fill="#222">DB read</text>
+    <text x="1310" y="240" text-anchor="middle" font-size="18" fill="#222">recipe</text>
+    <rect x="1396" y="182" width="148" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="1470" y="215" text-anchor="middle" font-size="18" fill="#222">state</text>
+    <text x="1470" y="240" text-anchor="middle" font-size="18" fill="#222">dump</text>
+    <!-- drive -->
+    <rect x="1580" y="130" width="270" height="150" rx="10" fill="#666"/>
+    <text x="1715" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">drive</text>
+    <rect x="1596" y="182" width="238" height="76" rx="6" fill="#d9d9d9"/>
+    <text x="1715" y="215" text-anchor="middle" font-size="18" fill="#222">Tier-1 E2E specs</text>
+    <text x="1715" y="240" text-anchor="middle" font-size="18" fill="#222">← agentic explore</text>
+  </g>
+
+  <!-- ═══════════ FLOW BANDS ═══════════ -->
+  <rect x="50" y="320" width="160" height="60" rx="8" fill="#000"/>
+  <text x="130" y="358" text-anchor="middle" font-size="24" font-style="italic" font-weight="bold" fill="#fff">Flow</text>
+
+  <rect x="240" y="320" width="1240" height="60" rx="6" fill="#3f51a3"/>
+  <text x="860" y="358" text-anchor="middle" font-size="26" fill="#fff">Full Flow — one feature, four human touchpoints</text>
+
+  <line x1="1510" y1="320" x2="1510" y2="1080" stroke="#777" stroke-width="2" stroke-dasharray="8,7"/>
+
+  <rect x="1540" y="320" width="310" height="60" rx="6" fill="#5b8c2a"/>
+  <text x="1695" y="358" text-anchor="middle" font-size="26" fill="#fff">Lite</text>
+
+  <!-- ═══════════ PIPELINE ═══════════ -->
+  <!-- 7 skills: brainstorm demo design contract build verify ship -->
+  <g font-size="23" font-weight="bold" fill="#123">
+    <!-- brainstorm -->
+    <circle cx="335" cy="430" r="16" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="335" y="437" text-anchor="middle" font-size="18" fill="#4a3000">1</text>
+    <rect x="250" y="455" width="170" height="72" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="335" y="498" text-anchor="middle">brainstorm</text>
+    <!-- demo -->
+    <circle cx="452" cy="430" r="16" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="452" y="437" text-anchor="middle" font-size="18" fill="#4a3000">2</text>
+    <rect x="430" y="455" width="170" height="72" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="515" y="498" text-anchor="middle">demo</text>
+    <!-- design -->
+    <circle cx="695" cy="430" r="16" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="695" y="437" text-anchor="middle" font-size="18" fill="#4a3000">3</text>
+    <rect x="610" y="455" width="170" height="72" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="695" y="498" text-anchor="middle">design</text>
+    <!-- contract -->
+    <rect x="790" y="455" width="170" height="72" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="875" y="498" text-anchor="middle">contract</text>
+    <!-- build -->
+    <rect x="970" y="455" width="170" height="72" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="1055" y="498" text-anchor="middle">build</text>
+    <!-- verify -->
+    <circle cx="1235" cy="430" r="16" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
+    <text x="1235" y="437" text-anchor="middle" font-size="18" fill="#4a3000">4</text>
+    <rect x="1150" y="455" width="170" height="72" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="1235" y="498" text-anchor="middle">verify</text>
+    <!-- ship -->
+    <rect x="1330" y="455" width="150" height="72" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+    <text x="1405" y="498" text-anchor="middle">ship</text>
+  </g>
+
+  <!-- pipeline arrows -->
+  <g stroke="#444" stroke-width="2.5" fill="none">
+    <line x1="420" y1="491" x2="428" y2="491" marker-end="url(#arrow)"/>
+    <line x1="600" y1="491" x2="608" y2="491" marker-end="url(#arrow)"/>
+    <line x1="780" y1="491" x2="788" y2="491" marker-end="url(#arrow)"/>
+    <line x1="960" y1="491" x2="968" y2="491" marker-end="url(#arrow)"/>
+    <line x1="1140" y1="491" x2="1148" y2="491" marker-end="url(#arrow)"/>
+    <line x1="1320" y1="491" x2="1328" y2="491" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- tune self-loop on demo -->
+  <path d="M 500 455 C 485 418, 600 418, 585 455" stroke="#2e7d32" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="548" y="410" text-anchor="middle" font-size="17" fill="#2e7d32" font-style="italic">tune ∞ (vibe-loop, free)</text>
+
+  <!-- artifacts under pipeline -->
+  <g font-size="17" fill="#555" text-anchor="middle">
+    <text x="335" y="556">requirement.md</text>
+    <text x="335" y="577">≤150 lines, decisions</text>
+    <text x="515" y="556">prototype in real code</text>
+    <text x="515" y="577">+ mock inventory</text>
+    <text x="695" y="556">prd.md (AC-IDs)</text>
+    <text x="695" y="577">technical.md (TD ADRs)</text>
+    <text x="875" y="556">contracts/C-XX</text>
+    <text x="875" y="577">spec+plan merged</text>
+    <text x="1055" y="556">TDD RED/GREEN</text>
+    <text x="1055" y="577">mock retirement</text>
+    <text x="1235" y="556">Tier-1 E2E + triangle</text>
+    <text x="1235" y="577">acceptance.md</text>
+    <text x="1405" y="556">release gates</text>
+    <text x="1405" y="577">rollback ready</text>
+  </g>
+
+  <!-- ═══════════ GATE BAND ═══════════ -->
+  <rect x="250" y="620" width="1230" height="96" rx="10" fill="#dff4f4" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="865" y="658" text-anchor="middle" font-size="23" font-weight="bold" fill="#123">gates — fresh reviewer subagent + rubric, per artifact</text>
+  <text x="865" y="692" text-anchor="middle" font-size="19" fill="#345">L0 precheck (validate_artifacts.py) · content-SHA freshness (check_freshness.py) · one status token · 2-round stop-loss</text>
+
+  <!-- gate diamonds connecting pipeline to gate band -->
+  <g fill="#fff" stroke="#5a4632" stroke-width="2">
+    <path d="M 335 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 695 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 875 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 1055 596 l 12 12 l -12 12 l -12 -12 z"/>
+    <path d="M 1235 596 l 12 12 l -12 12 l -12 -12 z"/>
+  </g>
+
+  <!-- ═══════════ FEEDBACK / REVISE ═══════════ -->
+  <rect x="250" y="760" width="1230" height="130" rx="10" fill="#fff8ec" stroke="#b26a00" stroke-width="2.5"/>
+  <text x="865" y="798" text-anchor="middle" font-size="23" font-weight="bold" fill="#7a4a00">feedback — tune · revise · park</text>
+  <text x="865" y="832" text-anchor="middle" font-size="19" fill="#7a4a00">revise → earliest broken layer, downstream approvals go SHA-stale, replay forward</text>
+  <text x="865" y="862" text-anchor="middle" font-size="19" fill="#7a4a00">acceptance triage: implementation defect → build · artifact defect → revise · taste change → brainstorm (not rework)</text>
+
+  <!-- revise arrows back -->
+  <g stroke="#b26a00" stroke-width="2.5" fill="none" stroke-dasharray="7,5">
+    <path d="M 1235 760 C 1235 740, 1235 730, 1235 716" marker-end="url(#arrowAmber)" transform="rotate(180 1235 738)"/>
+    <path d="M 335 760 C 335 745, 335 740, 335 730" marker-end="url(#arrowAmber)" transform="rotate(180 335 745)"/>
+    <path d="M 695 760 C 695 745, 695 740, 695 730" marker-end="url(#arrowAmber)" transform="rotate(180 695 745)"/>
+    <path d="M 1055 760 C 1055 745, 1055 740, 1055 730" marker-end="url(#arrowAmber)" transform="rotate(180 1055 745)"/>
+  </g>
+
+  <!-- ═══════════ LITE COLUMN ═══════════ -->
+  <rect x="1540" y="420" width="310" height="470" rx="12" fill="#dcedc8" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="1695" y="470" text-anchor="middle" font-size="26" font-weight="bold" fill="#2a4a10">lite</text>
+  <g font-size="19" fill="#365220" text-anchor="middle">
+    <text x="1695" y="516">the 80% path</text>
+    <text x="1695" y="552">current branch,</text>
+    <text x="1695" y="578">zero ceremony</text>
+    <text x="1695" y="622">targeted tests +</text>
+    <text x="1695" y="648">before/after evidence</text>
+    <text x="1695" y="692">bare-repo compatible</text>
+    <text x="1695" y="736">escalates to Full on</text>
+    <text x="1695" y="762">risk triggers</text>
+    <text x="1695" y="806">resolved failures →</text>
+    <text x="1695" y="832">error ledger too</text>
+  </g>
+
+  <!-- harness skill box on right -->
+  <rect x="1540" y="920" width="310" height="120" rx="12" fill="#dff4f4" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="1695" y="968" text-anchor="middle" font-size="24" font-weight="bold" fill="#123">harness</text>
+  <text x="1695" y="998" text-anchor="middle" font-size="18" fill="#345">score verbs by executing;</text>
+  <text x="1695" y="1022" text-anchor="middle" font-size="18" fill="#345">build gaps as scripts/seeds</text>
+
+  <!-- ═══════════ MEASURE BAND (LOOP C) ═══════════ -->
+  <rect x="50" y="1130" width="160" height="180" rx="8" fill="#000"/>
+  <text x="130" y="1205" text-anchor="middle" font-size="24" font-style="italic" font-weight="bold" fill="#fff">Measure</text>
+  <text x="130" y="1237" text-anchor="middle" font-size="15" fill="#bbb">the loop that</text>
+  <text x="130" y="1257" text-anchor="middle" font-size="15" fill="#bbb">improves the loop</text>
+
+  <!-- ledgers -->
+  <rect x="240" y="1130" width="380" height="180" rx="12" fill="#f0f0f0" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="430" y="1168" text-anchor="middle" font-size="22" font-weight="bold" fill="#123">ledgers (append-only JSONL)</text>
+  <text x="430" y="1202" text-anchor="middle" font-size="18" fill="#345">features/&lt;slug&gt;/ledger.jsonl</text>
+  <text x="430" y="1228" text-anchor="middle" font-size="17" fill="#666">gates · rework routing · evidence labels · gaps</text>
+  <text x="430" y="1262" text-anchor="middle" font-size="18" fill="#345">docs/opc/error-ledger.jsonl</text>
+  <text x="430" y="1288" text-anchor="middle" font-size="17" fill="#666">root causes captured at resolution time</text>
+
+  <!-- retro -->
+  <rect x="700" y="1130" width="360" height="180" rx="12" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
+  <text x="880" y="1172" text-anchor="middle" font-size="24" font-weight="bold" fill="#123">retro (weekly)</text>
+  <text x="880" y="1206" text-anchor="middle" font-size="18" fill="#234">token &amp; rework distribution</text>
+  <text x="880" y="1232" text-anchor="middle" font-size="18" fill="#234">gate round-trips · change vs rework</text>
+  <text x="880" y="1258" text-anchor="middle" font-size="18" fill="#234">recurrence_scan → rule candidates</text>
+  <text x="880" y="1288" text-anchor="middle" font-size="18" font-style="italic" fill="#234">human approves every rule</text>
+
+  <!-- outputs -->
+  <rect x="1140" y="1130" width="710" height="180" rx="12" fill="#efe9f7" stroke="#6a4fa3" stroke-width="2.5"/>
+  <text x="1495" y="1168" text-anchor="middle" font-size="22" font-weight="bold" fill="#3d2a66">crystallize at the lowest layer · prune what data can't defend</text>
+  <g font-size="18" fill="#3d2a66" text-anchor="middle">
+    <text x="1300" y="1210">rules.md + L0 hooks/lint</text>
+    <text x="1300" y="1236">(provenance + retirement)</text>
+    <text x="1495" y="1210">gate downgrades</text>
+    <text x="1495" y="1236">(blocking → sampled)</text>
+    <text x="1700" y="1210">harness backlog</text>
+    <text x="1700" y="1236">(gap entries)</text>
+    <text x="1495" y="1284" font-style="italic">heavy process is what you run when you can't measure</text>
+  </g>
+
+  <!-- arrows into ledger and from retro -->
+  <g stroke="#444" stroke-width="2.5" fill="none">
+    <path d="M 640 890 C 560 960, 470 1040, 435 1126" marker-end="url(#arrow)"/>
+    <line x1="620" y1="1220" x2="696" y2="1220" marker-end="url(#arrow)"/>
+    <line x1="1060" y1="1220" x2="1136" y2="1220" marker-end="url(#arrow)"/>
+  </g>
+  <text x="500" y="1010" font-size="17" fill="#444" font-style="italic">every gate / rework / evidence / gap appends</text>
+
+  <!-- retro feedback arrows (dashed purple) -->
+  <g stroke="#6a4fa3" stroke-width="2.5" fill="none" stroke-dasharray="7,5">
+    <path d="M 1495 1126 C 1495 1000, 1300 780, 1120 716" marker-end="url(#arrowPurple)"/>
+    <path d="M 1700 1126 C 1720 1100, 1700 1070, 1697 1046" marker-end="url(#arrowPurple)"/>
+  </g>
+  <text x="1400" y="960" font-size="17" fill="#6a4fa3" font-style="italic">tighten or relax gates</text>
+  <text x="1790" y="1094" font-size="17" fill="#6a4fa3" font-style="italic" text-anchor="middle">build gaps</text>
+
+  <!-- ═══════════ FOOTER: enforcement stack ═══════════ -->
+  <rect x="240" y="1370" width="1610" height="140" rx="12" fill="#fafafa" stroke="#999" stroke-width="2"/>
+  <text x="270" y="1412" font-size="22" font-weight="bold" fill="#123">Enforcement stack — every rule lives at the lowest layer that can hold it</text>
+  <g font-size="19" fill="#345">
+    <text x="270" y="1450"><tspan font-weight="bold" fill="#0a3">L0 scripts &amp; hooks</tspan> — freshness, structure, ledger validation, status parsing (zero tokens, zero drift)</text>
+    <text x="270" y="1482"><tspan font-weight="bold" fill="#06c">L1 structured artifacts</tspan> — AC-IDs · TD/PD records · seeds · ledgers (pulled on demand)   ·   <tspan font-weight="bold" fill="#a40">L2 prose</tspan> — one ~1.1k-token core contract + role packs (heaviest chain ≈ 5.4k tokens)</text>
+  </g>
+</svg>
