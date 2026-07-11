@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Make the applicable project `AGENTS.md` target language mandatory across every opc-develop
+  artifact, review, report, conversation, and human-readable ledger value. Reviewers now block
+  mismatched artifact/report language; only parser-required tokens and identifiers remain in
+  their normative spelling.
+
 ## 0.3.0 - 2026-07-08
 
 ATDD restructuring driven by a live-project retro: acceptance now flows AC → TC → skeleton →

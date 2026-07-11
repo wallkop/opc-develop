@@ -5,6 +5,9 @@ Every artifact gate follows the same anatomy, parameterized by a rubric file.
 ## Anatomy
 
 1. **L0 precheck (scripts, before any subagent):**
+   - Read the applicable project `AGENTS.md` and resolve its mandatory target language per
+     `shared/core-contract.md`. Artifact or report prose in another language returns to the
+     creator before review; fixed machine tokens and identifiers are exempt.
    - `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/validate_artifacts.py" <artifact>` — structure,
      required sections, AC-ID integrity.
    - `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/check_freshness.py" <upstream-review>`
@@ -40,6 +43,8 @@ round) inherit the outer counter; do not stack counters.
 ## Reviewer Conduct
 
 - Judge the artifact against the rubric and upstream artifacts, not against effort or intent.
+- Read the applicable project `AGENTS.md` before judging prose. A mismatch with its target
+  language is blocking, including review findings and rendered human reports.
 - Do not edit any artifact. Report findings; the creator fixes.
 - Cite evidence (file, line, AC-ID) for every blocking finding.
 - An empty findings list with `Issues Found`, or findings with `Approved`, is malformed — pick one.

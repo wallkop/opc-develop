@@ -26,6 +26,10 @@ Acceptance signals           observable outcomes that mean "it worked"
 
 ## Rules
 
+- Localize every ordinary heading and prose block to the target language resolved from project
+  `AGENTS.md`; keep only identifiers and parser-required tokens unchanged. Template headings are
+  semantic section names, not mandatory English display text.
+
 - Original wording is preserved; clarifications append, history is not rewritten.
 - Scope gate: if the request spans independently shippable subsystems, split into separate
   features before writing this file.

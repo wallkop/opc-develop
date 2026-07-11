@@ -57,8 +57,21 @@ The ledger is the substrate for `retro`; unrecorded events are invisible to impr
 
 ## Language
 
-Adapt conversational output and generated artifacts to the user's language. Normative suite text,
-status tokens, ledger fields, and label vocabulary stay in English exactly as written.
+Before writing or reviewing any artifact, read the applicable project `AGENTS.md` files from the
+repository root down to the artifact's scope. If they declare a target language, that language is
+mandatory for conversation, generated artifacts, review findings, rendered reports, and
+human-readable ledger values. A template, existing example, upstream artifact, or the language of
+this suite never overrides the project's declared target language.
+
+Language resolution order is strict: applicable `AGENTS.md` target language → explicit project
+language rule → user's language for this feature → language of the surrounding artifact. If no
+rule can be found, use the user's language. Reviewers treat a target-language mismatch as a
+blocking finding and may not return `Approved` until it is fixed.
+
+Only machine-parsed tokens and identifiers remain in their normative form: status tokens,
+`Reviewed-SHA`, ledger keys, AC/TC/PD/TD IDs, commands, paths, code identifiers, evidence labels,
+and protocol vocabulary whose parser requires the original spelling. Do not use these exceptions
+to leave ordinary headings, prose, Given/When/Then content, findings, or reports untranslated.
 
 ## Isolation
 

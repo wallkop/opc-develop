@@ -33,6 +33,9 @@ Non-goals                             inherited from requirement.md plus PRD-lev
 
 ## Rules
 
+- Localize all ordinary headings and prose to the target language resolved from project
+  `AGENTS.md`. The English headings in this template describe semantic sections, not mandatory
+  display strings. Keep PD/AC IDs and parser-required tokens unchanged.
 - Every downstream artifact (technical, impl-contract, testcases, reviews, acceptance report)
   references ACs by ID and never restates their text.
 - An AC that cannot be verified black-box is a spec detail, not an AC — move it to the appendix.

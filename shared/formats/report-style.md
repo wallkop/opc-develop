@@ -32,6 +32,10 @@ feature branch so a reviewer opens it from disk with no tooling.
 
 ## Rules
 
+- Read the applicable project `AGENTS.md` before rendering. All ordinary report headings,
+  navigation, labels, summaries, and source-derived prose must use its declared target language;
+  only normative machine tokens and identifiers may remain unchanged. A mixed-language report
+  that violates the project rule is not ready for its human touchpoint.
 - The HTML is never the review target: gate reviewers read the markdown, and `Reviewed-SHA`
   lines reference the markdown. Divergence between the two is presentation drift — regenerate
   from the md; never hand-edit the HTML.

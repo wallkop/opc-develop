@@ -42,6 +42,9 @@ Schema changes                        migrations forward + rollback note
 
 ## Rules
 
+- Localize every ordinary heading and prose block to the target language resolved from project
+  `AGENTS.md`; keep TD/AC IDs, reversibility tags, commands, paths, and parser-required tokens
+  unchanged. Template headings are semantic section names, not mandatory English display text.
 - Exactly one committed route. Alternatives live in decision records' Options, not as parallel maybes.
 - Every `[ONE-WAY]` record requires explicit human approval at the architecture sign-off touchpoint.
 - Public contracts here are the single source of truth; impl-contracts reference, never redefine.

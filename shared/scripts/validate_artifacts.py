@@ -23,7 +23,9 @@ from pathlib import Path
 
 AC_ACTIVE_RE = re.compile(r"^(?:[-*]\s*)?(AC-\d+)\s*:", re.M)
 AC_STRUCK_RE = re.compile(r"^(?:[-*]\s*)?~~\s*(AC-\d+)", re.M)
-AC_SECTION_RE = re.compile(r"^## Acceptance Criteria\s*$(.*?)(?=^## |\Z)", re.M | re.S)
+AC_SECTION_RE = re.compile(
+    r"^## (?:Acceptance Criteria|验收标准|验收条件)\s*$(.*?)(?=^## |\Z)", re.M | re.S
+)
 AC_REF_RE = re.compile(r"\bAC-\d+\b")
 TD_RE = re.compile(r"^(?:#{2,3}\s+)?(TD-\d+)\s*:.*?\[(ONE-WAY|one-way|two-way)\]", re.M)
 TD_ANY_RE = re.compile(r"^(?:#{2,3}\s+)?(TD-\d+)\s*:", re.M)
@@ -32,21 +34,21 @@ REVIEWED_RE = re.compile(r"^Reviewed-SHA:\s+\S+\s+[0-9a-f]{7,40}\s*$", re.M)
 
 
 def check_requirement(text: str, findings: list[str]) -> None:
-    if "## Decision Summary" not in text:
-        findings.append("missing '## Decision Summary' section")
+    if not any(section in text for section in ("## Decision Summary", "## 决策摘要")):
+        findings.append("missing decision-summary section ('Decision Summary' / '决策摘要')")
     lines = len(text.splitlines())
     if lines > 150:
         findings.append(f"requirement.md is {lines} lines (cap 150) — move detail out")
-    if "Risk profile" not in text and "risk profile" not in text:
+    if not any(marker in text for marker in ("Risk profile", "risk profile", "风险概况", "风险画像")):
         findings.append("no risk profile recorded")
 
 
 def check_prd(text: str, findings: list[str]) -> None:
-    if "## Decision Sheet" not in text:
-        findings.append("missing '## Decision Sheet' section")
+    if not any(section in text for section in ("## Decision Sheet", "## 决策表")):
+        findings.append("missing decision-sheet section ('Decision Sheet' / '决策表')")
     section = AC_SECTION_RE.search(text)
     if not section:
-        findings.append("missing '## Acceptance Criteria' section")
+        findings.append("missing acceptance-criteria section ('Acceptance Criteria' / '验收标准' / '验收条件')")
         return
     # AC definitions only count inside the AC section; struck-through lines are retired ids
     body = section.group(1)
@@ -67,9 +69,14 @@ def check_prd(text: str, findings: list[str]) -> None:
 
 
 def check_technical(text: str, findings: list[str]) -> None:
-    for section in ("## Decision Records", "## Public Contracts", "## Runtime Evidence Plan"):
-        if section not in text:
-            findings.append(f"missing '{section}' section")
+    required_sections = (
+        (("## Decision Records", "## 决策记录"), "decision records / 决策记录"),
+        (("## Public Contracts", "## 公共契约"), "public contracts / 公共契约"),
+        (("## Runtime Evidence Plan", "## 运行时证据计划"), "runtime evidence plan / 运行时证据计划"),
+    )
+    for aliases, label in required_sections:
+        if not any(section in text for section in aliases):
+            findings.append(f"missing '{label}' section")
     tds = TD_ANY_RE.findall(text)
     tagged = {m[0] for m in TD_RE.findall(text)}
     untagged = [td for td in tds if td not in tagged]
@@ -86,9 +93,14 @@ def check_contract(text: str, findings: list[str], name: str) -> None:
         if "Integration steps" not in text:
             findings.append("index.md missing integration steps")
         return
-    for section in ("## Boundary", "## TDD Seed", "## Done Means"):
-        if section not in text:
-            findings.append(f"missing '{section}' section")
+    required_sections = (
+        (("## Boundary", "## 边界"), "Boundary / 边界"),
+        (("## TDD Seed", "## TDD 种子"), "TDD Seed / TDD 种子"),
+        (("## Done Means", "## 完成标准"), "Done Means / 完成标准"),
+    )
+    for aliases, label in required_sections:
+        if not any(section in text for section in aliases):
+            findings.append(f"missing '{label}' section")
     if not AC_REF_RE.search(text):
         findings.append("contract references no AC ids")
 

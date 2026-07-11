@@ -244,6 +244,15 @@ class TestValidateArtifacts(unittest.TestCase):
             prd.write_text("# PRD\n\nno sections\n")
             self.assertEqual(run("validate_artifacts.py", str(prd)).returncode, 1)
 
+    def test_prd_chinese_sections(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            prd = Path(tmp) / "prd.md"
+            prd.write_text(
+                "# 产品需求文档\n\n## 决策表\n内容\n\n## 验收标准\n"
+                "AC-1: 用户可以看到结果\nAC-2: 未授权用户被拒绝\n\n## 附录\n"
+            )
+            self.assertEqual(run("validate_artifacts.py", str(prd)).returncode, 0)
+
     def test_prd_ac_section_scoping_and_struck(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             prd = Path(tmp) / "prd.md"
@@ -297,6 +306,15 @@ class TestValidateArtifacts(unittest.TestCase):
             res = run("validate_artifacts.py", str(tech))
             self.assertEqual(res.returncode, 1)
             self.assertIn("reversibility", res.stderr)
+
+    def test_technical_chinese_sections(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tech = Path(tmp) / "technical.md"
+            tech.write_text(
+                "# 技术方案\n\n## 决策记录\nTD-1: 选择现有存储 [two-way]\n说明\n\n"
+                "## 公共契约\n接口\n\n## 运行时证据计划\n日志\n"
+            )
+            self.assertEqual(run("validate_artifacts.py", str(tech)).returncode, 0)
 
     def test_contract_ac_cross_check(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

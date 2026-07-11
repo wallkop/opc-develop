@@ -22,6 +22,9 @@ Then   <the observable outcome: the response or UI, and the state that must hold
 
 ## Rules
 
+- Localize headings, labels, Given/When/Then keywords, and all ordinary prose to the target
+  language resolved from project `AGENTS.md`. Keep TC/AC IDs, `level`, named seeds, commands, and
+  parser-required tokens unchanged.
 - TC-IDs are never renumbered — retired cases are struck through, new ones appended (same rule
   as ACs). Downstream artifacts reference TC-IDs and never restate case text.
 - Every non-struck AC has ≥1 TC; every TC references ≥1 existing AC.
