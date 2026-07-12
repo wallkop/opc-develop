@@ -12,6 +12,7 @@ The harness is executable capability, not documentation. Docs index; scripts pro
 
 - `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/harness-verbs.md`
+- `${CLAUDE_PLUGIN_ROOT}/shared/formats/report-style.md`
 
 ## Process
 
@@ -26,7 +27,8 @@ The harness is executable capability, not documentation. Docs index; scripts pro
    never score `drive` ≥4 without named seeds; never score any verb 4.5+ from plans or partial
    evidence; cap 3.5 overall when mocks/fixtures touch real secrets or production data.
 3. Report per verb: score, evidence of what was executed, the label caps current gaps impose,
-   and the top 3 highest-leverage builds.
+   and the top 3 highest-leverage builds. Write machine JSON/markdown truth and render/lint the
+   same-basename plain-language HTML companion.
 
 ### Build (default when asked to initialize or improve)
 

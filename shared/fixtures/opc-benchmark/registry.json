@@ -1,0 +1,44 @@
+{
+  "schema_version": "opc-benchmark-registry-v1",
+  "cases": [
+    {
+      "schema_version": "opc-benchmark-case-v1",
+      "id": "OPC-SYN-STDERR",
+      "title": "child stderr must be consumed",
+      "provenance": {"source": "synthetic lifecycle incident"},
+      "initial_state": {"child": "writes beyond pipe capacity"},
+      "task": {"instruction": "finish the child process without deadlock"},
+      "ground_truth": {"expected_detection_stage": "unit", "must_detect": ["stderr pipe deadlock"]},
+      "profiles": [{"id": "fake", "kind": "fake", "fidelity": "fake", "verification": {
+        "good": {"command": ["python3", "shared/fixtures/opc-benchmark/synthetic_cases.py", "stderr"], "expected_exit": 0},
+        "bad": {"command": ["python3", "shared/fixtures/opc-benchmark/synthetic_cases.py", "stderr", "--bad"], "expected_exit": 1}
+      }}]
+    },
+    {
+      "schema_version": "opc-benchmark-case-v1",
+      "id": "OPC-SYN-APPROVAL",
+      "title": "decline must end an approval wait",
+      "provenance": {"source": "synthetic event-stream incident"},
+      "initial_state": {"events": ["approval_required", "decline"]},
+      "task": {"instruction": "terminate the turn after decline"},
+      "ground_truth": {"expected_detection_stage": "unit", "must_detect": ["missing terminal event"]},
+      "profiles": [{"id": "fake", "kind": "fake", "fidelity": "fake", "verification": {
+        "good": {"command": ["python3", "shared/fixtures/opc-benchmark/synthetic_cases.py", "approval"], "expected_exit": 0},
+        "bad": {"command": ["python3", "shared/fixtures/opc-benchmark/synthetic_cases.py", "approval", "--bad"], "expected_exit": 1}
+      }}]
+    },
+    {
+      "schema_version": "opc-benchmark-case-v1",
+      "id": "OPC-SYN-DELETE",
+      "title": "external project delete only removes the binding",
+      "provenance": {"source": "synthetic irreversible-risk incident"},
+      "initial_state": {"external_repo": "temporary directory with sentinel"},
+      "task": {"instruction": "delete the project record without deleting the external repo"},
+      "ground_truth": {"expected_detection_stage": "api", "must_detect": ["external sentinel deleted"]},
+      "profiles": [{"id": "fixture", "kind": "fixture", "fidelity": "fixture", "verification": {
+        "good": {"command": ["python3", "shared/fixtures/opc-benchmark/synthetic_cases.py", "delete"], "expected_exit": 0},
+        "bad": {"command": ["python3", "shared/fixtures/opc-benchmark/synthetic_cases.py", "delete", "--bad"], "expected_exit": 1}
+      }}]
+    }
+  ]
+}

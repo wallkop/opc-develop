@@ -89,6 +89,147 @@ class TestLedger(unittest.TestCase):
             res = run("opc_ledger.py", "append", "--ledger", str(ledger), "--json", json.dumps(bad))
             self.assertEqual(res.returncode, 1)
 
+    def test_span_usage_delta_and_json_summary(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            ledger = root / "ledger.jsonl"
+            usage = root / "usage.json"
+            usage.write_text(json.dumps({"session_id": "s1", "usage": {"input_tokens": 100, "output_tokens": 10, "total_tokens": 110}}))
+            started = run("opc_ledger.py", "span-start", "--repo", str(root), "--ledger", str(ledger),
+                          "--usage-source", "normalized", "--usage-input", str(usage),
+                          "--json", json.dumps({"type": "gate", "gate": "prd", "status": "Approved", "rounds": 1}))
+            self.assertEqual(started.returncode, 0, started.stderr)
+            span = json.loads(started.stdout)["span_id"]
+            usage.write_text(json.dumps({"session_id": "s1", "usage": {"input_tokens": 160, "output_tokens": 25, "total_tokens": 185}}))
+            ended = run("opc_ledger.py", "span-end", "--repo", str(root), "--span", span,
+                        "--usage-source", "normalized", "--usage-input", str(usage), "--json", "{}")
+            self.assertEqual(ended.returncode, 0, ended.stderr)
+            entry = json.loads(ledger.read_text())
+            self.assertEqual(entry["token_usage"]["total_tokens"], 75)
+            self.assertIn("wall_secs", entry)
+            summary = run("opc_ledger.py", "summary", "--ledger", str(ledger), "--json")
+            self.assertEqual(json.loads(summary.stdout)["phases"]["prd"]["tokens"], 75)
+
+    def test_v2_audit_rejects_missing_evidence_label(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "ledger.jsonl"
+            ledger.write_text(json.dumps({"schema_version": "opc-ledger-v2", "type": "evidence", "ac": "AC-1"}) + "\n")
+            result = run("opc_ledger.py", "audit", "--ledger", str(ledger))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("evidence", result.stdout)
+
+
+class TestUsage(unittest.TestCase):
+    def test_codex_snapshot_uses_latest_cumulative_event(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            session = Path(tmp) / "rollout-thread-1.jsonl"
+            session.write_text("\n".join([
+                json.dumps({"type": "session_meta", "payload": {"session_id": "s1"}}),
+                json.dumps({"type": "event_msg", "payload": {"type": "token_count", "info": {"total_token_usage": {"input_tokens": 10, "output_tokens": 2, "total_tokens": 12}}}}),
+                json.dumps({"type": "event_msg", "payload": {"type": "token_count", "info": {"total_token_usage": {"input_tokens": 20, "output_tokens": 5, "total_tokens": 25}}}}),
+            ]) + "\n")
+            code = ("from pathlib import Path; from opc_usage import read_codex_usage; "
+                    f"import json; print(json.dumps(read_codex_usage(Path({str(session)!r}))))")
+            proc = subprocess.run([sys.executable, "-c", code], cwd=SCRIPTS, capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertEqual(json.loads(proc.stdout)["usage"]["total_tokens"], 25)
+
+
+class TestBenchmark(unittest.TestCase):
+    def _registry(self, root: Path, bad_command: list[str]) -> Path:
+        registry = root / "registry.json"
+        registry.write_text(json.dumps({"cases": [{
+            "schema_version": "opc-benchmark-case-v1", "id": "OPC-TEST", "title": "detect bad variant",
+            "provenance": {"source": "synthetic"}, "initial_state": {}, "task": {"instruction": "test"},
+            "ground_truth": {"expected_detection_stage": "unit"},
+            "profiles": [{"id": "fixture", "kind": "fixture", "fidelity": "fixture", "verification": {
+                "good": {"command": [sys.executable, "-c", "raise SystemExit(0)"], "expected_exit": 0},
+                "bad": {"command": bad_command, "expected_exit": 1}
+            }}]
+        }]}))
+        return registry
+
+    def test_green_red_green_and_html_report(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = self._registry(root, [sys.executable, "-c", "raise SystemExit(1)"])
+            out = root / "out"
+            result = run("opc_benchmark.py", "run", str(registry), "--repo", str(root), "--out", str(out))
+            self.assertEqual(result.returncode, 0, result.stderr)
+            report = json.loads((out / "report.json").read_text())
+            self.assertTrue(report["runs"][0]["cleanup_ok"])
+            self.assertTrue((out / "report.html").exists())
+
+    def test_vacuous_bad_variant_fails_benchmark(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = self._registry(root, [sys.executable, "-c", "raise SystemExit(0)"])
+            result = run("opc_benchmark.py", "run", str(registry), "--repo", str(root))
+            self.assertEqual(result.returncode, 1)
+
+    def test_bundled_synthetic_incidents(self) -> None:
+        registry = SCRIPTS.parent / "fixtures" / "opc-benchmark" / "registry.json"
+        result = run("opc_benchmark.py", "run", str(registry), "--repo", str(SCRIPTS.parent.parent))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(json.loads(result.stdout)["runs"]), 3)
+
+    def test_historical_refs_run_bad_and_good_in_temporary_worktrees(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"; repo.mkdir()
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.email", "opc@example.invalid"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "OPC Test"], cwd=repo, check=True)
+            check = repo / "check.py"; state = repo / "state.txt"
+            check.write_text("from pathlib import Path\nraise SystemExit(0 if Path('state.txt').read_text() == 'good' else 1)\n")
+            state.write_text("bad"); subprocess.run(["git", "add", "."], cwd=repo, check=True); subprocess.run(["git", "commit", "-qm", "bad"], cwd=repo, check=True)
+            bad_ref = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
+            state.write_text("good"); subprocess.run(["git", "commit", "-qam", "good"], cwd=repo, check=True)
+            good_ref = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
+            registry = repo / "registry.json"
+            registry.write_text(json.dumps({"cases": [{"schema_version": "opc-benchmark-case-v1", "id": "HIST", "title": "history", "provenance": {}, "initial_state": {}, "task": {}, "ground_truth": {}, "profiles": [{"id": "history", "kind": "historical_ref", "fidelity": "local_service", "good_ref": good_ref, "bad_ref": bad_ref, "verification": {"good": {"command": [sys.executable, "check.py"], "expected_exit": 0}, "bad": {"command": [sys.executable, "check.py"], "expected_exit": 1}}}]}]}))
+            subprocess.run(["git", "add", "registry.json"], cwd=repo, check=True); subprocess.run(["git", "commit", "-qm", "registry"], cwd=repo, check=True)
+            result = run("opc_benchmark.py", "run", str(registry), "--repo", str(repo))
+            self.assertEqual(result.returncode, 0, result.stderr)
+            worktrees = subprocess.run(["git", "worktree", "list", "--porcelain"], cwd=repo, capture_output=True, text=True, check=True).stdout
+            self.assertEqual(worktrees.count("worktree "), 1)
+
+    def test_mutation_patch_is_killed_and_restored(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"; repo.mkdir()
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.email", "opc@example.invalid"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "OPC Test"], cwd=repo, check=True)
+            (repo / "state.txt").write_text("good\n")
+            (repo / "check.py").write_text("from pathlib import Path\nraise SystemExit(0 if Path('state.txt').read_text().strip() == 'good' else 1)\n")
+            subprocess.run(["git", "add", "."], cwd=repo, check=True); subprocess.run(["git", "commit", "-qm", "good"], cwd=repo, check=True)
+            (repo / "state.txt").write_text("bad\n")
+            patch = subprocess.run(["git", "diff", "--", "state.txt"], cwd=repo, capture_output=True, text=True, check=True).stdout
+            subprocess.run(["git", "checkout", "--", "state.txt"], cwd=repo, check=True)
+            (repo / "mutation.patch").write_text(patch)
+            registry = repo / "registry.json"
+            registry.write_text(json.dumps({"cases": [{"schema_version": "opc-benchmark-case-v1", "id": "MUT", "title": "mutation", "provenance": {}, "initial_state": {}, "task": {}, "ground_truth": {}, "profiles": [{"id": "mutation", "kind": "mutation", "fidelity": "mutation", "patch": "mutation.patch", "verification": {"good": {"command": [sys.executable, "check.py"], "expected_exit": 0}, "bad": {"command": [sys.executable, "check.py"], "expected_exit": 1}}}]}]}))
+            result = run("opc_benchmark.py", "run", str(registry), "--repo", str(repo))
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual((repo / "state.txt").read_text(), "good\n")
+
+
+class TestHumanReport(unittest.TestCase):
+    def test_chinese_report_requires_plain_sections_and_term_annotation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); source = root / "retro.md"; output = root / "retro.html"
+            terms = SCRIPTS.parent / "formats" / "report-terms.json"
+            source.write_text("# 复盘\n\n## 结论\nGT 没通过。\n\n## 对用户意味着什么\n会漏问题。\n\n## 证据\n测试失败。\n\n## 下一步\n修复。\n")
+            render = run("render_report.py", "render", str(source), "--out", str(output))
+            self.assertEqual(render.returncode, 0, render.stderr)
+            lint = run("render_report.py", "lint", str(source), "--html", str(output), "--terms", str(terms))
+            self.assertEqual(lint.returncode, 1)
+            self.assertIn("GT", lint.stdout)
+            source.write_text(source.read_text().replace("GT 没通过", "GT（机器判定结果对不对的标准）没通过"))
+            run("render_report.py", "render", str(source), "--out", str(output))
+            lint = run("render_report.py", "lint", str(source), "--html", str(output), "--terms", str(terms))
+            self.assertEqual(lint.returncode, 0, lint.stdout)
+
 
 class TestReviewStatus(unittest.TestCase):
     def _write(self, tmp: str, body: str) -> Path:

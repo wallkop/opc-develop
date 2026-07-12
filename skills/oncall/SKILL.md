@@ -15,6 +15,7 @@ the log chain and state that prove it, no fix without a covering test.
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/harness-verbs.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/evidence.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/decision-protocol.md`
+- `${CLAUDE_PLUGIN_ROOT}/shared/formats/report-style.md`
 - On hotfix: `${CLAUDE_PLUGIN_ROOT}/shared/packs/release-ops.md`
 
 ## Process
@@ -31,6 +32,8 @@ the log chain and state that prove it, no fix without a covering test.
    cause with the evidence chain (log lines, queries, commits), contributing factors, and the
    options considered. No root cause ⇒ say so explicitly and record the leading hypotheses with
    what would confirm each.
+   Render and lint the same-basename `.html`. Lead with conclusion, user impact, evidence and next
+   action; explain specialist terms beside their first occurrence.
 4. **Decide the path** (five-piece set to the human when contested):
    - **rollback** — hand to `deploy`'s rollback path; fastest when the trigger is a recent release;
    - **hotfix (expedited path)** — minimal fix on a hotfix branch per project flow, RED/GREEN
@@ -41,6 +44,8 @@ the log chain and state that prove it, no fix without a covering test.
 5. **Always, after stabilization**:
    - append the root cause to `docs/opc/error-ledger.jsonl` (tag it — incidents feed `retro`'s
      recurrence detection like any other failure);
+   - for P0/P1, irreversible-risk, false-green, or recurring incidents, link a project benchmark
+     case proving GREEN → RED → GREEN, or record a human-approved waiver;
    - write the long-term fix proposal: what structural change prevents the class, sized as a
      `lite` task or routed to `brainstorm`/`architect` as a feature; link it in the report;
    - record any harness gap the investigation exposed (missing correlation ID, missing dump,

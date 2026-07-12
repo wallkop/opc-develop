@@ -34,8 +34,9 @@ judgment — the PM in a duo, the builder solo. Ends with a pushed branch anothe
    build.
 4. Gate the PRD + testcases together (fresh reviewer, `rubrics/prd.md`, L0 precheck via
    `validate_artifacts.py`). Fix-and-re-gate until Approved. Ledger each round.
-5. **Product sign-off touchpoint**: render `reports/prd.html` and `reports/testcases.html` per
-   `report-style.md` and present the decision sheet plus the testcase coverage map to the product
+5. **Product sign-off touchpoint**: write faithful plain-language `reports/prd.md` and
+   `reports/testcases.md` summaries with source artifact SHAs, render/lint their `.html` companions
+   per `report-style.md`, and present the decision sheet plus testcase coverage map to the product
    owner. Two-way doors were decided and logged; `[ONE-WAY]` PD records need an explicit yes.
    Feedback routes tune/revise/park.
 6. **Handoff**: commit the feature artifacts and push the feature branch. Print a handoff

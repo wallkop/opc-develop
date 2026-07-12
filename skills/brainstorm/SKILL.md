@@ -41,7 +41,9 @@ judgment that is missing here.
    and a `gap` entry for any harness verb already known missing.
 8. Gate the requirement per `${CLAUDE_PLUGIN_ROOT}/shared/packs/gate-protocol.md` with
    `${CLAUDE_PLUGIN_ROOT}/shared/rubrics/requirement.md`.
-9. Human touchpoint: render `reports/requirement.html` per `formats/report-style.md`, then
+9. Human touchpoint: write the faithful plain-language summary `reports/requirement.md`, including
+   the requirement artifact SHA, then render/lint `reports/requirement.html` per `report-style.md`;
+   then
    present the decision summary (≤1 page) for confirmation. Their feedback routes as tune (fix
    wording/decisions here) or park; on tune, regenerate the report from the updated md.
 

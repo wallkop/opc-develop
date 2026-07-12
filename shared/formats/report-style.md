@@ -1,43 +1,41 @@
-# Human Review Reports (HTML)
+# Human Reports: HTML, Plain Language, Machine Truth
 
-Artifacts that a human reads at a touchpoint get a rendered HTML companion. The markdown stays
-the source of truth — gates hash and review the `.md`; the HTML is presentation only.
+Every report shown to a human has a self-contained HTML companion. Markdown or JSON stays the
+source of truth for hashes, gates, diffs, and automation; HTML is the required reading surface.
 
-## When
+## Required companions
 
-Generate or refresh the companion at every touchpoint that presents an artifact:
-
-| Artifact | Touchpoint |
+| Machine/artifact truth | Human report source and HTML |
 |---|---|
-| requirement.md | brainstorm decision-summary confirmation |
-| prd.md + testcases.md | product sign-off |
-| technical.md | architecture sign-off |
-| acceptance.md + release-manifest.md | ship test-acceptance |
+| feature requirement/prd/testcases/technical/acceptance | `reports/<name>.md` + `reports/<name>.html` |
+| retro JSON | `docs/opc/retro/<date>.md` + `.html` |
+| oncall evidence/incident facts | same-basename `.md` + `.html` under `docs/opc/incidents/` |
+| harness assessment JSON/evidence | same-basename `.md` + `.html` beside the machine source |
+| benchmark report.json | `report.html` in the benchmark report directory |
+| ship/deploy human handoff | feature report or same-basename HTML under `docs/opc/deploy/` |
 
-## Where
+JSONL, manifests, status tokens, IDs, and machine-only evidence are not converted to HTML.
+Feature report markdown is a faithful human summary, not a second product truth: it cites the
+artifact SHA and may simplify wording but may not add decisions or claims absent from the artifact.
 
-`docs/features/<slug>/reports/<artifact>.html` (e.g. `reports/prd.html`), committed with the
-feature branch so a reviewer opens it from disk with no tooling.
+## Plain-language contract
 
-## How
+Every Chinese report opens with these reader questions, using equivalent headings in other target
+languages: `结论`, `对用户意味着什么`, `证据`, and `下一步` or `需要决定什么`.
 
-- One self-contained file per artifact: inline CSS, no external assets, no build step.
-- Use the `frontend-design` skill when available to produce and keep one shared look across all
-  report types; otherwise follow the tokens below by hand.
-- Shared tokens: readable measure (~72ch), system font stack, generous whitespace; AC/TC/PD/TD
-  IDs rendered as monospace badges; the decision sheet first; a table of contents for anything
-  over two screens; color reserved for semantic states (one-way doors, blocking items, struck
-  entries) — never decoration.
-- Coverage maps render as tables; Given/When/Then render as labeled definition blocks, not code.
+Prefer short active sentences and business outcomes. Put implementation detail after the outcome.
+At the first use of a specialist term, explain it immediately: `GT（机器判定结果对不对的标准）`.
+Do not repeat the explanation later. Common terms live in `formats/report-terms.json`; project
+terms follow the same rule. A separate glossary does not satisfy first-use explanation.
 
-## Rules
+## Render and lint
 
-- Read the applicable project `AGENTS.md` before rendering. All ordinary report headings,
-  navigation, labels, summaries, and source-derived prose must use its declared target language;
-  only normative machine tokens and identifiers may remain unchanged. A mixed-language report
-  that violates the project rule is not ready for its human touchpoint.
-- The HTML is never the review target: gate reviewers read the markdown, and `Reviewed-SHA`
-  lines reference the markdown. Divergence between the two is presentation drift — regenerate
-  from the md; never hand-edit the HTML.
-- Regenerate whenever the source md changes after a gate (revise flows included).
-- Nothing appears in the HTML that is absent from the md.
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/render_report.py" render SOURCE.md --out REPORT.html --lang zh-CN
+python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/render_report.py" lint SOURCE.md --html REPORT.html \
+  --terms "${CLAUDE_PLUGIN_ROOT}/shared/formats/report-terms.json" --lang zh-CN
+```
+
+The HTML must contain inline CSS, no external assets, the target-language `lang`, and the SHA-256
+of its source. Regenerate after any source change. Nothing may contradict the source. Reviewers
+read markdown for correctness and HTML for human clarity.

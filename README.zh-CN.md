@@ -233,6 +233,25 @@ git pull --ff-only
 v0.1 的 feature 产物仍然可读；新 feature 使用 v0.2 格式。最大的行为变化：评审新鲜度
 改为基于 SHA 而非 mtime，项目文档缺失改为记录缺口而非阻塞，并行实现始终使用 worktree。
 
+## 可度量复盘与可执行事故记忆
+
+opc-develop 0.4 会把高价值故障压缩成项目内 Benchmark（把历史问题变成可重复实验）case。
+一个 case 只代表一个问题；fixture（最小数据样例）、fake（可控替身）、mutation（把历史
+缺陷精确注回代码）、本地服务和真实环境，是同一问题不同成本的复现方式。规则只有在
+“好版本通过 → 坏变体失败 → 恢复后再通过”后，才能标记为已验证。
+
+```bash
+python3 shared/scripts/opc_benchmark.py validate path/to/registry.json
+python3 shared/scripts/opc_benchmark.py run path/to/registry.json --profile auto --out .dev/opc-benchmark
+```
+
+gate（进入下一阶段前必须通过的检查）和 dispatch（把任务交给实现代理）会记录耗时；Codex
+可用时还会读取当前 session 的 token 增量。缺失数据会形成可追踪 gap，不会被估造成精确值。
+
+所有面向人的报告必须同时提供自包含 HTML。Markdown/JSON 继续作为机器真源；HTML 先讲
+结论、用户影响、证据和下一步。中文报告使用短句，晦涩术语第一次出现时紧邻解释，后续不
+重复解释。
+
 ## 发布与发现
 
 GitHub 是历史记录、tag、diff、issue 和 release note 的规范来源。各 marketplace 目录

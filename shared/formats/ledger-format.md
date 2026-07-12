@@ -27,8 +27,9 @@ Conventions:
   `RISK-PROFILE` for the brainstorm risk classification.
 - Any entry may carry an optional `actor` field (e.g. `"actor":"pm"`, `"actor":"architect"`) —
   use it in multi-person features so `retro` can attribute rework routing by role.
-- Any entry may carry optional cost fields `wall_secs` and `tokens_est` — record them on `gate`
-  and `dispatch` entries when known; they are `retro`'s telemetry-independent cost baseline.
+- Every new `gate` and `dispatch` uses `opc_ledger.py span-start` / `span-end`. `wall_secs` is
+  automatic. Exact usage goes in `token_usage` with `cost_source`; `tokens_est` is reserved for an
+  explicitly labeled fallback estimate. Missing usage stays missing and creates an observe gap.
 - `rework` entries carry an `id` (`RW-1`, `RW-2`, … per feature). A rework is **resolved** only
   by a later entry explicitly referencing it via `"resolves":["RW-1"]` (typically the fixing
   gate or evidence entry) — an unrelated Approved on the same layer does not close it. `ship`'s
@@ -53,6 +54,9 @@ debug resolution, gate rejection, acceptance rejection, mid-session human correc
 `tag` vocabulary (pick one): `env-assumption`, `api-misuse`, `stale-knowledge`,
 `missing-project-rule`, `spec-gap`, `test-blindspot`, `taste-misjudgment`, `harness-gap`.
 
+High-value resolved failures add `benchmark_case` and `benchmark_status`, or a human-approved
+`benchmark_waiver` with its reason.
+
 ## Crystallized rules — `docs/opc/rules.md` (project-wide)
 
 Written only by `retro` with human approval. Each rule records provenance and placement:
@@ -61,8 +65,12 @@ Written only by `retro` with human approval. Each rule records provenance and pl
 ## R-7: Always pass tz to datetime constructors
 Born from: error-ledger 2026-07-01, 2026-07-02 (2 recurrences, tag stale-knowledge)
 Enforced at: L0 — lint rule `no-naive-datetime` (preferred) | L2 — AGENTS.md line
-Status: active | retired <date> <reason>
+Status: proposed | approved | implemented | verified | active-unmeasured | effective | recurring |
+strengthened | retired
 ```
+
+`verified` requires a linked benchmark report proving GREEN → RED → GREEN. `active-unmeasured`
+means enforcement exists but no later observation window exists. No records is not zero recurrence.
 
 Retirement review: rules that never fire for 8 weeks, and all rules after a model major-version
 change, go back to the human as retirement candidates.

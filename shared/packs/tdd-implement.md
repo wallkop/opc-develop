@@ -16,6 +16,10 @@ implementer were not separated.
 Parallel dispatch ⇒ one worktree per implementer (see `branch-worktree.md`). No worktrees ⇒ serial
 dispatch. There is no third option; do not weigh "conflict risk" per case.
 
+Wrap every dispatch in a ledger cost span. Close it after controller verification and attach child
+session ids/usage when the host exposes them. Missing child usage is an `observe` gap, not a token
+estimate invented from prose length.
+
 ## Dispatch Context
 
 Each implementer receives: its impl-contract file path, the AC-IDs it owns, the declared level of

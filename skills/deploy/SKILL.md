@@ -15,6 +15,7 @@ no verified precondition, no deploy.
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/release-ops.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/evidence.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/branch-worktree.md`
+- `${CLAUDE_PLUGIN_ROOT}/shared/formats/report-style.md`
 
 ## Stages
 
@@ -49,7 +50,8 @@ Resume after the last `release` ledger entry with `result: ok`.
    stated window. Anomaly ⇒ the decision is rollback-first: propose the rollback path
    immediately, fix-forward only with the human's explicit choice.
 6. **close**: final ledger entries (stages, backups, evidence), residual gaps carried forward,
-   suggest `retro`.
+   suggest `retro`. Write the human handoff under `docs/opc/deploy/` as markdown truth plus a
+   rendered/linted HTML companion using plain language and first-use term explanations.
 
 ## Rework
 

@@ -37,7 +37,8 @@ The 80% path. Zero ceremony that doesn't pay for itself, same honesty rules.
    revise (widen scope → reclassify, possibly escalate) / park (discard cleanly).
 6. If a debugging session resolved a non-obvious root cause, append it to
    `docs/opc/error-ledger.jsonl` via `opc_ledger.py` — lite work is where repeated small mistakes
-   hide.
+   hide. P0/P1, false-green, irreversible-risk, or recurring failures also produce a project-local
+   benchmark case with the cheapest stable reproduction, or a human-approved waiver.
 7. Worktree cleanup per `branch-worktree.md` when one was used.
 
 ## Fail-open

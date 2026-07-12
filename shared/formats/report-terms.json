@@ -1,0 +1,11 @@
+{
+  "terms": [
+    {"name": "GT", "explanation": "机器判定结果对不对的标准"},
+    {"name": "gate", "explanation": "进入下一阶段前必须通过的检查"},
+    {"name": "Harness", "explanation": "让开发代理能启动、重置、观察和验收系统的工具链"},
+    {"name": "thin slice", "explanation": "先打通最短完整链路的小实验"},
+    {"name": "mutation", "explanation": "把历史缺陷精确注回代码，确认测试真的会失败"},
+    {"name": "trace", "explanation": "一次操作从入口到结果的完整运行轨迹"},
+    {"name": "cache", "explanation": "复用已有计算结果以减少时间和成本"}
+  ]
+}

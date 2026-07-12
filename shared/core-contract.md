@@ -55,6 +55,18 @@ JSON line to the feature ledger (`docs/features/<slug>/ledger.jsonl`) via `share
 Resolved failures also append root-cause records to `docs/opc/error-ledger.jsonl`.
 The ledger is the substrate for `retro`; unrecorded events are invisible to improvement.
 
+### Cost spans
+
+Every `gate` and `dispatch` is wrapped by `opc_ledger.py span-start` / `span-end`. The span records
+wall time and captures token deltas when the host exposes usage. Never invent missing usage: write
+`cost_source: wall-only`, record an `observe` gap for unmapped controller/subagent cost, and let
+retro cap the claim. New records use `opc-ledger-v2`; old JSONL remains readable.
+
+Resolved high-value failures (P0/P1, false-green gates, irreversible-risk bugs, or recurrences)
+must link a project-local OPC benchmark case or a human-approved waiver. One case is one problem;
+its profiles reproduce the same ground truth at different cost. A rule is not `verified` until its
+case proves GREEN → RED → GREEN.
+
 ## Language
 
 Before writing or reviewing any artifact, read the applicable project `AGENTS.md` files from the
@@ -72,6 +84,13 @@ Only machine-parsed tokens and identifiers remain in their normative form: statu
 `Reviewed-SHA`, ledger keys, AC/TC/PD/TD IDs, commands, paths, code identifiers, evidence labels,
 and protocol vocabulary whose parser requires the original spelling. Do not use these exceptions
 to leave ordinary headings, prose, Given/When/Then content, findings, or reports untranslated.
+
+## Human Reports
+
+Markdown/JSON remains the review and machine source of truth. Every output presented to a human as
+a report has a self-contained HTML companion generated and linted per `formats/report-style.md`.
+Reports lead with the conclusion and user impact. In Chinese, use short plain sentences; explain
+each specialist term beside its first occurrence and do not repeat the explanation.
 
 ## Isolation
 

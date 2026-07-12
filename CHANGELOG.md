@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0 - 2026-07-12
+
+- Add executable OPC benchmark cases with multiple cost/realism profiles for one historical
+  problem, mandatory GREEN → RED → GREEN proof, temporary-worktree mutation/historical replay,
+  machine JSON and plain-language HTML reports.
+- Add ledger v2 cost spans, automatic wall time, Codex session token deltas, normalized Claude
+  usage imports, cost audits and phase summaries while keeping legacy JSONL readable.
+- Close the retro loop with data-quality preflight, benchmark coverage for high-value incidents,
+  explicit rule lifecycle states, post-crystallization measurement, and honest missing-data gaps.
+- Require a self-contained HTML companion for every human report. Chinese reports lead with the
+  conclusion and user impact, and explain specialist terms beside their first occurrence.
+- Add project-agnostic compressed incident fixtures for child stderr deadlock, approval decline
+  termination, and external-directory deletion safety. Helper tests increase from 23 to 32.
+
 ## Unreleased
 
 - Make the applicable project `AGENTS.md` target language mandatory across every opc-develop

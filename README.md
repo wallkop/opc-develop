@@ -258,6 +258,32 @@ instead of blocking, and parallel implementation always uses worktrees.
 GitHub is the canonical source for history, tags, diffs, issues, and release notes. Marketplace
 directories are discovery surfaces that link back to this repository.
 
+## Measured Retro And Executable Incident Memory
+
+opc-develop 0.4 turns high-value failures into project-local benchmark cases. One case represents
+one problem; fixture, fake, mutation, local-service, and real profiles reproduce the same ground
+truth at different cost. The default runner chooses the cheapest stable profile. A rule is not
+verified until the correct version passes, the injected/historical bad version fails, and the
+restored correct version passes again.
+
+```bash
+python3 shared/scripts/opc_benchmark.py validate path/to/registry.json
+python3 shared/scripts/opc_benchmark.py run path/to/registry.json --profile auto --out .dev/opc-benchmark
+```
+
+Gate and dispatch cost spans record wall time and capture Codex token deltas when available:
+
+```bash
+python3 shared/scripts/opc_ledger.py span-start --ledger docs/features/1-x/ledger.jsonl \
+  --json '{"type":"gate","gate":"prd","status":"Approved","rounds":1}'
+python3 shared/scripts/opc_ledger.py span-end --span <span-id> --json '{}'
+```
+
+Every report presented to a human has a self-contained HTML companion. Markdown/JSON remains the
+machine truth; HTML leads with conclusion, user impact, evidence, and next action. Specialist terms
+are explained beside their first occurrence, with Chinese-first plain language when the project
+language is Chinese.
+
 ## Safety Notes
 
 This repository must not contain project-specific business artifacts, credentials, private logs,

@@ -13,6 +13,8 @@ Every artifact gate follows the same anatomy, parameterized by a rubric file.
    - `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/check_freshness.py" <upstream-review>`
      (once per upstream review) — upstream approvals still fresh. Stale upstream ⇒ stop, route
      per `feedback-routing.md`.
+   - Start a gate cost span with `opc_ledger.py span-start`; close it only after the final gate
+     record is known, including all review rounds.
    - Precheck failures return to the creator without spending a reviewer.
 2. **Fresh reviewer subagent** — prefer the `opc-reviewer` agent (read-only by tool restriction);
    otherwise a fresh isolated subagent primed with
@@ -48,6 +50,8 @@ round) inherit the outer counter; do not stack counters.
 - Do not edit any artifact. Report findings; the creator fixes.
 - Cite evidence (file, line, AC-ID) for every blocking finding.
 - An empty findings list with `Issues Found`, or findings with `Approved`, is malformed — pick one.
+- Before a human touchpoint, render and lint the HTML companion. Unexplained specialist terms,
+  buried conclusions, or target-language violations are blocking findings.
 
 ## Degraded Mode
 

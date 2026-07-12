@@ -21,6 +21,8 @@ This checklist tracks public distribution channels for opc-develop.
 
 ```bash
 python3 shared/scripts/test_opc_scripts.py
+python3 shared/scripts/opc_benchmark.py validate shared/fixtures/opc-benchmark/registry.json
+python3 shared/scripts/opc_benchmark.py run shared/fixtures/opc-benchmark/registry.json --repo .
 python3 -m json.tool .codex-plugin/plugin.json >/dev/null
 python3 -m json.tool .claude-plugin/plugin.json >/dev/null
 python3 -m json.tool .claude-plugin/marketplace.json >/dev/null

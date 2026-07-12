@@ -36,8 +36,9 @@ diff moved.
 4. **regression-test**: run the Tier-1 suite against the test environment; evidence triangles
    with test-env labels; smoke the documented signals. Failures here are triaged before any
    human is summoned.
-5. **acceptance-test (touchpoint)**: render `reports/acceptance.html` (acceptance sheet +
-   manifest summary) per `formats/report-style.md`, then hand the human the test-environment
+5. **acceptance-test (touchpoint)**: write `reports/acceptance.md` as a faithful plain-language
+   acceptance-sheet + manifest summary with source SHAs, render/lint `reports/acceptance.html` per
+   `formats/report-style.md`, then hand the human the test-environment
    entry point, the acceptance sheet, and the manifest. Route the verdict:
    - **Approved** → next stage.
    - **Code defect** → re-enter **`build`** (fix mode) with the rejection notes; after build

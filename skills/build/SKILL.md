@@ -41,7 +41,9 @@ contract → implement → locally deploy → verify. No human touchpoint; the o
    run the merged review gate (`rubrics/implementation.md`). Blocking issues → implementer →
    targeted re-review; 2-round stop-loss.
 6. Failures with unclear cause get debugging discipline; resolved root causes append to the
-   error ledger — resolution time is capture time.
+   error ledger — resolution time is capture time. P0/P1, false-green, irreversible-risk, and
+   recurring failures also link a project benchmark case (or a human-approved waiver) before the
+   affected gate can be considered closed.
 7. Integration steps from the contract index — including every `api`-level boundary skeleton the
    index names — then the final mock-residual audit when any prototype mock existed.
 

@@ -1,6 +1,6 @@
 {
   "name": "opc-develop",
-  "version": "0.3.0+codex.20260711160916",
+  "version": "0.4.0+codex.20260712033123",
   "description": "Loop-engineering product development suite: taste-first design flow (brainstorm/demo/design), contract-based TDD build, evidence-labeled black-box verify, ledger-driven retro, and executable harness capabilities",
   "author": {
     "name": "wallkop"
@@ -20,7 +20,7 @@
     "defaultPrompt": [
       "Use $lite to handle this small request on the current branch with targeted tests and before/after evidence.",
       "Use $brainstorm to grill this raw idea into a decision-first requirement with a numbered feature branch.",
-      "Use $retro to mine the ledgers and report token distribution, rework routing, and recurring errors with crystallization proposals."
+      "Use $retro to audit measured cost and data quality, replay compressed incident cases, verify rule effectiveness, and present a plain-language HTML report."
     ]
   }
 }

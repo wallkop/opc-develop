@@ -35,7 +35,8 @@ duo the architect was not in the room when the requirement and PRD were shaped.
    the architecture baseline; divergence is a `[ONE-WAY]` TD record.
 4. Gate it (fresh reviewer, `rubrics/technical.md`, L0 precheck). Fix-and-re-gate until
    Approved. Ledger each round.
-5. **Architecture sign-off touchpoint**: render `reports/technical.html` per
+5. **Architecture sign-off touchpoint**: write `reports/technical.md` as a faithful plain-language
+   summary with the technical artifact SHA, render/lint `reports/technical.html` per
    `formats/report-style.md`, then present the TD decision sheet to the human architect.
    Every `[ONE-WAY]` record needs an explicit yes; questions get evidence-backed answers or
    become decision-spikes. Feedback routes tune/revise/park; report regenerates with the md.
