@@ -133,6 +133,7 @@ as rework). Attribution is the agent's job; arbitration is yours.
 | `ship` | release manifest → test-env deploy → automated regression → test acceptance → merge to trunk | ⑤ test acceptance |
 | `deploy` | fail-closed production release: preflight, env changes with backups, deploy, prod-safe regression, watch | confirm every destructive step |
 | `oncall` | production diagnosis → report → rollback / expedited hotfix / mitigation → long-term proposal | choose the path |
+| `vibe` | fastest direct implementation: no tests or verification, human owns acceptance | inspect and accept the code |
 | `lite` | small/low-risk changes on the current branch, zero ceremony, bare-repo OK | quick before/after check |
 | `retro` | weekly loop report + rule crystallization + gate pruning proposals | approve rules and prunings |
 | `harness` | score the four verbs by executing; build gaps as scripts/seeds/conventions | — |
@@ -155,7 +156,7 @@ person just produced the PRD.
 
 ## Repository Layout
 
-- `skills/` — the 11 skills (each ≤ ~95 lines; detail lives in packs).
+- `skills/` — the 12 skills (each ≤ ~95 lines; detail lives in packs).
 - `shared/core-contract.md` — the one always-loaded contract: status tokens, evidence labels,
   feedback taxonomy, freshness, failure philosophy, ledger duty, isolation.
 - `shared/packs/` — nine on-demand rule packs (gate protocol, decision protocol, feedback
@@ -192,8 +193,9 @@ The full flow assumes a builder who owns product and architecture judgment, a pr
 test environment, and a harness that supports isolated subagents. You don't need any of that to
 start:
 
-1. Install the plugin and use **`lite`** for your daily small changes — it works on a bare repo,
-   on the current branch, with zero ceremony, and already gives you honest evidence habits.
+1. Use **`vibe`** when speed is the only priority and you will personally accept untested code.
+   Use **`lite`** for daily small changes when you still want targeted tests and honest evidence —
+   it works on a bare repo and on the current branch.
 2. Run **`harness`** once — it scores your project's run/reset/observe/drive capabilities by
    executing them and builds the highest-leverage gaps as scripts and seeds.
 3. Adopt the full flow when a feature deserves it. Everything else (ledgers, retro, the gate
@@ -207,7 +209,7 @@ start:
 claude --plugin-dir ~/plugins/opc-develop
 ```
 
-Invoke with the plugin namespace: `/opc-develop:brainstorm`, `/opc-develop:lite`,
+Invoke with the plugin namespace: `/opc-develop:brainstorm`, `/opc-develop:vibe`, `/opc-develop:lite`,
 `/opc-develop:retro`. Or register as a marketplace source — see
 [docs/claude-code.md](docs/claude-code.md).
 
@@ -245,6 +247,7 @@ Restart Claude Code / Codex or reload plugins afterwards.
 | `ship` | acceptance-rework, finish-branch, release-verify (test half) |
 | `deploy` | release-verify (production half) |
 | `oncall` | — (new) |
+| `vibe` | — (new in v0.4.1) |
 | `lite` | lite-develop |
 | `retro` | — (new) |
 | `harness` | harness-init, harness-eval |

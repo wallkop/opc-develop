@@ -1,0 +1,4 @@
+interface:
+  display_name: "vibe"
+  short_description: "Fastest coding with human-only acceptance"
+  default_prompt: "Use $vibe to implement this request immediately without writing or running tests; hand the result to me for manual acceptance."

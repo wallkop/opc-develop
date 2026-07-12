@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "opc-develop",
-      "description": "Loop-engineering product development suite: taste-first design flow (brainstorm/demo/design), contract-based TDD build, evidence-labeled black-box verify, ledger-driven retro, and executable harness capabilities",
-      "version": "0.4.0",
+      "description": "Product development suite from fastest human-accepted vibe coding to taste-first design, contract TDD, evidence-labeled verification, retro, and executable harness capabilities",
+      "version": "0.4.1",
       "source": "./",
       "author": {
         "name": "wallkop",

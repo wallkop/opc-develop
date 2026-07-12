@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1 - 2026-07-12
+
+- Add `vibe`, an explicit fastest-path skill that writes code directly without plans, tests,
+  automated verification, browser checks, or evidence artifacts; the human owns acceptance.
+- Keep destructive, production, security/permission, and irreversible data/schema actions behind
+  human approval even in vibe mode.
+- Document the new path in English and Chinese and expose it in Codex plugin prompts.
+
 ## 0.4.0 - 2026-07-12
 
 - Add executable OPC benchmark cases with multiple cost/realism profiles for one historical
