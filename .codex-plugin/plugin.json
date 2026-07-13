@@ -1,6 +1,6 @@
 {
   "name": "opc-develop",
-  "version": "0.5.0+codex.20260713090721",
+  "version": "0.5.1+codex.20260713094600",
   "description": "Budget-first product development with real core journeys, runnable increments, revision-bound evidence, and reviews that stop",
   "author": {
     "name": "wallkop"
@@ -18,9 +18,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use $vibe to implement this immediately without tests; I will perform the acceptance.",
-      "Use $lite to handle this small request on the current branch with targeted tests and before/after evidence.",
-      "Use $build to deliver this as one <=4-hour increment through a real core journey with a fresh acceptance receipt."
+      "Use $opc-develop:vibe to implement this immediately without tests; I will perform the acceptance.",
+      "Use $opc-develop:lite to handle this small request on the current branch with targeted tests and before/after evidence.",
+      "Use $opc-develop:build to deliver this as one <=4-hour increment through a real core journey with a fresh acceptance receipt."
     ]
   }
 }

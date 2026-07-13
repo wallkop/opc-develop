@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" font-family="Inter, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7fafc"/><stop offset="1" stop-color="#edf4f7"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#42606b"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-15%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#17333d" flood-opacity=".12"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1600" height="134" fill="#102d36"/>
+  <text x="70" y="66" font-size="42" font-weight="750" fill="#fff">OPC Develop v0.5.1</text>
+  <text x="70" y="104" font-size="23" fill="#bfe7df">Budget-first delivery · one real journey · revision-bound evidence</text>
+  <text x="1460" y="74" text-anchor="end" font-size="18" fill="#82cfc3">standard increment ≤ 4h</text>
+
+  <text x="70" y="184" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">ROUTE BY ELAPSED-TIME BUDGET</text>
+  <g filter="url(#shadow)">
+    <rect x="70" y="210" width="280" height="116" rx="18" fill="#fff" stroke="#d7e5e8"/>
+    <rect x="370" y="210" width="280" height="116" rx="18" fill="#fff" stroke="#d7e5e8"/>
+    <rect x="670" y="195" width="430" height="146" rx="20" fill="#d9f3ed" stroke="#5eb9aa" stroke-width="2"/>
+    <rect x="1120" y="210" width="410" height="116" rx="18" fill="#fff4db" stroke="#e9bd5a"/>
+  </g>
+  <text x="98" y="247" font-size="24" font-weight="700" fill="#17333d">Vibe</text>
+  <text x="98" y="279" font-size="18" fill="#536b73">Explicit human-only acceptance</text>
+  <text x="98" y="304" font-size="16" fill="#82949a">No implied verification</text>
+  <text x="398" y="247" font-size="24" font-weight="700" fill="#17333d">Lite · ≤ 60m</text>
+  <text x="398" y="279" font-size="18" fill="#536b73">One small result</text>
+  <text x="398" y="304" font-size="16" fill="#82949a">No feature artifacts or agents</text>
+  <text x="704" y="241" font-size="28" font-weight="780" fill="#0f4b43">Build · 1–4h</text>
+  <text x="704" y="276" font-size="19" fill="#2b635b">Default product increment</text>
+  <text x="704" y="307" font-size="16" fill="#4e746f">Quick class also covers release-bound hotfixes</text>
+  <text x="1150" y="247" font-size="24" font-weight="700" fill="#6d4b08">Split · &gt; 4h</text>
+  <text x="1150" y="279" font-size="18" fill="#745f36">Choose one useful increment</text>
+  <text x="1150" y="304" font-size="16" fill="#927d52">Stop before broad implementation</text>
+
+  <text x="70" y="398" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">STANDARD INCREMENT</text>
+  <g fill="#fff" stroke="#b8ced3" stroke-width="2" filter="url(#shadow)">
+    <rect x="70" y="430" width="180" height="100" rx="16"/>
+    <rect x="285" y="430" width="180" height="100" rx="16"/>
+    <rect x="500" y="430" width="180" height="100" rx="16"/>
+    <rect x="715" y="430" width="180" height="100" rx="16"/>
+    <rect x="930" y="430" width="180" height="100" rx="16"/>
+    <rect x="1145" y="430" width="180" height="100" rx="16"/>
+    <rect x="1360" y="430" width="170" height="100" rx="16"/>
+  </g>
+  <g stroke="#42606b" stroke-width="3" marker-end="url(#arrow)">
+    <path d="M250 480H280"/><path d="M465 480H495"/><path d="M680 480H710"/>
+    <path d="M895 480H925"/><path d="M1110 480H1140"/><path d="M1325 480H1355"/>
+  </g>
+  <g text-anchor="middle" fill="#17333d">
+    <text x="160" y="470" font-size="20" font-weight="700">Result card</text><text x="160" y="500" font-size="15">one outcome</text>
+    <text x="375" y="470" font-size="20" font-weight="700">Core RED</text><text x="375" y="500" font-size="15">real entry fails</text>
+    <text x="590" y="470" font-size="20" font-weight="700">Slice 1</text><text x="590" y="500" font-size="15">runnable ≤45m</text>
+    <text x="805" y="470" font-size="20" font-weight="700">Reality review</text><text x="805" y="500" font-size="15">cold + independent</text>
+    <text x="1020" y="470" font-size="20" font-weight="700">More slices</text><text x="1020" y="500" font-size="15">30–90m serially</text>
+    <text x="1235" y="470" font-size="20" font-weight="700">Final review</text><text x="1235" y="500" font-size="15">integration truth</text>
+    <text x="1445" y="470" font-size="20" font-weight="700">Receipt</text><text x="1445" y="500" font-size="15">fresh level</text>
+  </g>
+  <text x="70" y="570" font-size="16" fill="#60777f">Two review moments total · at most two repair rounds across both · one implementer and one reviewer at most</text>
+
+  <rect x="70" y="615" width="960" height="300" rx="24" fill="#102d36"/>
+  <text x="108" y="662" font-size="21" font-weight="700" fill="#bfe7df" letter-spacing="1.2">VERIFY CHEAP → EXPENSIVE</text>
+  <g font-size="19" fill="#fff">
+    <text x="112" y="715">1  Logic / build</text>
+    <text x="112" y="757">2  Local production assembly + scratch state</text>
+    <text x="112" y="799">3  Browser core journey for UI</text>
+    <text x="540" y="715">4  Saved provider-response replay</text>
+    <text x="540" y="757">5  One external provider canary</text>
+    <text x="540" y="799">6  Human acceptance</text>
+  </g>
+  <line x1="108" y1="835" x2="990" y2="835" stroke="#3e6069"/>
+  <text x="108" y="872" font-size="17" fill="#8fd8cd">UI proof = browser key action through the production assembly</text>
+  <text x="108" y="899" font-size="15" fill="#9fb9bf">Artifact hashes + object ID + trace ID + content-tree freshness</text>
+
+  <rect x="1060" y="615" width="470" height="300" rx="24" fill="#fff" stroke="#d7e5e8"/>
+  <text x="1098" y="662" font-size="21" font-weight="700" fill="#26434d" letter-spacing="1.2">OPT-IN DECISION TOOLS</text>
+  <g font-size="18" fill="#3d5962">
+    <circle cx="1110" cy="711" r="6" fill="#5eb9aa"/><text x="1130" y="718">Brainstorm — unresolved product intent</text>
+    <circle cx="1110" cy="754" r="6" fill="#5eb9aa"/><text x="1130" y="761">Demo — unresolved interaction taste</text>
+    <circle cx="1110" cy="797" r="6" fill="#5eb9aa"/><text x="1130" y="804">PRD — durable product contract</text>
+    <circle cx="1110" cy="840" r="6" fill="#5eb9aa"/><text x="1130" y="847">Architect — public / one-way boundary</text>
+  </g>
+  <text x="1098" y="886" font-size="16" fill="#7a8e95">Risk adds its matching check—not the full chain.</text>
+  <text x="70" y="963" font-size="15" fill="#70858c">Machine truth: feature-plan.md · acceptance.json · Reviewed-Revision · opc-ledger-v3</text>
+</svg>

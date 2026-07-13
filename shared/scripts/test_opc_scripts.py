@@ -11,6 +11,7 @@ import unittest
 from pathlib import Path
 
 SCRIPTS = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPTS.parents[1]
 
 
 def run(script: str, *args: str, cwd: Path | None = None) -> subprocess.CompletedProcess:
@@ -339,6 +340,50 @@ class TestHumanReport(unittest.TestCase):
             run("render_report.py", "render", str(source), "--out", str(output))
             lint = run("render_report.py", "lint", str(source), "--html", str(output), "--terms", str(terms))
             self.assertEqual(lint.returncode, 0, lint.stdout)
+
+
+class TestReadmeOnboardingContract(unittest.TestCase):
+    def test_architecture_routing_and_adoption_guides_remain_discoverable(self) -> None:
+        required_sections = {
+            "README.md": (
+                "## Who it is for",
+                "## System architecture",
+                "## Five-minute quick start",
+                "## Which skill does what",
+                "## Best practices",
+                "## New-project onboarding",
+                "## Existing-project adoption",
+                "assets/opc-develop-skills.png",
+                "assets/opc-develop-routing.png",
+            ),
+            "README.zh-CN.md": (
+                "## 适合谁",
+                "## 全景架构",
+                "## 5 分钟上手",
+                "## 哪个 skill 在什么场景做什么",
+                "## 最佳实践",
+                "## 新项目怎么落地",
+                "## 老项目怎么接入",
+                "assets/opc-develop-skills.zh-CN.png",
+                "assets/opc-develop-routing.zh-CN.png",
+            ),
+        }
+        for relative, markers in required_sections.items():
+            content = (REPO_ROOT / relative).read_text(encoding="utf-8")
+            for marker in markers:
+                with self.subTest(readme=relative, marker=marker):
+                    self.assertIn(marker, content)
+
+        for stem in (
+            "opc-develop-skills",
+            "opc-develop-skills.zh-CN",
+            "opc-develop-routing",
+            "opc-develop-routing.zh-CN",
+        ):
+            for suffix in (".svg", ".png"):
+                path = REPO_ROOT / "assets" / f"{stem}{suffix}"
+                with self.subTest(asset=path.name):
+                    self.assertTrue(path.is_file(), f"missing README diagram: {path}")
 
 
 class TestReviewStatus(unittest.TestCase):

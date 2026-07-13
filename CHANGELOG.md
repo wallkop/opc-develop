@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.1 - 2026-07-13
+
+- Restored the full system architecture map instead of replacing it with the v0.5 increment flow.
+- Kept the budget-first diagram as a separate routing aid with a distinct asset path and caption.
+- Rebuilt both READMEs around quick start, exact invocation, skill selection, scenario playbooks,
+  best practices, new-project onboarding, and gradual existing-project adoption.
+- Added a regression contract that fails when architecture/routing assets or core onboarding
+  sections disappear from either README.
+
 ## 0.5.0 - 2026-07-13
 
 Breaking default-flow change driven by a measured 38-hour false-green incident: standard work is
