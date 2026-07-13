@@ -1,70 +1,75 @@
 # Gate Protocol
 
-Every artifact gate follows the same anatomy, parameterized by a rubric file.
+Use one review protocol for standard-increment reviews and explicitly requested artifact gates.
 
-## Anatomy
+## L0 before reviewer time
 
-1. **L0 precheck (scripts, before any subagent):**
-   - Read the applicable project `AGENTS.md` and resolve its mandatory target language per
-     `shared/core-contract.md`. Artifact or report prose in another language returns to the
-     creator before review; fixed machine tokens and identifiers are exempt.
-   - `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/validate_artifacts.py" <artifact>` — structure,
-     required sections, AC-ID integrity.
-   - `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/check_freshness.py" <upstream-review>`
-     (once per upstream review) — upstream approvals still fresh. Stale upstream ⇒ stop, route
-     per `feedback-routing.md`.
-   - Start a gate cost span with `opc_ledger.py span-start`; close it only after the final gate
-     record is known, including all review rounds.
-   - Precheck failures return to the creator without spending a reviewer.
-2. **Fresh reviewer subagent** — prefer the `opc-reviewer` agent (read-only by tool restriction);
-   otherwise a fresh isolated subagent primed with
-   `${CLAUDE_PLUGIN_ROOT}/shared/prompts/reviewer.md`. Context given: the rubric for this artifact type
-   (`shared/rubrics/<type>.md`), the artifact itself, the upstream artifacts it must align with
-   (or their AC index), the diff when reviewing code. Context withheld: creator chat history,
-   creator reasoning, suspected issues, desired outcome, unrelated conversation.
-3. **Review record — chain of custody.** The **reviewer itself** writes
-   `docs/features/<slug>/reviews/<type>-review.md` (per-contract implementation reviews:
-   `reviews/C-XX-implementation-review.md`): findings, per-AC verdicts where applicable, one
-   status token, and one `Reviewed-SHA:` line per reviewed file (`git hash-object <file>`).
-   Writing its own review record is the one write the reviewer is allowed. The reviewer's final
-   returned text also states the status token.
-4. **Controller cross-check (no transcription).** The controller never writes or edits the
-   review file. It runs `parse_review_status.py` on the file and compares the parsed token with
-   the token in the reviewer's returned text — mismatch or missing file means the review did not
-   happen; escalate, don't repair. Then ledger via `opc_ledger.py`: gate type, status, rounds, SHA.
-5. **Routing.** `Issues Found` → creator fixes → targeted re-review of blocking issues and changed
-   regions only. Full re-review only when main semantics changed.
+1. Resolve the target language from applicable project `AGENTS.md`.
+2. Run `validate_artifacts.py` for the artifact. For a standard increment, validate
+   `feature-plan.md`, run `opc_increment.py check`, and audit its ledger. Reality review uses the
+   ordinary partial audit; final/ship uses `opc_ledger.py audit --require-increment-complete`.
+3. Verify upstream review freshness when an opt-in artifact depends on another artifact.
+4. Start one gate cost span. Close it only after the gate's initial review and repair rounds end.
+5. Return mechanical failures to the creator without spending reviewer context.
 
-## Stop-Loss
+## Reviewer isolation
 
-One counter, suite-wide: when the same blocking issue survives **2** repair rounds, stop. Write the
-unresolved issue to the ledger and escalate: route `revise` upstream if the artifact is the problem,
-or surface to the human if judgment is required. Nested loops (e.g. a failing test inside a review
-round) inherit the outer counter; do not stack counters.
+Start one fresh reviewer with `fork_turns: none` or an equivalent empty context. Give only:
 
-## Reviewer Conduct
+- the exact rubric;
+- project rules;
+- reviewed artifacts/plan and actual diff;
+- acceptance receipt and command outputs;
+- narrowly relevant upstream references.
 
-- Judge the artifact against the rubric and upstream artifacts, not against effort or intent.
-- Read the applicable project `AGENTS.md` before judging prose. A mismatch with its target
-  language is blocking, including review findings and rendered human reports.
-- Do not edit any artifact. Report findings; the creator fixes.
-- Cite evidence (file, line, AC-ID) for every blocking finding.
-- An empty findings list with `Issues Found`, or findings with `Approved`, is malformed — pick one.
-- Before a human touchpoint, render and lint the HTML companion. Unexplained specialist terms,
-  buried conclusions, or target-language violations are blocking findings.
+Withhold creator chat history, reasoning, suspected bugs, desired verdict, other reviews, and
+unrelated artifacts. Never run more than one reviewer concurrently with one implementer.
 
-## Degraded Mode
+## Review record and chain of custody
 
-If the environment cannot start subagents: run the gate inline after a deliberate context reset
-(re-read only rubric + artifact, set aside creator reasoning), record
-`self-reviewed (no isolation)` in the review record and ledger, and flag it at the next human
-touchpoint. In degraded mode the chain-of-custody separation is gone too — say so; do not present
-a self-written review as reviewer-written. Never silently skip a gate.
+The reviewer writes its own record under `docs/features/<slug>/reviews/` as its one permitted write.
+For standard increments use `reality-review.md` and `final-review.md`; opt-in artifact gates keep
+their named records. Include severity-ordered findings, concrete failure scenarios, exactly one
+status token, and `Reviewed-SHA:` lines. Standard reviews also include `Reviewed-Revision:` from the
+receipt. The final revision is the freshness gate; later slices may supersede the reality revision.
 
-## Chain Verification
+The controller never transcribes or repairs a verdict. It parses the record with
+`parse_review_status.py`, compares it to the reviewer's returned status, verifies the actual diff
+and command output, then closes the ledger span.
 
-"The gate happened" is itself L0-checkable:
-`python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/check_gate_chain.py" docs/features/<slug>` verifies
-every expected review record exists, parses to exactly one Approved, and is content-SHA fresh —
-the full chain from requirement to e2e. `ship` and `deploy` prechecks run it; projects should
-wire it (plus `validate_artifacts.py`) into hooks or CI per the `harness` skill's default wiring.
+## Routing and aggregate stop-loss
+
+The first pass returns the complete finding list; it must not drip-feed one new subsystem per round.
+`Issues Found` routes to a targeted repair and re-review. Count repairs across the whole standard
+increment, not separately by finding or gate:
+
+- initial review is round 1;
+- at most two repair rounds are allowed across reality + final;
+- if blocking issues remain, stop patching and reduce scope or redesign.
+
+Record standard gates with `flow: increment-v1`, `gate: reality|final`, and `rounds: 1..3`.
+`opc_ledger.py audit` rejects a third repair round, duplicate gates, or any extra increment gate.
+For opt-in artifact gates, the same per-gate cap applies. A review object spanning unrelated user
+journeys or several major subsystems is immediately `Issues Found: slice too large`.
+
+## Reviewer conduct
+
+- Judge the requested real object and production assembly, not effort or claimed test counts.
+- Check router mount, session/origin/auth, service construction, datastore, and runtime startup when
+  relevant. “Targeted tests green” is not a production-assembly check.
+- For UI, verify the browser performs the key action. API-created success cannot substitute.
+- Check tests for direct-write controls that manufacture the asserted success.
+- Cite file/line, receipt command ID, and a concrete failure scenario for blocking findings.
+- Findings and status must agree. Style nits do not justify `Issues Found`.
+
+## Degraded mode
+
+If isolated reviewers are unavailable, deliberately clear creator reasoning, reread only rubric +
+inputs, self-review, and record `self-reviewed (no isolation)`. Surface the missing separation to the
+human; never present it as independent.
+
+## Chain checks
+
+`check_gate_chain.py` supports the standard two-review chain when `feature-plan.md` exists and the
+legacy explicit artifact chain otherwise. `ship` also requires a fresh real-service acceptance
+receipt; review freshness never substitutes for runtime evidence.

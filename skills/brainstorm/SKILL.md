@@ -1,6 +1,6 @@
 ---
 name: brainstorm
-description: "Use when starting an opc-develop feature from a raw idea, or when acceptance triage classifies feedback as a taste change needing a fast increment. Grills the user one question at a time with recommended answers until product intent, domain language, tradeoffs, non-goals, and risk profile are sharp, then assigns the numbered feature slug, creates the feature branch, and writes the capped decision-first requirement.md."
+description: "Use only when product intent is genuinely uncertain or the human explicitly asks to be grilled before implementation. Sharpens durable product judgment, domain language, tradeoffs, and non-goals into requirement.md. It is optional and is not a prerequisite for ordinary build increments of up to four hours or taste changes already clear enough for a result card."
 license: MIT
 ---
 
@@ -29,7 +29,8 @@ judgment that is missing here.
    alternatives (2-3 when real choice exists), domain terms, constraints. Stop grilling when new
    questions stop changing the shape — shared understanding, not exhaustion.
 4. Classify the risk profile (`risk-readiness.md` categories, or `none identified`). Unknowns
-   become open questions owned by `prd` or `architect`.
+   become open questions owned by the result card, or by `prd`/`architect` only when those optional
+   decisions are justified.
 5. Classify remaining open questions: any that could change scope, core behavior, or risk class
    must be resolved now; the rest get trigger conditions.
 6. When ready to commit: run
@@ -55,4 +56,5 @@ human defers, record the recommended answer as provisional with a trigger.
 
 ## Output
 
-`requirement.md` (gated), feature branch, initialized ledger. Next: `demo`.
+`requirement.md` (gated), feature branch, initialized ledger. Next: `build` by default; use `demo`,
+`prd`, or `architect` only for the unresolved judgment each one owns.

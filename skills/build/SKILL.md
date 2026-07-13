@@ -1,79 +1,67 @@
 ---
 name: build
-description: "Use after the architecture sign-off to complete everything local in one run: partition the work into gated implementation contracts, author the failing Tier-1 acceptance skeletons from testcases.md before any implementation, implement via TDD implementer subagents with RED/GREEN evidence and mock retirement, apply migrations/config to the local or shared dev environment, deploy locally, and turn the skeletons green under the full black-box regression with evidence triangles — ending with a gated acceptance sheet ready for ship. Also the re-entry point for fixing code defects rejected at test acceptance."
+description: "Use for a standard 1-4 hour product increment, or a release-bound/oncall quick increment that needs ship/deploy evidence, starting from a raw request or optional approved artifacts. Enforces a 4-hour budget gate, one-page feature-plan.md, one real core journey, a 45-minute first slice, serial runnable slices, cost-ordered verification, at most two review repair rounds, and a revision-bound receipt. UI completion requires a browser action through production assembly. Work above 4 hours is split; ordinary small work routes to lite."
 license: MIT
 ---
 
 # build
 
-Everything that can be finished on the builder's machine, finished in one invocation:
-contract → implement → locally deploy → verify. No human touchpoint; the output is evidence.
+Deliver one useful increment within the stated budget. Optimize time to a real working path, then
+add coverage and evidence that protect it.
 
 ## Load
 
 - `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/contracting.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/tdd-implement.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/verification.md`
+- `${CLAUDE_PLUGIN_ROOT}/shared/packs/increment.md`
+- `${CLAUDE_PLUGIN_ROOT}/shared/formats/feature-plan-format.md`
+- `${CLAUDE_PLUGIN_ROOT}/shared/formats/acceptance-receipt-format.md`
 - `${CLAUDE_PLUGIN_ROOT}/shared/packs/evidence.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/branch-worktree.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/mock-retirement.md`
-- For gates: `packs/gate-protocol.md` + `rubrics/impl-contract.md`, `rubrics/implementation.md`,
-  `rubrics/e2e.md`
-- Implementer prompt: `${CLAUDE_PLUGIN_ROOT}/shared/prompts/implementer.md`
+- When `demo/mock-inventory.md` exists: `${CLAUDE_PLUGIN_ROOT}/shared/packs/mock-retirement.md`
+- On matching risk: `packs/risk-readiness.md`
+- On branch/worktree questions: `packs/branch-worktree.md`
+- For reviews: `packs/gate-protocol.md` + `rubrics/increment.md`
 
-## Phase A — Contract (skipped when fresh)
+## Process
 
-1. Precheck PRD/technical gate freshness. If `contracts/` is missing or stale, partition and
-   gate the contract tree per `contracting.md`. Readiness blockers from `risk-spike.md` stop
-   only the affected contracts.
-2. Author the Tier-1 skeletons per `contracting.md`: every TC in testcases.md becomes a
-   committed, currently-failing black-box spec **before any implementer is dispatched**. Capture
-   the failing run (acceptance RED). Contracts and skeletons pass the same gate together.
+1. Read project rules and inspect the real entry, runtime assembly, target data, and harness before
+   asking questions. Establish the user's time budget; default a standard increment to 240 minutes.
+2. Apply the budget gate from `increment.md`. Route ordinary <=60-minute work to `lite`. A hotfix
+   or other release-bound change that must pass `ship`/`deploy` stays in `build` as `Class: quick`
+   so it receives a receipt and reviews. If credible scope is >240 minutes or contains multiple
+   independently useful journeys, write the split result card, recommend the first increment, and
+   stop before broad implementation.
+3. Use the current authorized feature branch, or create a numbered `feature/<slug>` branch. Write
+   only `docs/features/<slug>/feature-plan.md`; existing requirement/PRD/technical records are
+   constraints when present, not mandatory predecessors. Map every existing demo mock to its
+   replacement slice and regression. Validate the plan and initialize the generated
+   `acceptance.json` receipt.
+4. Run the core journey before implementation and confirm a meaningful failure. For UI, the browser
+   performs the key action. Repair a broken harness before writing breadth.
+5. Implement Slice-1 through the production assembly within 45 minutes. Use targeted lower-level
+   tests while coding, then run the real core journey once. If the path still cannot run/observe,
+   pause and route the harness gap.
+6. Run the independent reality review. Then implement remaining 30-90 minute slices serially,
+   preserving the previous core journey and adding one valuable regression per slice. The main
+   executor implements by default; subagents are exceptional and receive cold one-page context.
+7. Verify in cost order through `opc_increment.py`: build/logic, local service + scratch state,
+   browser for UI, provider replay, one external canary when applicable. Never use the canary as a
+   debug loop.
+8. Run one final independent integration review. Reality + final share a maximum of two repair
+   rounds; if blockers remain, stop and reduce scope/redesign. When an inventory exists, prove
+   every mock is retired from production runtime. Audit with
+   `opc_ledger.py audit --require-increment-complete` so missing review records cannot pass.
+9. Run `opc_increment.py check --require real-service-core-journey`. Report its exact completion
+   level and remaining caps. Do not claim completion when the receipt is stale or the core journey
+   is below real-service level.
 
-## Phase B — Implement
+## Re-entry
 
-3. Dispatch mode per `tdd-implement.md`: parallel ⇒ one worktree per implementer; else serial.
-   Ledger `dispatch` entries.
-4. Dispatch implementers (prefer `opc-implementer`; else isolated subagent with
-   `prompts/implementer.md`) with paths and section pointers, not pasted documents.
-5. Per completed contract: verify the report against reality (diff, tests, RED/GREEN fields),
-   run the merged review gate (`rubrics/implementation.md`). Blocking issues → implementer →
-   targeted re-review; 2-round stop-loss.
-6. Failures with unclear cause get debugging discipline; resolved root causes append to the
-   error ledger — resolution time is capture time. P0/P1, false-green, irreversible-risk, and
-   recurring failures also link a project benchmark case (or a human-approved waiver) before the
-   affected gate can be considered closed.
-7. Integration steps from the contract index — including every `api`-level boundary skeleton the
-   index names — then the final mock-residual audit when any prototype mock existed.
-
-## Phase C — Local verify
-
-8. Local deploy per `verification.md`: stack up, reset + seed, apply this feature's
-   migrations/DDL and config to the local/shared dev environment under `release-ops.md` safety
-   rules (backup before DDL on shared data; destructive changes need human confirmation).
-9. Run the pre-authored Tier-1 suite — the Phase A skeletons turning green is the feature's
-   primary acceptance signal. Per AC, assemble evidence triangles. Then the agentic pass becomes
-   a gap hunt: explore beyond the cases, check demo parity, and distill only newly discovered
-   behavior into additional `explored` Tier-1 specs.
-10. Write the acceptance sheet (`acceptance.md`) and gate the phase (`rubrics/e2e.md`).
-
-## Re-entry (fix mode)
-
-When `ship`'s test acceptance rejects with implementation defects: re-enter here with the
-rejection notes. Scope to the affected contracts/ACs — targeted fixes, targeted re-review,
-re-run the affected Tier-1 specs plus regression, refresh the acceptance sheet. `ship` then
-resumes from its deploy stage. Artifact defects and new needs do not enter build — they route to
-`prd`/`architect` (revise) or `brainstorm` (change) per `feedback-routing.md`.
-
-## Fail-open
-
-No subagent support: degrade per `tdd-implement.md` with `self-implemented (no isolation)`
-labels. Missing runbooks/commands: discover, record `gap`, continue. Shared-infra destructive
-changes are the fail-closed exception.
+Test/human rejection of the same intent re-enters the affected slice: invalidate stale receipt
+results, add a covering regression, fix, rerun cheap checks, then the core journey and targeted
+final review. If the user says the target object or intended journey is wrong, invalidate all
+downstream conclusions and rewrite the result card before continuing.
 
 ## Output
 
-Implemented feature with tests, contract tree, per-contract review records, mock residual audit,
-committed Tier-1 specs (Phase A skeletons turned green + `explored` additions), gated
-`acceptance.md`, ledger trail. Next: `ship`.
+One runnable increment, `feature-plan.md`, generated `acceptance.json`, focused regressions, at most
+two review records, and an honest completion level. Next: `ship` for test-environment acceptance.

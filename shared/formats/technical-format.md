@@ -2,8 +2,9 @@
 
 Path: `docs/features/<slug>/technical.md`. One committed route, decision records first, detail in
 the appendix. Owns: architecture layering, SaaS/infrastructure choices, public API contracts,
-system boundaries, migration, security posture, runtime evidence strategy. Does NOT own internal
-module design — that belongs to impl-contracts.
+system boundaries, migration, security posture, runtime evidence strategy. Does NOT own ordinary
+internal module design — keep that near the result-card slice or, when coordination contracts were
+explicitly requested, in the owning packet.
 
 ## Structure
 

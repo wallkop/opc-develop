@@ -1,6 +1,6 @@
 interface:
   display_name: "prd"
-  short_description: "Produce and gate the PRD, then push the handoff"
-  default_prompt: "Use $prd to write prd.md with numbered PD decisions and AC-IDs from the approved demo, gate it, run the product sign-off, and push the feature branch for the architect."
+  short_description: "Optionally turn durable product decisions into a gated PRD"
+  default_prompt: "Use $prd when durable product decisions need a contract: derive prd.md and black-box testcases.md from whichever approved requirement/demo/result-card inputs exist, gate product sign-off, then return to build by default."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

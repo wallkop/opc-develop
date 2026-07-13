@@ -30,14 +30,16 @@ Then invoke skills by their Claude plugin namespace, for example:
 
 ```text
 /opc-develop:brainstorm
+/opc-develop:build
 /opc-develop:lite
 /opc-develop:retro
 ```
 
 Skill files reference shared packs, rubrics, and scripts via `${CLAUDE_PLUGIN_ROOT}`, which Claude
 Code resolves to the installed plugin root. The `opc-reviewer` agent is tool-restricted to
-read-only verification (Read, Grep, Glob, Bash); the `opc-implementer` agent is unrestricted
-inside its contract boundary.
+read-only verification (Read, Grep, Glob, Bash). The `opc-implementer` agent is an exceptional
+bounded-task worker; standard increments otherwise keep implementation in the main executor and
+start every subagent with empty/cold context.
 
 ## Marketplace Source
 

@@ -18,15 +18,18 @@ rule becomes active only after that experiment proves it can kill the bad varian
 
 ## Process
 
-1. **Data-quality preflight**: audit every active feature/error ledger. Count eligible gate and
-   dispatch entries, cost coverage, unmapped sessions, invalid gaps, and benchmark linkage. Missing
-   cost data creates or updates one stable `observe` gap with its label cap; never duplicate it.
+1. **Data-quality preflight**: audit every active feature/error ledger and generated acceptance
+   receipt. Count eligible phase/gate/dispatch entries, cost coverage, unmapped sessions, invalid
+   gaps, command/provider capture, and benchmark linkage. Missing cost data creates or updates one
+   stable `observe` gap with its label cap; never duplicate it.
 2. **Collect**: feature summaries, exact-match error pre-groups, semantic clusters, normalized
    Codex/Claude usage, benchmark reports, and crystallized rules. Label script findings separately
    from semantic judgment.
-3. **Compute**: measured/estimated/no-data cost by phase, review rounds, rework routing,
-   change/rework ratio, recurring clusters, open gaps, benchmark coverage, and false-green gates.
-   Do not call missing capture “zero recurrence.”
+3. **Compute**: measured/estimated/no-data cost by phase, time to first runnable core path, command
+   and repeated-test counts, subtask/context modes, review/repair rounds, provider calls/cost,
+   rework routing, user corrections, post-completion fixes, recurring clusters, open gaps,
+   benchmark coverage, and false-green gates. Do not call missing capture “zero recurrence” or
+   “efficient.”
 4. **Executable case check**: every P0/P1, irreversible-risk, false-green, or recurring incident
    links a project case, or a human-approved waiver. Profiles reproduce one problem at different
    cost. Prefer the cheapest stable profile and report when real calibration is stale.

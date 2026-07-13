@@ -1,13 +1,12 @@
 ---
 name: ship
-description: "Use after build's local verification passes to put the feature in front of the human on the test environment: collect and gate the release manifest (DDL, env vars, config, services) against technical.md, apply environment changes and deploy to test, run automated regression there, then run the test-acceptance touchpoint and route its verdict — code defects re-enter build, artifact defects revise upstream, approval merges the branch to the trunk. Production is deploy's job, not ship's."
+description: "Use after a build increment reaches a fresh real-service core journey to deploy it to the test environment, run the same core journey and targeted regression there, obtain human acceptance, and merge the branch. Supports standard and release-bound quick increments; requires the generated receipt and two-review chain. Optional PRD/technical artifacts are checked only when present. Production remains deploy's job."
 license: MIT
 ---
 
 # ship
 
-Test environment only. Ship ends with a human verdict on a really-deployed feature and, on
-approval, code merged to the project trunk — the precondition `deploy` will check.
+Deploy one accepted increment to the test environment, obtain the human verdict, then merge.
 
 ## Load
 
@@ -20,48 +19,42 @@ approval, code merged to the project trunk — the precondition `deploy` will ch
 
 ## Stages
 
-Resume after the last `release` ledger entry with `result: ok`; `manifest` re-collects when the
-diff moved.
+Resume after the latest fresh `release` entry with `result: ok`; recollect the manifest whenever the
+content tree changes.
 
-1. **Precheck**: run
-   `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/check_gate_chain.py" docs/features/<slug>` —
-   the whole chain from requirement to e2e must be intact (declared `--skip`s are surfaced to
-   the human). Acceptance sheet exists, rework entries resolved (each open `RW-n` explicitly
-   referenced by a resolving entry), project test-env runbooks read.
-2. **manifest**: collect the release manifest per `release-ops.md` from the actual diff (build's
-   phase-C ledger entries seed the DDL/config sections), cross-checked against technical.md.
-   Drift routes `revise` before release. Write `release-manifest.md`; self-check; ledger.
-3. **env-test + deploy-test**: apply manifest items to the test environment in order (backup
-   before DDL per safety rules), deploy per runbook.
-4. **regression-test**: run the Tier-1 suite against the test environment; evidence triangles
-   with test-env labels; smoke the documented signals. Failures here are triaged before any
-   human is summoned.
-5. **acceptance-test (touchpoint)**: write `reports/acceptance.md` as a faithful plain-language
-   acceptance-sheet + manifest summary with source SHAs, render/lint `reports/acceptance.html` per
-   `formats/report-style.md`, then hand the human the test-environment
-   entry point, the acceptance sheet, and the manifest. Route the verdict:
-   - **Approved** → next stage.
-   - **Code defect** → re-enter **`build`** (fix mode) with the rejection notes; after build
-     refreshes its evidence, ship resumes at stage 3.
-   - **Artifact defect** → `revise` at `prd`/`architect` + stale cascade; the flow replays
-     forward and ship resumes at stage 2 (manifest re-collects).
-   - **New need / taste change** → `change` entry → `brainstorm` for the next increment; the
-     human decides whether this release proceeds without it or parks.
-6. **merge**: merge the feature branch into the project trunk (`develop` or per AGENTS.md flow),
-   push, clean worktrees per `branch-worktree.md`. Record the merge commit in the ledger —
-   `deploy`'s preflight requires it. Then **fold the feature's deltas into the living spec**
-   (`formats/living-spec-format.md`): ACs into the domain registry, state machines and
-   permission tables rebuilt to current truth, PD/TD references indexed. An AC conflict at merge
-   time is a `revise`, not an overwrite.
+1. **Precheck**: run `opc_increment.py check --require real-service-core-journey`,
+   `check_gate_chain.py docs/features/<slug>`, and
+   `opc_ledger.py audit --require-increment-complete`. Require the build plan,
+   generated receipt, reality/final reviews, resolved rework, and test-env runbook. When explicit
+   PRD/technical artifacts exist, verify their approvals/freshness separately; do not require absent
+   layers.
+2. **manifest**: collect `release-manifest.md` from the actual diff per `release-ops.md`. Cross-check
+   optional technical records when present. Every DDL item has rollback; secret values never enter
+   artifacts; provider/dashboard changes have an owner.
+3. **env-test + deploy-test**: apply manifest items to test in order, back up shared data before DDL,
+   and deploy per runbook.
+4. **regression-test**: run the same core journey against test plus the focused regressions for this
+   increment. For UI, the browser performs the key action. Record test build ID, origin/session,
+   object IDs, trace, state assertion, and honest label. Do not rerun a real provider to diagnose a
+   harness failure.
+5. **acceptance-test**: present the real test entry, result-card scope, manifest, safety checks, and
+   highest completion level. Route the verdict:
+   - approved: run `opc_increment.py accept --actor <role>` and continue;
+   - implementation defect: re-enter the affected `build` slice, invalidate stale receipt commands,
+     fix, and resume at test deploy;
+   - wrong journey/object/plan: reject the candidate, revise the result card or earliest explicit
+     artifact, invalidate downstream evidence, and re-evaluate budget;
+   - taste change: create a new increment; the human decides whether this one still ships.
+6. **merge**: merge to the project trunk, push, and clean worktrees. Fold into a living spec only
+   when the project uses one and the increment changes durable behavior; PRD is not mandatory.
 
-## Fail-open
+## Fail-open / fail-closed
 
-Missing test environment: run the acceptance touchpoint on the best available surface with its
-label cap stated, and say so on the sheet. Missing deploy runbook for test: record the gap,
-deliver the manifest + checklist, stop at handoff. Shared-data DDL keeps its confirmation rule
-even on test.
+Missing test environment caps acceptance at the best real local level and stops before merge unless
+the human explicitly accepts that release policy. Missing runbooks create a handoff, not improvised
+deployment. Shared-data DDL and destructive actions remain approval-gated.
 
 ## Output
 
-`release-manifest.md`, staged `release` ledger entries, human test-acceptance verdict, feature
-merged to trunk on approval. Next: `deploy` when you choose to release to production.
+Test deployment evidence, human-accepted fresh receipt, release manifest, and merged branch. Next:
+`deploy` when the human chooses production release.

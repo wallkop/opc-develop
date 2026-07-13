@@ -1,6 +1,6 @@
 ---
 name: demo
-description: "Use after brainstorm when requirement.md exists, to make the idea experienceable before any PRD. Builds a high-fidelity prototype inside the real frontend codebase with frontend-only mocks (or a runnable skeleton for non-UI features), runs the vibe-loop with the human until the feel is right, maintains the mock inventory, and gates the result."
+description: "Use only when interaction taste is unresolved and the human explicitly wants an experienceable prototype before implementation. Builds a high-fidelity prototype in the real frontend (or a runnable non-UI skeleton), runs the vibe-loop, and inventories mocks. It is optional and not required for an ordinary standard increment with a clear core journey."
 license: MIT
 ---
 
@@ -19,7 +19,7 @@ that `revise` happens at its cheapest possible moment.
 
 ## Process
 
-1. Verify `requirement.md` exists on the feature branch. Decide the variant:
+1. Verify a result card or `requirement.md` exists on the feature branch. Decide the variant:
    - **UI surface exists** → prototype in the real frontend codebase, reachable through the real
      app shell. No detached playgrounds, no query-param-only roots.
    - **No UI surface** (API/CLI/job/migration) → runnable skeleton: one real request/response or
@@ -31,10 +31,10 @@ that `revise` happens at its cheapest possible moment.
    run command.
 3. **Vibe-loop (the main work):** hand the human the preview. Their feedback is `tune` by
    default — iterate freely, no records, no re-gates. Watch for the tune/revise boundary: feedback
-   that changes *what is true* (wrong audience, wrong core flow) is a `revise` to requirement.md —
-   say so, route it, cascade staleness.
+   that changes *what is true* (wrong audience, wrong core flow) is a `revise` to the source result
+   card or `requirement.md` — say so, route it, cascade staleness.
 4. Record demo run notes in `docs/features/<slug>/demo/prototype.md`: entry path, preview
-   command/URL, which requirement key paths it demonstrates, known placeholder areas.
+   command/URL, which source-card/requirement key paths it demonstrates, known placeholder areas.
 5. When the human says the feel is right, gate it: fresh reviewer, `rubrics/demo.md`, reviewer
    must exercise the running prototype. Ledger the gate result.
 
@@ -48,4 +48,5 @@ proceed-with-cap — do not silently lower the bar.
 ## Output
 
 Running prototype in the real codebase, `mock-inventory.md`, `prototype.md`, demo gate Approved,
-ledger entries. Next: `prd`.
+ledger entries. Next: `build` by default; use `prd` only when the prototype reveals durable product
+decisions worth a product contract.

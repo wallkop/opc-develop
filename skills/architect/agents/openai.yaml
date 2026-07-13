@@ -1,6 +1,6 @@
 interface:
   display_name: "architect"
-  short_description: "Intake the PRD and produce the gated technical design"
-  default_prompt: "Use $architect to pull the feature branch, run architecture intake, then write and gate technical.md with TD decision records, public contracts, and the runtime evidence plan."
+  short_description: "Optionally gate a public-boundary or one-way technical decision"
+  default_prompt: "Use $architect when the result card changes a public boundary or one-way architecture decision; consume any optional PRD, write only the necessary TD records/contracts/evidence plan, gate them, then return to build."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

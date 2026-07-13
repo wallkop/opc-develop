@@ -22,9 +22,9 @@ never a query-param-only alternate root app.
 
 1. **demo** creates the inventory alongside the prototype.
 2. **prd** carries the inventory forward; the PRD's ACs must cover the real behavior each mock fakes.
-3. **contract** maps every `M-x` to an impl-contract boundary and a test seed. Unmapped mocks block
-   the contract gate.
-4. **build** implementers replace or remove their assigned mocks and report per-mock actions.
+3. **feature plan** maps every `M-x` to the runnable slice that replaces it and the regression that
+   proves the real capability. Unmapped mocks block the final review.
+4. **build** replaces or removes each mock as its owning slice lands and records the real path.
 5. **Final audit** (end of `build`): a fresh reviewer proves no prototype mock still affects
    production runtime — grep for inventory markers, inspect changed files, run focused tests.
    Ambiguous evidence = not retired.

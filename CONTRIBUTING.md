@@ -6,9 +6,15 @@ opc-develop is a workflow suite for controlled AI-assisted product development. 
 
 - Do not add project-specific business context, private runbooks, customer data, credentials, logs, `.env` files, or generated feature artifacts.
 - Do not hard-code a product, company, cloud provider, database, frontend framework, CI system, or deployment platform as a required default.
-- Preserve language-adaptive behavior. User-visible output should follow `shared/references/language-contract.md`.
-- Preserve the Full flow artifact boundary: product, demo, PRD, technical, spec, testcases, plan, implementation, verification, and release gates have distinct responsibilities.
-- Keep skills concise. Put reusable details in `shared/references/` and deterministic helpers in `shared/scripts/`.
+- Preserve language-adaptive behavior. User-visible output should follow `shared/core-contract.md`.
+- Preserve the budget-first default: `lite` <=60 minutes, one `build` increment <=4 hours, and
+  split anything larger. Standard increments keep one result card and one real core journey.
+- Keep brainstorm/demo/PRD/technical artifacts opt-in. Risk adds the matching check rather than
+  activating the complete artifact chain.
+- Preserve receipt freshness, browser-driven UI acceptance, provider stop-loss, and the aggregate
+  two-repair review cap as machine-enforced rules.
+- Keep skills concise. Put reusable workflow detail in `shared/packs/`, formats/rubrics in their
+  existing shared folders, and deterministic helpers in `shared/scripts/`.
 
 ## Local Validation
 
@@ -21,6 +27,7 @@ python3 shared/scripts/opc_benchmark.py run shared/fixtures/opc-benchmark/regist
 python3 -m json.tool .codex-plugin/plugin.json >/dev/null
 python3 -m json.tool .claude-plugin/plugin.json >/dev/null
 python3 -m json.tool .claude-plugin/marketplace.json >/dev/null
+python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
 ruby -ryaml -e 'Dir["skills/*/agents/openai.yaml"].each { |f| YAML.load_file(f) }'
 ```
 

@@ -21,13 +21,14 @@ import subprocess
 import sys
 from pathlib import Path
 
-REVIEWED_RE = re.compile(r"^Reviewed-SHA:\s+(?P<path>\S+)\s+(?P<sha>[0-9a-f]{7,40})\s*$", re.M)
+REVIEWED_RE = re.compile(r"^Reviewed-SHA:\s+(?P<path>\S+)\s+(?P<sha>[0-9a-f]{7,64})\s*$", re.M)
 
 
-def git_hash(path: Path) -> str | None:
+def git_hash(path: Path, root: Path) -> str | None:
     try:
         out = subprocess.run(
             ["git", "hash-object", str(path)],
+            cwd=root,
             capture_output=True, text=True, check=True,
         )
     except (subprocess.CalledProcessError, FileNotFoundError):
@@ -52,7 +53,7 @@ def main() -> int:
         print(f"STALE: no Reviewed-SHA lines in {review}", file=sys.stderr)
         return 1
 
-    root = Path(args.repo_root)
+    root = Path(args.repo_root).resolve()
     stale = []
     for match in records:
         artifact = root / match.group("path")
@@ -60,7 +61,7 @@ def main() -> int:
         if not artifact.exists():
             stale.append(f"{match.group('path')}: file missing")
             continue
-        current = git_hash(artifact)
+        current = git_hash(artifact, root)
         if current is None:
             print("ERROR: git unavailable; cannot verify freshness", file=sys.stderr)
             return 2

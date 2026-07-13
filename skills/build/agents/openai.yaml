@@ -1,6 +1,6 @@
 interface:
   display_name: "build"
-  short_description: "Contract, implement, locally deploy, and verify in one run"
-  default_prompt: "Use $build to partition the approved design into gated contracts, implement them via TDD subagents with RED/GREEN evidence, apply local env changes, and run the full black-box regression to a gated acceptance sheet."
+  short_description: "Deliver one budgeted increment through a real core journey"
+  default_prompt: "Use $build to deliver this as one <=4-hour increment: write the one-page result card, prove the real core journey, implement runnable slices, and produce a fresh acceptance receipt."
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

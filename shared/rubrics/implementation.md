@@ -1,6 +1,7 @@
-# Rubric: implementation (merged contract-compliance + code quality)
+# Optional rubric: owner handoff implementation
 
-You are reviewing one completed contract's implementation. Inputs: the contract file, the actual
+Use only when an explicit coordination handoff warrants its own owner review; ordinary increments
+use the reality/final rubric instead. Inputs: the contract file, the actual
 diff, test files and outputs, the implementer's report (as claims to verify, not truth). One pass
 covers both compliance and quality. End with one `**Status:**` line and `Reviewed-SHA:` for the
 contract file.
@@ -11,8 +12,9 @@ contract file.
    Found regardless of quality.
 2. **ACs actually implemented**: for each owned AC, find the code and the test that proves it.
    The report saying so is not finding it.
-3. **TDD evidence**: RED and GREEN fields present per task, RED output genuinely fails for the
-   right reason (read it), GREEN uses the same command. Missing RED ⇒ flag as test-after.
+3. **Regression evidence**: the workstream's named seed/regression has honest failing or baseline
+   evidence and a fresh pass. Missing historical RED is labeled test-after, not an automatic block
+   unless the risk/rubric requires it.
 4. **Tests are honest**: assertions test behavior, not implementation echoes; no tests that pass
    vacuously; no weakened/deleted existing tests without justification.
 5. **Mock retirement**: each assigned M-x is gone from production paths — verify by grep/reading,

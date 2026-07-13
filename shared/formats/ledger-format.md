@@ -8,26 +8,34 @@ timestamps); never hand-edit past lines.
 Common fields: `ts` (stamped by script), `feature`, `type`.
 
 ```jsonl
-{"type":"gate","gate":"prd","status":"Approved","rounds":2,"review":"reviews/prd-review.md","sha":{"prd.md":"ab12cd"},"isolation":"subagent"}
+{"type":"phase","phase":"slice-1","result":"ok","flow":"increment-v1"}
+{"type":"gate","gate":"reality","status":"Approved","rounds":2,"flow":"increment-v1","review":"reviews/reality-review.md","isolation":"subagent"}
 {"type":"rework","id":"RW-1","routed_to":"implementation","source":"acceptance","trigger":"AC-3 fail","note":"..."}
 {"type":"gate","gate":"implementation","status":"Approved","rounds":1,"resolves":["RW-1"]}
 {"type":"change","source":"acceptance","note":"taste change: ...","routed_to":"brainstorm"}
 {"type":"evidence","ac":"AC-3","label":"local real service passed","evidence":"reports/e2e-0703.md"}
 {"type":"decision","id":"TD-2","door":"two-way","decided_by":"agent","note":"..."}
-{"type":"gap","verb":"observe","blocks":"correlation IDs missing","label_cap":"seeded passed"}
-{"type":"dispatch","contract":"C-01","mode":"worktree|serial","isolation":"subagent|self-implemented (no isolation)"}
+{"type":"gap","id":"GAP-1","verb":"observe","blocks":"correlation IDs missing","label_cap":"seeded passed","state":"open"}
+{"type":"dispatch","contract":"slice-2-task-a","mode":"worktree|serial","context_mode":"none|summary","isolation":"subagent|self-implemented (no isolation)"}
 {"type":"release","stage":"deploy-test","result":"ok","evidence":"...","backup":"..."}
 {"type":"park","note":"...","reason":"..."}
 ```
 
 Conventions:
 
+- New records are stamped `schema_version: opc-ledger-v3`. Auditing remains backward-compatible
+  with historical v2 rows; v3 alone enforces increment repair/context guardrails.
 - `gate.isolation` is `subagent` normally, `self-reviewed (no isolation)` in degraded mode.
+- Standard increment gates use `flow: increment-v1`, exactly `reality` and `final`, with `rounds`
+  including the initial review. Across both gates, `rounds - 1` totals at most two repairs.
+  Partial-work audits may omit gates; final/ship runs add `--require-increment-complete`, which
+  requires exactly one Approved v3 record for each gate.
+- Dispatch requires `context_mode: none|summary`; full conversation context is invalid.
 - Decision ids: `TD-n` for technical records, `PD-n` for PRD decision-sheet records,
   `RISK-PROFILE` for the brainstorm risk classification.
 - Any entry may carry an optional `actor` field (e.g. `"actor":"pm"`, `"actor":"architect"`) —
   use it in multi-person features so `retro` can attribute rework routing by role.
-- Every new `gate` and `dispatch` uses `opc_ledger.py span-start` / `span-end`. `wall_secs` is
+- Every new `phase`, `gate`, and `dispatch` uses `opc_ledger.py span-start` / `span-end`. `wall_secs` is
   automatic. Exact usage goes in `token_usage` with `cost_source`; `tokens_est` is reserved for an
   explicitly labeled fallback estimate. Missing usage stays missing and creates an observe gap.
 - `rework` entries carry an `id` (`RW-1`, `RW-2`, … per feature). A rework is **resolved** only

@@ -8,8 +8,9 @@ one. Project AGENTS.md always wins over this pack.
 
 ## Feature Branches
 
-- Full-flow features live on `feature/<numbered-slug>` (e.g. `feature/7-export`), created by
-  `brainstorm` when requirement.md is first written — not before, not later.
+- Standard increments live on `feature/<numbered-slug>` (e.g. `feature/7-export`). `build` creates
+  the branch when it writes `feature-plan.md`; when optional `brainstorm` ran first, it may already
+  have created the same branch with `requirement.md`.
 - **Slug collision (multi-person)**: `next_feature_slug.py` numbers from the local checkout, so
   two people starting features concurrently can draw the same number. Push the feature branch
   right after creating it to reserve the slug; on a collision at push time, the later branch
@@ -22,8 +23,9 @@ one. Project AGENTS.md always wins over this pack.
 
 ## Worktrees
 
-- Parallel implementers ⇒ one worktree each, branched from the feature branch
-  (`git worktree add ../<repo>-wt-<contract-id> <feature-branch>`). Serial dispatch needs none.
+- Exceptional parallel work uses at most one bounded implementer worktree plus the main checkout,
+  branched from the feature branch (`git worktree add ../<repo>-wt-<task-id> <task-branch>`).
+  Serial work needs none. A worktree is per bounded task/slice, not proof that contracts are needed.
 - Never nest worktrees. Never create a worktree from inside another worktree.
 - Cleanup: merge or discard promptly after the contract completes; `git worktree remove` after
   merge; a worktree left behind is a recorded gap.

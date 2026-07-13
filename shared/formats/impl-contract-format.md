@@ -1,8 +1,8 @@
 # Implementation Contract Format
 
 Path: `docs/features/<slug>/contracts/` — one `C-XX-<name>.md` per independently implementable
-workstream plus one `index.md`. This layer merges the old spec + plan: each contract is a complete,
-self-sufficient work order for one implementer subagent.
+workstream plus one `index.md`. This optional layer is a compact coordination packet for one owner;
+the owner may be the main executor, a human, or the single exceptional implementer subagent.
 
 ## index.md
 
@@ -14,7 +14,7 @@ self-sufficient work order for one implementer subagent.
 | C-01 | export-api | — | yes | AC-1..3 | M-1 |
 ...
 
-Thin slice: C-01                      (mandatory when risk categories exist)
+First runnable outcome: C-01          (only when contracts are explicitly justified)
 Integration steps:                    ordered controller-run steps after all contracts complete
 ```
 
@@ -29,15 +29,13 @@ Forbidden paths:                      globs it must not touch
 ACs owned:                            AC-IDs this contract proves (reference, don't restate)
 References:                           prd.md#section, technical.md#TD-n — pointers, not copies
 
-## Internal Design
-                                      module split, state handling, local storage/cache decisions,
-                                      internal error handling — the executable micro-detail that
-                                      technical.md deliberately leaves out
+## Local Notes
+                                      only owner-specific detail not already clear from the result
+                                      card/code; do not build a second design document
 
 ## TDD Seed
-                                      per task: test name, what it asserts, suggested command —
-                                      enough for the implementer to start RED without inventing
-                                      the test strategy
+                                      one highest-value boundary/regression seed for this workstream;
+                                      future slice tests are added when their behavior lands
 
 ## Mock Retirement
                                       inventory entries (M-x) this contract retires, and how
@@ -55,3 +53,5 @@ References:                           prd.md#section, technical.md#TD-n — poin
   technical content will drift and is rejected at the gate.
 - No public API redefinition, no SaaS re-decisions — that is technical.md's territory.
 - Every mock in the inventory appears in exactly one contract's Mock Retirement section.
+- Contracts do not require subagents, per-contract review gates, or an upfront skeleton for every
+  future test case. Reality/final integration reviews remain the standard gates.

@@ -1,50 +1,38 @@
 # Evidence Pack
 
-Extends the core contract's Evidence Before Claim rules.
+## Command receipt
 
-## Evidence Record Fields
+Every verification records command argv, exit code, start/end time, working directory, output path
+or excerpt, branch/commit, content-tree fingerprint, and authenticity label. Browser/runtime checks
+also record the available build ID, origin, session type, scratch DB, core object IDs, screenshot or
+artifact, and correlation/trace ID. Use `opc_increment.py` for standard increments so code, tests,
+plan, seed, or tracked-config changes invalidate old results automatically.
 
-Every verification records: command, exit code, report path or output excerpt, working directory,
-branch + commit, authenticity label. For browser/UI/DB/log checks: the evidence path or a stable
-lookup key (correlation ID, screenshot path, query used).
+## Runtime evidence
 
-## The Evidence Triangle (black-box claims)
+A `local real service passed` claim proves the production assembly, not just an isolated service:
 
-A black-box verification claim at `local real service passed` or above requires all three corners:
+1. interface evidence—browser assertion for UI, real HTTP/CLI/job result otherwise;
+2. correlation-linked log/trace evidence for the route actually executed;
+3. read-only state evidence for the durable result and safety invariants.
 
-1. **UI/interface assertion** — screenshot or accessibility-tree assertion of what the user sees
-   (or CLI/API response for non-UI features).
-2. **Log chain** — the correlation-ID-linked log lines proving which code path actually ran.
-3. **State assertion** — a DB/storage query proving the end state is correct.
+If the harness cannot expose a corner, record the gap and cap the label. Do not rerun expensive
+checks merely to compensate for missing observability; route that gap to `harness`.
 
-One corner alone proves appearance, not behavior. If the harness cannot provide a corner
-(no correlation IDs, no DB access), the claim caps at the label the available corners support,
-and the gap is recorded.
+## RED/GREEN
 
-## TDD Evidence (RED/GREEN fields)
+When using TDD, record `RED:` command + relevant failing output before implementation and `GREEN:`
+the same command + passing output after. Missing RED is test-after, not automatically a product
+failure; label it honestly. Never delete working code just to recreate ceremonial RED.
 
-Implementer reports must contain, per task, as distinct fields:
+## Data provenance
 
-- `RED:` the test command + failing output excerpt, captured **before** implementation
-- `GREEN:` the same command + passing output excerpt, captured after
+Distinguish synthetic seed, source-hashed read-only snapshot, and real object/provider. Report what
+each can prove. If the requested journey concerns existing user data, only the allowed snapshot or
+real object supports compatibility claims.
 
-A report without a RED field is treated as test-after: the reviewer flags it, and the task does not
-count as TDD-compliant. Deleting code to re-observe RED after the fact is waste — capture it live.
+## Prohibited claims
 
-## Prohibited Claims
-
-Never say passed/done/fixed/verified/ready/releasable when: the command was not run; the exit code
-is unknown; the report path does not exist; the output predates the latest change; a check was
-skipped without a recorded reason; a lower-realism label is being passed off as a higher one.
-
-## Labels and Caps
-
-The harness determines the maximum achievable label, not the agent's optimism:
-
-- mocks only → cap `mock passed`
-- seeded local stack → cap `seeded passed` / `local real service passed`
-- real external providers exercised → `external provider passed`
-- human exercised it → `human accepted`; sustained operation observed → `long-run passed`
-
-Report caps as caps: "AC-5: mock passed (testing runbook missing — gap #12)" is honest;
-"AC-5: passed" is not.
+Do not say passed/done/fixed/verified/ready when the command did not run, exit is unknown, evidence
+path is missing, fingerprint is stale, a bypass created the result, or a lower-realism label is
+presented as higher. Always state the exact completion level.

@@ -36,8 +36,9 @@ the log chain and state that prove it, no fix without a covering test.
    action; explain specialist terms beside their first occurrence.
 4. **Decide the path** (five-piece set to the human when contested):
    - **rollback** — hand to `deploy`'s rollback path; fastest when the trigger is a recent release;
-   - **hotfix (expedited path)** — minimal fix on a hotfix branch per project flow, RED/GREEN
-     evidence for the defect, targeted regression only, then `ship` (test env, compressed) →
+   - **hotfix (expedited path)** — minimal fix on a hotfix branch per project flow; route every
+     release-bound hotfix through `build` (`Class: quick` when <=60 minutes, otherwise standard),
+     preserve RED/GREEN evidence for the defect and targeted regression, then `ship` (test env, compressed) →
      `deploy` with the incident referenced. Expedited ≠ unverified: the RED test and prod-safe
      regression are not skippable;
    - **mitigation** — config/flag/scale change with its own evidence and a revert note.
@@ -47,7 +48,8 @@ the log chain and state that prove it, no fix without a covering test.
    - for P0/P1, irreversible-risk, false-green, or recurring incidents, link a project benchmark
      case proving GREEN → RED → GREEN, or record a human-approved waiver;
    - write the long-term fix proposal: what structural change prevents the class, sized as a
-     `lite` task or routed to `brainstorm`/`architect` as a feature; link it in the report;
+     `lite` task, one `build` increment, or an explicit `brainstorm`/`architect` decision task;
+     link it in the report;
    - record any harness gap the investigation exposed (missing correlation ID, missing dump,
      missing prod-safe spec) — these become `harness` backlog.
 

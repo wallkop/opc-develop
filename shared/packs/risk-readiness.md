@@ -1,33 +1,34 @@
-# Risk & Readiness
+# Risk and Readiness
 
-High-risk work is identified early and de-risked with evidence before broad implementation.
+Identify risk early, then add only the check that reduces that risk. Risk does not automatically
+load the full artifact chain.
 
-## Risk Categories
+## Categories and matching checks
 
-Classify every feature at `brainstorm` (record in requirement.md; `none identified` is a valid answer):
+- **Data/schema/migration** — read-only source snapshot + hash, dry run, invariant query, backup and
+  rollback/one-way acknowledgment.
+- **Auth/permissions/security** — real session/origin path, allow + deny cases, no test bypass.
+- **Money/quotas** — deterministic calculation, idempotency, limit/rollback evidence.
+- **External provider** — independent fake, saved-response replay, then one real canary.
+- **Runtime capability** — smallest real production-assembly experiment for queues, workers,
+  streaming, heavy compute, etc.
+- **Long-running/concurrency** — lease/restart/idempotency/concurrency checks and an appropriate
+  observation window.
+- **Shared state coupling** — scratch copy, invariants, compatibility and rollback.
+- **Cross-shell UI** — one core journey per materially different shell only when both are in scope;
+  otherwise split.
 
-- **External Provider** — depends on a third-party API/SaaS whose behavior is unverified here.
-- **Runtime Capability** — needs a capability the stack has not proven (streaming, websockets,
-  background jobs, heavy computation).
-- **Long-running / Streaming** — correctness depends on sustained operation, not single requests.
-- **State Coupling** — touches shared state machines, migrations, or cross-feature invariants.
-- **Cross-shell UI** — spans multiple app shells/platforms with divergent behavior.
+## Time-boxed spike
 
-## Risk Spike
+Run a spike only when a risk remains unproven and could invalidate the chosen slice. Time-box it
+inside the increment budget and test the smallest real capability. Record evidence and a verdict:
+ready, ready-with-constraints, or blocked. Reasoning without execution is not a spike.
 
-Any category present ⇒ a time-boxed spike before `build`'s contracting phase: the smallest experiment that proves the
-risky capability actually works in this project (real provider call, prototype worker, migration
-dry-run). Output: `docs/features/<slug>/risk-spike.md` — what was tried, evidence with authenticity
-labels, verdict (ready / ready-with-constraints / blocked). A spike that only reasons without
-running anything is not a spike.
+If the risk cannot be retired without pushing the increment beyond four hours, split or stop. Do
+not hide the spike cost outside the budget.
 
-## Thin Slice
+## First slice
 
-High-risk features implement a thin slice first: one end-to-end path through the risky capability,
-gated and verified, before parallel breadth work. The impl-contract tree must show the slice as the
-first contract with the rest depending on it.
-
-## Readiness Blockers
-
-Unresolved `blocked` verdicts stop `build` dispatch for the affected contracts only; unaffected
-contracts may proceed. Record the blocker in the ledger and surface it at the next touchpoint.
+Put the highest-risk boundary inside the 45-minute vertical slice when feasible, but keep the slice
+to one user-visible result. A slice that combines many unrelated risk categories is too broad and
+must be decomposed.

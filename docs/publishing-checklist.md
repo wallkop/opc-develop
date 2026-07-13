@@ -26,7 +26,9 @@ python3 shared/scripts/opc_benchmark.py run shared/fixtures/opc-benchmark/regist
 python3 -m json.tool .codex-plugin/plugin.json >/dev/null
 python3 -m json.tool .claude-plugin/plugin.json >/dev/null
 python3 -m json.tool .claude-plugin/marketplace.json >/dev/null
+python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
 ruby -ryaml -e 'Dir["skills/*/agents/openai.yaml"].each { |f| YAML.load_file(f) }'
+rg -q 'v0\.5|Budget-first' assets/opc-develop-skills.svg assets/opc-develop-skills.zh-CN.svg
 claude plugin validate .
 claude plugin validate .claude-plugin/plugin.json
 claude plugin tag --dry-run .
@@ -48,6 +50,8 @@ claude plugin tag --dry-run .
 
 ## GitHub Agent Skills Risk
 
-opc-develop has 27 interdependent skills that rely on `shared/references/` and `shared/scripts/`. Before publishing through GitHub Agent Skills, verify whether `gh skill publish` and `gh skill install` preserve the repository-level shared resources.
+opc-develop has 12 interdependent skills that rely on repository-level `shared/packs/`,
+`shared/formats/`, `shared/rubrics/`, and `shared/scripts/`. Before publishing through GitHub Agent
+Skills, verify whether `gh skill publish` and `gh skill install` preserve those shared resources.
 
 If GitHub installs each `skills/*/SKILL.md` folder independently without `shared/`, create a dedicated GitHub Agent Skills packaging layer before publishing.

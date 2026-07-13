@@ -43,8 +43,9 @@ The harness is executable capability, not documentation. Docs index; scripts pro
 6. Verify each build by using it once for real; record the command and output. Update AGENTS.md
    as the index pointing at everything built (keep it thin — pointers, not prose).
 7. **L0 wiring is a default recommendation, not an afterthought**: propose project-local hooks
-   or CI steps invoking `validate_artifacts.py`, `check_freshness.py`, and `check_gate_chain.py`
-   at gate points as part of every build pass — "the gate must happen" is the suite's most
+   or CI steps invoking `validate_artifacts.py`, `opc_increment.py check`, `opc_ledger.py audit`,
+   `check_freshness.py`, and `check_gate_chain.py` at the appropriate gate points — "the gate and
+   real core journey must happen" is the suite's most
    important rule and deserves its strongest layer. Install on the human's yes (hooks change the
    project's behavior for everyone); a decline is recorded as a `gap` with the enforcement
    downgrade it implies.

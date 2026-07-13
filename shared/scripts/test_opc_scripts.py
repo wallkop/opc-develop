@@ -49,6 +49,7 @@ class TestLedger(unittest.TestCase):
             self.assertEqual(res.returncode, 0, res.stderr)
             data = json.loads(ledger.read_text().strip())
             self.assertIn("ts", data)
+            self.assertEqual(data["schema_version"], "opc-ledger-v3")
             res = run("opc_ledger.py", "summary", "--ledger", str(ledger))
             self.assertEqual(res.returncode, 0)
             self.assertIn("gate: 1", res.stdout)
@@ -118,6 +119,115 @@ class TestLedger(unittest.TestCase):
             result = run("opc_ledger.py", "audit", "--ledger", str(ledger))
             self.assertEqual(result.returncode, 1)
             self.assertIn("evidence", result.stdout)
+
+    def test_historical_v2_gate_and_dispatch_remain_readable(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "ledger.jsonl"
+            rows = [
+                {"schema_version": "opc-ledger-v2", "type": "gate", "gate": "prd", "status": "Approved"},
+                {"schema_version": "opc-ledger-v2", "type": "dispatch", "contract": "C-01", "mode": "serial"},
+            ]
+            ledger.write_text("\n".join(json.dumps(row) for row in rows) + "\n")
+            result = run("opc_ledger.py", "audit", "--ledger", str(ledger))
+            self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_increment_guardrails_reject_full_context_and_excess_review_rounds(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "ledger.jsonl"
+            bad_dispatch = {
+                "type": "dispatch", "contract": "slice-1", "mode": "serial",
+                "context_mode": "all",
+            }
+            result = run(
+                "opc_ledger.py", "append", "--ledger", str(ledger),
+                "--json", json.dumps(bad_dispatch),
+            )
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("context", result.stderr)
+
+            too_many_rounds = {
+                "type": "gate", "gate": "final", "status": "Issues Found",
+                "rounds": 4, "flow": "increment-v1",
+            }
+            result = run(
+                "opc_ledger.py", "append", "--ledger", str(ledger),
+                "--json", json.dumps(too_many_rounds),
+            )
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("round", result.stderr)
+
+            for bad_gate in (
+                {"type": "gate", "gate": "reality", "status": "Approved", "rounds": 1},
+                {"type": "gate", "gate": "final", "status": "Approved", "rounds": 1, "flow": "increment-vl"},
+            ):
+                result = run(
+                    "opc_ledger.py", "append", "--ledger", str(ledger),
+                    "--json", json.dumps(bad_gate),
+                )
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("flow", result.stderr)
+
+    def test_increment_audit_rejects_more_than_two_total_repairs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "ledger.jsonl"
+            rows = [
+                {
+                    "schema_version": "opc-ledger-v3", "type": "gate",
+                    "gate": "reality", "status": "Approved", "rounds": 3,
+                    "flow": "increment-v1",
+                },
+                {
+                    "schema_version": "opc-ledger-v3", "type": "gate",
+                    "gate": "final", "status": "Approved", "rounds": 2,
+                    "flow": "increment-v1",
+                },
+            ]
+            ledger.write_text("\n".join(json.dumps(row) for row in rows) + "\n")
+            result = run("opc_ledger.py", "audit", "--ledger", str(ledger))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("repair", result.stdout)
+
+    def test_complete_increment_audit_requires_both_approved_gates(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "ledger.jsonl"
+            missing = run(
+                "opc_ledger.py", "audit", "--ledger", str(ledger),
+                "--require-increment-complete",
+            )
+            self.assertEqual(missing.returncode, 1)
+            self.assertIn("incomplete", missing.stdout)
+            for gate in ("reality", "final"):
+                entry = {
+                    "type": "gate", "gate": gate, "status": "Approved",
+                    "rounds": 1, "flow": "increment-v1",
+                }
+                appended = run(
+                    "opc_ledger.py", "append", "--ledger", str(ledger),
+                    "--json", json.dumps(entry),
+                )
+                self.assertEqual(appended.returncode, 0, appended.stderr)
+            complete = run(
+                "opc_ledger.py", "audit", "--ledger", str(ledger),
+                "--require-increment-complete",
+            )
+            self.assertEqual(complete.returncode, 0, complete.stdout)
+
+            reversed_ledger = Path(tmp) / "reversed.jsonl"
+            for gate in ("final", "reality"):
+                entry = {
+                    "type": "gate", "gate": gate, "status": "Approved",
+                    "rounds": 1, "flow": "increment-v1",
+                }
+                self.assertEqual(run(
+                    "opc_ledger.py", "append", "--ledger", str(reversed_ledger),
+                    "--json", json.dumps(entry),
+                ).returncode, 0)
+            reversed_result = run(
+                "opc_ledger.py", "audit", "--ledger", str(reversed_ledger),
+                "--require-increment-complete",
+            )
+            self.assertEqual(reversed_result.returncode, 1)
+            self.assertIn("ordered", reversed_result.stdout)
 
 
 class TestUsage(unittest.TestCase):
@@ -288,6 +398,46 @@ class TestFreshness(unittest.TestCase):
             res = run("check_freshness.py", str(review), "--repo-root", tmp)
             self.assertEqual(res.returncode, 1)
 
+    def test_sha256_repository_review_hash(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            initialized = subprocess.run(
+                ["git", "init", "-q", "--object-format=sha256"], cwd=root,
+                capture_output=True, text=True,
+            )
+            if initialized.returncode != 0:
+                self.skipTest("git build lacks SHA-256 repository support")
+            artifact = root / "prd.md"
+            artifact.write_text("sha256 content\n")
+            sha = subprocess.run(
+                ["git", "hash-object", "prd.md"], cwd=root,
+                capture_output=True, text=True, check=True,
+            ).stdout.strip()
+            self.assertEqual(len(sha), 64)
+            review = root / "review.md"
+            review.write_text(f"Reviewed-SHA: prd.md {sha}\n")
+            result = run("check_freshness.py", str(review), "--repo-root", str(root))
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_relative_repo_root_is_resolved_once(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            parent = Path(tmp)
+            root = parent / "repo"
+            root.mkdir()
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            artifact = root / "plan.md"
+            artifact.write_text("content\n")
+            sha = subprocess.run(
+                ["git", "hash-object", "plan.md"], cwd=root,
+                capture_output=True, text=True, check=True,
+            ).stdout.strip()
+            review = parent / "review.md"
+            review.write_text(f"Reviewed-SHA: plan.md {sha}\n")
+            result = run(
+                "check_freshness.py", "review.md", "--repo-root", "repo", cwd=parent,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+
 
 class TestRecurrence(unittest.TestCase):
     def test_detects_clusters(self) -> None:
@@ -371,6 +521,78 @@ class TestGateChain(unittest.TestCase):
             self.assertEqual(res.returncode, 1)
             self.assertIn("impl-contract-review.md", res.stderr)
             self.assertIn("C-01-implementation-review.md", res.stderr)
+
+    def test_standard_increment_uses_two_review_chain(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            feature = root / "docs/features/1-export"
+            reviews = feature / "reviews"
+            reviews.mkdir(parents=True)
+            plan = feature / "feature-plan.md"
+            receipt = feature / "acceptance.json"
+            plan.write_text("plan\n")
+            plan_rel = "docs/features/1-export/feature-plan.md"
+            receipt_rel = "docs/features/1-export/acceptance.json"
+            def sha(path: Path) -> str:
+                return subprocess.run(
+                    ["git", "hash-object", str(path)], cwd=root,
+                    capture_output=True, text=True, check=True,
+                ).stdout.strip()
+
+            subprocess.run(["git", "add", plan_rel], cwd=root, check=True)
+            revision = subprocess.run(
+                ["git", "write-tree"], cwd=root, capture_output=True, text=True, check=True,
+            ).stdout.strip()
+            receipt.write_text(json.dumps({
+                "schema_version": "opc-acceptance-v1", "plan": plan_rel,
+                "excluded_paths": [
+                    receipt_rel, "docs/features/1-export/reviews",
+                    "docs/features/1-export/ledger.jsonl",
+                    "docs/features/1-export/reports",
+                    "docs/features/1-export/release-manifest.md",
+                ],
+                "commands": [{
+                    "revision": revision, "revision_after": revision,
+                    "exit_code": 0, "core": True, "production_assembly": True,
+                    "evidence_complete": True, "mutated_worktree": False,
+                    "label": "local real service passed",
+                }],
+            }) + "\n")
+            (reviews / "reality-review.md").write_text(
+                f"**Status:** Approved\nReviewed-SHA: {plan_rel} {sha(plan)}\n"
+                f"Reviewed-Revision: {revision}\n"
+            )
+            (reviews / "final-review.md").write_text(
+                f"**Status:** Approved\nReviewed-SHA: {plan_rel} {sha(plan)}\n"
+                f"Reviewed-Revision: {revision}\n"
+            )
+            result = run("check_gate_chain.py", str(feature), "--repo-root", str(root))
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("2 reviews", result.stdout)
+
+            skipped = run(
+                "check_gate_chain.py", str(feature), "--repo-root", str(root),
+                "--skip", "reality", "--skip", "final",
+            )
+            self.assertNotEqual(skipped.returncode, 0)
+            self.assertIn("mandatory", skipped.stderr)
+
+            (reviews / "reality-review.md").write_text(
+                f"**Status:** Approved\nReviewed-SHA: {plan_rel} {sha(plan)}\n"
+            )
+            result = run("check_gate_chain.py", str(feature), "--repo-root", str(root))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("Reviewed-Revision", result.stderr)
+            (reviews / "reality-review.md").write_text(
+                f"**Status:** Approved\nReviewed-SHA: {plan_rel} {sha(plan)}\n"
+                f"Reviewed-Revision: {revision}\n"
+            )
+
+            (root / "app.txt").write_text("changed code\n")
+            result = run("check_gate_chain.py", str(feature), "--repo-root", str(root))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("final-review.md", result.stderr)
 
 
 class TestValidateArtifacts(unittest.TestCase):
@@ -481,6 +703,629 @@ class TestValidateArtifacts(unittest.TestCase):
             res = run("validate_artifacts.py", str(review))
             self.assertEqual(res.returncode, 1)
             self.assertIn("Reviewed-SHA", res.stderr)
+
+    def test_feature_plan_budget_and_slice_guardrails(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            plan = Path(tmp) / "feature-plan.md"
+            plan.write_text(
+                "# Feature Plan\n\n"
+                "Plan-Version: opc-increment-v1\n"
+                "Class: standard\n"
+                "Budget-Minutes: 240\n\n"
+                "## Outcome\n"
+                "User-Action: run the existing workflow\n"
+                "Entry-Point: /workflows/vera\n"
+                "Success-Signal: completed run is visible\n"
+                "Non-Goals: bulk migration\n\n"
+                "## Core Journey\n"
+                "Journey-Type: ui\n"
+                "Given: the traced snapshot\n"
+                "When: the user clicks Run\n"
+                "Then: the canvas shows completion\n"
+                "Production-Assembly: page -> session -> router -> service -> scratch DB\n"
+                "Data-Kind: snapshot\n"
+                "Data-Source: vera-workflow\n"
+                "Data-Hash: sha256:abc123\n"
+                "Safety-1: preserve the original workflow\n"
+                "Safety-2: do not affect other users\n\n"
+                "## Slices\n"
+                "Slice-1: 45 | click creates a run | browser core journey\n"
+                "Slice-2: 60 | reload keeps state | browser core journey\n\n"
+                "## Acceptance\n"
+                "Build-Command: python -m compileall src\n"
+                "Core-Command: playwright test core.spec.ts\n"
+            )
+            self.assertEqual(run("validate_artifacts.py", str(plan)).returncode, 0)
+
+            plan.write_text(plan.read_text().replace("Budget-Minutes: 240", "Budget-Minutes: 300"))
+            result = run("validate_artifacts.py", str(plan))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("240", result.stderr)
+
+            plan.write_text(
+                plan.read_text()
+                .replace("Budget-Minutes: 300", "Budget-Minutes: 240")
+                .replace("Slice-1: 45", "Slice-1: 60")
+            )
+            result = run("validate_artifacts.py", str(plan))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("45", result.stderr)
+
+            plan.write_text(plan.read_text() + (
+                "\n## Core Journey\nData-Hash: sha256:different\n"
+            ))
+            result = run("validate_artifacts.py", str(plan))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("exactly one", result.stderr.lower())
+            self.assertIn("data-hash", result.stderr.lower())
+
+    def test_split_plan_accepts_separate_standard_increments_but_not_oversized_ones(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            plan = Path(tmp) / "feature-plan.md"
+            plan.write_text(
+                "# Feature Plan\n\nPlan-Version: opc-increment-v1\nClass: split\n"
+                "Budget-Minutes: 420\n\n## Outcome\nUser-Action: complete the workflow migration\n"
+                "Entry-Point: /workflows\nSuccess-Signal: migrated workflows run\n"
+                "Non-Goals: provider replacement\n\n## Core Journey\nJourney-Type: ui\n"
+                "Given: source-hashed workflow snapshot\nWhen: user runs one workflow\n"
+                "Then: result is visible\nProduction-Assembly: page -> route -> service -> DB\n"
+                "Data-Kind: snapshot\nData-Source: workflows\nData-Hash: sha256:abc\n"
+                "Safety-1: originals remain\nSafety-2: other users remain unchanged\n\n"
+                "## Slices\nSlice-1: 180 | one workflow migrates and runs | browser journey\n"
+                "Slice-2: 240 | bulk migration is resumable | migration canary\n\n"
+                "## Acceptance\nBuild-Command: make check\nCore-Command: make core\n"
+            )
+            self.assertEqual(run("validate_artifacts.py", str(plan)).returncode, 0)
+            plan.write_text(plan.read_text().replace("Slice-2: 240", "Slice-2: 300"))
+            result = run("validate_artifacts.py", str(plan))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("240", result.stderr)
+
+    def test_feature_plan_must_retire_every_demo_mock(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            feature = Path(tmp) / "docs/features/1-export"
+            (feature / "demo").mkdir(parents=True)
+            inventory = feature / "demo/mock-inventory.md"
+            inventory.write_text(
+                "- id: M-1\n  file: ui.ts\n  type: stubbed-endpoint\n"
+                "  scenario: export\n  replacement: export API\n"
+            )
+            plan = feature / "feature-plan.md"
+            plan.write_text(
+                "# Feature Plan\n\nPlan-Version: opc-increment-v1\nClass: standard\n"
+                "Budget-Minutes: 120\n\n## Outcome\nUser-Action: export one report\n"
+                "Entry-Point: /exports\nSuccess-Signal: report appears\nNon-Goals: bulk export\n\n"
+                "## Core Journey\nJourney-Type: ui\nGiven: source-hashed report\n"
+                "When: user clicks Export\nThen: report appears\n"
+                "Production-Assembly: page -> route -> service -> scratch DB\n"
+                "Data-Kind: snapshot\nData-Source: report\nData-Hash: sha256:abc\n"
+                "Safety-1: source unchanged\nSafety-2: other users unchanged\n\n"
+                "## Slices\nSlice-1: 45 | one report exports | browser regression\n\n"
+                "## Acceptance\nBuild-Command: make check\nCore-Command: make core\n"
+            )
+            missing = run("validate_artifacts.py", str(plan))
+            self.assertEqual(missing.returncode, 1)
+            self.assertIn("retirement", missing.stderr.lower())
+            plan.write_text(plan.read_text() + (
+                "\n## Mock Retirement\n"
+                "Mock-Retirement: M-1 | Slice-1 | export API | browser export regression\n"
+            ))
+            self.assertEqual(run("validate_artifacts.py", str(plan)).returncode, 0)
+            plan.write_text(plan.read_text().replace("## Mock Retirement", "## 模拟退役"))
+            self.assertEqual(run("validate_artifacts.py", str(plan)).returncode, 0)
+
+    def test_feature_plan_maps_optional_prd_constraints(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            feature = Path(tmp) / "docs/features/1-export"
+            feature.mkdir(parents=True)
+            prd = feature / "prd.md"
+            prd.write_text(
+                "# PRD\n\n## Decision Sheet\nx\n\n## Acceptance Criteria\n"
+                "AC-1: one report exports\n\n## Appendix\n"
+            )
+            plan = feature / "feature-plan.md"
+            plan.write_text(
+                "# Feature Plan\n\nPlan-Version: opc-increment-v1\nClass: standard\n"
+                "Budget-Minutes: 120\n\n## Outcome\nUser-Action: export one report\n"
+                "Entry-Point: /exports\nSuccess-Signal: report appears\nNon-Goals: bulk export\n\n"
+                "## Core Journey\nJourney-Type: ui\nGiven: source-hashed report\n"
+                "When: user clicks Export\nThen: report appears\n"
+                "Production-Assembly: page -> route -> service -> scratch DB\n"
+                "Data-Kind: snapshot\nData-Source: report\nData-Hash: sha256:abc\n"
+                "Safety-1: source unchanged\nSafety-2: other users unchanged\n\n"
+                "## Slices\nSlice-1: 45 | one report exports | browser regression\n\n"
+                "## Acceptance\nBuild-Command: make check\nCore-Command: make core\n"
+            )
+            missing = run("validate_artifacts.py", str(plan))
+            self.assertEqual(missing.returncode, 1)
+            self.assertIn("constraint", missing.stderr.lower())
+            plan.write_text(plan.read_text() + (
+                "\n## Optional Constraints\n"
+                "Constraint: AC-1 | Slice-1 | TC-1 browser export\n"
+            ))
+            self.assertEqual(run("validate_artifacts.py", str(plan)).returncode, 0)
+
+    def test_testcases_validate_coverage_and_browser_action(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            cases = Path(tmp) / "testcases.md"
+            cases.write_text(
+                "# Test Cases\n\n"
+                "## Coverage Map\n"
+                "| AC | Cases |\n"
+                "| --- | --- |\n"
+                "| AC-1 | TC-1 |\n\n"
+                "## Cases\n"
+                "### TC-1: Run from canvas [level: ui-e2e] [seed: seed:vera] [AC-1]\n"
+                "Given the traced workflow snapshot\n"
+                "When the user runs it\n"
+                "Driver-Action: browser | click the Run button\n"
+                "Then the completed run is visible and stored\n"
+            )
+            self.assertEqual(run("validate_artifacts.py", str(cases)).returncode, 0)
+
+            cases.write_text(cases.read_text().replace(
+                "Driver-Action: browser | click the Run button\n", ""
+            ))
+            result = run("validate_artifacts.py", str(cases))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("browser", result.stderr)
+
+            cases.write_text(
+                cases.read_text().replace("| AC-1 | TC-1 |", "| AC-1 | TC-9 |")
+            )
+            result = run("validate_artifacts.py", str(cases))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("coverage", result.stderr.lower())
+
+            cases.write_text(cases.read_text().replace("| AC-1 | TC-9 |", "| AC-1 | TBD |"))
+            result = run("validate_artifacts.py", str(cases))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("names no tc", result.stderr.lower())
+
+
+class TestIncrementReceipt(unittest.TestCase):
+    def _repo(self, root: Path, journey_type: str = "ui") -> tuple[Path, Path]:
+        subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+        subprocess.run(["git", "config", "user.email", "opc@example.invalid"], cwd=root, check=True)
+        subprocess.run(["git", "config", "user.name", "OPC Test"], cwd=root, check=True)
+        (root / "app.txt").write_text("v1\n")
+        plan = root / "feature-plan.md"
+        plan.write_text(
+            "# Feature Plan\n\n"
+            "Plan-Version: opc-increment-v1\n"
+            "Class: standard\n"
+            "Budget-Minutes: 240\n\n"
+            "## Outcome\n"
+            "User-Action: run the existing workflow\n"
+            "Entry-Point: /workflows/vera\n"
+            "Success-Signal: completed run is visible\n"
+            "Non-Goals: bulk migration\n\n"
+            "## Core Journey\n"
+            f"Journey-Type: {journey_type}\n"
+            "Given: the traced snapshot\n"
+            "When: the user runs it\n"
+            "Then: the completed result is visible\n"
+            "Production-Assembly: entry -> session -> router -> service -> scratch DB\n"
+            "Data-Kind: snapshot\n"
+            "Data-Source: vera-workflow\n"
+            "Data-Hash: sha256:abc123\n"
+            "Safety-1: preserve the original workflow\n"
+            "Safety-2: do not affect other users\n\n"
+            "## Slices\n"
+            "Slice-1: 45 | run produces a result | core journey\n\n"
+            "## Acceptance\n"
+            "Build-Command: python -c pass\n"
+            "Core-Command: python -c pass\n"
+        )
+        subprocess.run(["git", "add", "."], cwd=root, check=True)
+        subprocess.run(["git", "commit", "-qm", "base"], cwd=root, check=True)
+        return plan, root / "acceptance.json"
+
+    def _init(self, root: Path, plan: Path, receipt: Path) -> None:
+        result = run(
+            "opc_increment.py", "init", "--repo", str(root),
+            "--plan", str(plan), "--receipt", str(receipt),
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def _record_success(
+        self, root: Path, receipt: Path, kind: str, *flags: str,
+    ) -> subprocess.CompletedProcess:
+        label = "external provider passed" if kind == "provider" else (
+            "seeded passed" if kind in {"build", "logic", "replay"} else "local real service passed"
+        )
+        extra: list[str] = []
+        command = [sys.executable, "-c", "raise SystemExit(0)"]
+        if (kind == "browser" and "--core" in flags) or kind == "provider":
+            artifact = root / ".git" / f"opc-{kind}-evidence.txt"
+            extra = [
+                "--origin", "http://127.0.0.1:7777", "--session-type", "scratch",
+                "--object-id", "obj-1", "--trace-id", "trace-1",
+                "--artifact", str(artifact),
+            ]
+            if kind == "browser":
+                extra += ["--scratch-db", str(root / ".git" / "scratch.db")]
+            command = [
+                sys.executable, "-c",
+                "from pathlib import Path; import time; "
+                f"Path({str(artifact)!r}).write_text(str(time.time_ns()))",
+            ]
+        return run(
+            "opc_increment.py", "run", "--repo", str(root),
+            "--receipt", str(receipt), "--kind", kind,
+            "--label", label, *flags, *extra,
+            "--", *command,
+        )
+
+    def test_real_ui_journey_passes_and_code_change_invalidates_it(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            result = self._record_success(
+                root, receipt, "browser", "--core", "--browser-action",
+                "--production-assembly", "--data-hash", "sha256:abc123",
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            checked = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "real-service-core-journey",
+            )
+            self.assertEqual(checked.returncode, 0, checked.stderr)
+
+            (root / "reviews").mkdir()
+            (root / "reviews/final-review.md").write_text("review\n")
+            (root / "ledger.jsonl").write_text("{}\n")
+            (root / "release-manifest.md").write_text("manifest\n")
+            process_only = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "real-service-core-journey",
+            )
+            self.assertEqual(process_only.returncode, 0, process_only.stderr)
+
+            subprocess.run(["git", "add", "."], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "record receipt"], cwd=root, check=True)
+            committed = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "real-service-core-journey",
+            )
+            self.assertEqual(committed.returncode, 0, committed.stderr)
+
+            (root / "app.txt").write_text("v2\n")
+            stale = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "real-service-core-journey",
+            )
+            self.assertEqual(stale.returncode, 1)
+            self.assertIn("stale", stale.stderr.lower())
+
+    def test_ui_journey_requires_browser_driven_key_action(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            self.assertEqual(self._record_success(
+                root, receipt, "browser", "--core", "--production-assembly",
+                "--data-hash", "sha256:abc123",
+            ).returncode, 1)
+            checked = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "real-service-core-journey",
+            )
+            self.assertEqual(checked.returncode, 1)
+            self.assertIn("browser", checked.stderr.lower())
+
+    def test_deleted_evidence_artifact_invalidates_real_level(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            self.assertEqual(self._record_success(
+                root, receipt, "browser", "--core", "--browser-action",
+                "--production-assembly", "--data-hash", "sha256:abc123",
+            ).returncode, 0)
+            (root / ".git/opc-browser-evidence.txt").unlink()
+            checked = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "real-service-core-journey",
+            )
+            self.assertEqual(checked.returncode, 1)
+
+    def test_preexisting_unchanged_artifact_cannot_prove_real_core(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            artifact = root / ".git/static-evidence.txt"
+            artifact.write_text("old evidence\n")
+            result = run(
+                "opc_increment.py", "run", "--repo", str(root),
+                "--receipt", str(receipt), "--kind", "browser",
+                "--label", "local real service passed", "--core", "--browser-action",
+                "--production-assembly", "--data-hash", "sha256:abc123",
+                "--origin", "http://127.0.0.1", "--session-type", "scratch",
+                "--scratch-db", str(root / ".git/scratch.db"),
+                "--object-id", "obj-1", "--trace-id", "trace-1",
+                "--artifact", str(artifact), "--", sys.executable, "-c", "pass",
+            )
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("not created or updated", result.stderr)
+
+    def test_other_feature_process_records_do_not_stale_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            self.assertEqual(self._record_success(
+                root, receipt, "browser", "--core", "--browser-action",
+                "--production-assembly", "--data-hash", "sha256:abc123",
+            ).returncode, 0)
+            other = root / "docs/features/2-other/reviews"
+            other.mkdir(parents=True)
+            (other / "reality-review.md").write_text("process-only\n")
+            checked = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "real-service-core-journey",
+            )
+            self.assertEqual(checked.returncode, 0, checked.stderr)
+
+    def test_completion_levels_are_cumulative_from_build(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(
+                root, receipt, "browser", "--core", "--browser-action",
+                "--production-assembly", "--data-hash", "sha256:abc123",
+            ).returncode, 0)
+            checked = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "automated-core-journey",
+            )
+            self.assertEqual(checked.returncode, 1)
+            self.assertIn("required", checked.stderr.lower())
+
+    def test_provider_requires_offline_layers_and_refuses_repeat(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            early = self._record_success(root, receipt, "provider")
+            self.assertEqual(early.returncode, 1)
+            self.assertIn("offline", early.stderr.lower())
+
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            self.assertEqual(self._record_success(
+                root, receipt, "browser", "--core", "--browser-action",
+                "--production-assembly", "--data-hash", "sha256:abc123",
+            ).returncode, 0)
+            self.assertEqual(self._record_success(root, receipt, "replay").returncode, 0)
+            first = self._record_success(root, receipt, "provider")
+            self.assertEqual(first.returncode, 0, first.stderr)
+            second = self._record_success(root, receipt, "provider")
+            self.assertEqual(second.returncode, 1)
+            self.assertIn("repeat", second.stderr.lower())
+
+    def test_concurrent_provider_runs_execute_only_one_canary(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            self.assertEqual(self._record_success(
+                root, receipt, "browser", "--core", "--browser-action",
+                "--production-assembly", "--data-hash", "sha256:abc123",
+            ).returncode, 0)
+            self.assertEqual(self._record_success(root, receipt, "replay").returncode, 0)
+
+            processes = []
+            artifacts = []
+            for index in (1, 2):
+                artifact = root / ".git" / f"provider-concurrent-{index}.txt"
+                artifacts.append(artifact)
+                command = [
+                    sys.executable, str(SCRIPTS / "opc_increment.py"), "run",
+                    "--repo", str(root), "--receipt", str(receipt),
+                    "--kind", "provider", "--label", "external provider passed",
+                    "--origin", "https://provider.invalid", "--session-type", "canary",
+                    "--object-id", f"provider-{index}", "--trace-id", f"trace-{index}",
+                    "--artifact", str(artifact), "--", sys.executable, "-c",
+                    "from pathlib import Path; import time; time.sleep(0.4); "
+                    f"Path({str(artifact)!r}).write_text('provider {index}')",
+                ]
+                processes.append(subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True))
+            results = [process.communicate(timeout=10) + (process.returncode,) for process in processes]
+            self.assertEqual(sorted(result[2] for result in results), [0, 1], results)
+            self.assertEqual(sum(path.exists() for path in artifacts), 1)
+            data = json.loads(receipt.read_text())
+            providers = [row for row in data["commands"] if row["kind"] == "provider"]
+            self.assertEqual(len(providers), 1)
+
+    def test_human_acceptance_is_a_distinct_fresh_level(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            self.assertEqual(self._record_success(
+                root, receipt, "browser", "--core", "--browser-action",
+                "--production-assembly", "--data-hash", "sha256:abc123",
+            ).returncode, 0)
+            accepted = run(
+                "opc_increment.py", "accept", "--repo", str(root),
+                "--receipt", str(receipt), "--actor", "owner",
+            )
+            self.assertEqual(accepted.returncode, 0, accepted.stderr)
+            checked = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "human-accepted",
+            )
+            self.assertEqual(checked.returncode, 0, checked.stderr)
+
+    def test_later_failed_core_attempt_invalidates_pass_and_acceptance(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            flags = (
+                "--core", "--browser-action", "--production-assembly",
+                "--data-hash", "sha256:abc123",
+            )
+            self.assertEqual(self._record_success(root, receipt, "browser", *flags).returncode, 0)
+            self.assertEqual(run(
+                "opc_increment.py", "accept", "--repo", str(root),
+                "--receipt", str(receipt), "--actor", "owner",
+            ).returncode, 0)
+            artifact = root / ".git" / "failed-browser-evidence.txt"
+            artifact.write_text("failed\n")
+            failed = run(
+                "opc_increment.py", "run", "--repo", str(root),
+                "--receipt", str(receipt), "--kind", "browser",
+                "--label", "local real service passed", *flags,
+                "--origin", "http://127.0.0.1", "--session-type", "scratch",
+                "--scratch-db", str(root / ".git" / "scratch.db"),
+                "--object-id", "obj-1", "--trace-id", "trace-failed",
+                "--artifact", str(artifact),
+                "--", sys.executable, "-c", "raise SystemExit(1)",
+            )
+            self.assertEqual(failed.returncode, 1)
+            checked = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "real-service-core-journey",
+            )
+            self.assertEqual(checked.returncode, 1)
+
+    def test_command_launch_failure_invalidates_older_layer_pass(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            failed = run(
+                "opc_increment.py", "run", "--repo", str(root),
+                "--receipt", str(receipt), "--kind", "build",
+                "--label", "seeded passed", "--", "/definitely/not/a/command",
+            )
+            self.assertNotEqual(failed.returncode, 0)
+            data = json.loads(receipt.read_text())
+            self.assertEqual(len(data["commands"]), 2)
+            self.assertEqual(data["commands"][-1]["label"], "blocked")
+            checked = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "code-build",
+            )
+            self.assertEqual(checked.returncode, 1)
+
+    def test_invalid_utf8_failure_is_recorded_and_dominates(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            failed = run(
+                "opc_increment.py", "run", "--repo", str(root),
+                "--receipt", str(receipt), "--kind", "build",
+                "--label", "seeded passed", "--", sys.executable, "-c",
+                "import sys; sys.stdout.buffer.write(b'\\xff'); raise SystemExit(1)",
+            )
+            self.assertEqual(failed.returncode, 1)
+            data = json.loads(receipt.read_text())
+            self.assertEqual(len(data["commands"]), 2)
+            checked = run(
+                "opc_increment.py", "check", "--repo", str(root),
+                "--receipt", str(receipt), "--require", "code-build",
+            )
+            self.assertEqual(checked.returncode, 1)
+
+    def test_split_plan_cannot_initialize_receipt_and_exclusions_cannot_be_overridden(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            plan.write_text(plan.read_text().replace("Class: standard", "Class: split").replace(
+                "Budget-Minutes: 240", "Budget-Minutes: 300"
+            ))
+            result = run(
+                "opc_increment.py", "init", "--repo", str(root),
+                "--plan", str(plan), "--receipt", str(receipt),
+            )
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("plan-only", result.stderr)
+
+            plan.write_text(plan.read_text().replace("Class: split", "Class: standard").replace(
+                "Budget-Minutes: 300", "Budget-Minutes: 240"
+            ))
+            result = run(
+                "opc_increment.py", "init", "--repo", str(root),
+                "--plan", str(plan), "--receipt", str(receipt),
+                "--exclude", "app.txt",
+            )
+            self.assertNotEqual(result.returncode, 0)
+
+    def test_tampered_receipt_cannot_exclude_product_source(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            data = json.loads(receipt.read_text())
+            data["excluded_paths"].append("app.txt")
+            receipt.write_text(json.dumps(data) + "\n")
+            result = self._record_success(root, receipt, "build")
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("tampered", result.stderr.lower())
+
+    def test_reinitialization_cannot_erase_command_history(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, receipt = self._repo(root)
+            self._init(root, plan, receipt)
+            self.assertEqual(self._record_success(root, receipt, "build").returncode, 0)
+            before = receipt.read_text()
+            result = run(
+                "opc_increment.py", "init", "--repo", str(root),
+                "--plan", str(plan), "--receipt", str(receipt),
+            )
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("already exists", result.stderr)
+            self.assertEqual(receipt.read_text(), before)
+
+    def test_same_revision_receipts_keep_separate_command_logs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source_plan, _ = self._repo(root)
+            plan_text = source_plan.read_text()
+            source_plan.unlink()
+            plan_a = root / "docs/features/1-a/feature-plan.md"
+            plan_b = root / "docs/features/2-b/feature-plan.md"
+            plan_a.parent.mkdir(parents=True)
+            plan_b.parent.mkdir(parents=True)
+            plan_a.write_text(plan_text)
+            plan_b.write_text(plan_text.replace("/workflows/vera", "/workflows/b"))
+            subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "two plans"], cwd=root, check=True)
+            receipt_a = plan_a.parent / "acceptance.json"
+            receipt_b = plan_b.parent / "acceptance.json"
+            self._init(root, plan_a, receipt_a)
+            self._init(root, plan_b, receipt_b)
+            for receipt, output in ((receipt_a, "alpha"), (receipt_b, "beta")):
+                result = run(
+                    "opc_increment.py", "run", "--repo", str(root),
+                    "--receipt", str(receipt), "--kind", "build",
+                    "--label", "seeded passed", "--",
+                    sys.executable, "-c", f"print({output!r})",
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+            for receipt in (receipt_a, receipt_b):
+                checked = run(
+                    "opc_increment.py", "check", "--repo", str(root),
+                    "--receipt", str(receipt), "--require", "code-build",
+                )
+                self.assertEqual(checked.returncode, 0, checked.stderr)
 
 
 if __name__ == "__main__":

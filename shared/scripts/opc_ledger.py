@@ -16,15 +16,25 @@ from pathlib import Path
 from opc_usage import capture_usage, usage_delta
 
 SCHEMA_V2 = "opc-ledger-v2"
-FEATURE_TYPES = {
+SCHEMA_CURRENT = "opc-ledger-v3"
+CURRENT_REQUIRED = {
+    "gate": {"gate", "status", "rounds"}, "rework": {"id", "routed_to", "source"},
+    "change": {"source", "note"}, "evidence": {"ac", "label"},
+    "decision": {"id", "door"}, "gap": {"id", "verb", "blocks", "label_cap", "state"},
+    "dispatch": {"contract", "mode", "context_mode"},
+    "phase": {"phase", "result"}, "release": {"stage", "result"}, "park": {"note"},
+}
+V2_REQUIRED = {
     "gate": {"gate", "status"}, "rework": {"id", "routed_to", "source"},
     "change": {"source", "note"}, "evidence": {"ac", "label"},
     "decision": {"id", "door"}, "gap": {"id", "verb", "blocks", "label_cap", "state"},
-    "dispatch": {"contract", "mode"}, "release": {"stage", "result"}, "park": {"note"},
+    "dispatch": {"contract", "mode"}, "release": {"stage", "result"},
+    "park": {"note"},
 }
 LEGACY_REQUIRED = {
-    **FEATURE_TYPES,
-    "rework": {"routed_to", "source"}, "gap": {"verb", "blocks"},
+    **CURRENT_REQUIRED,
+    "gate": {"gate", "status"}, "rework": {"routed_to", "source"},
+    "gap": {"verb", "blocks"}, "dispatch": {"contract", "mode"},
 }
 EVIDENCE_LABELS = {"mock passed", "seeded passed", "local real service passed", "external provider passed", "human accepted", "long-run passed", "not run", "pending", "blocked"}
 ERROR_TAGS = {"env-assumption", "api-misuse", "stale-knowledge", "missing-project-rule", "spec-gap", "test-blindspot", "taste-misjudgment", "harness-gap"}
@@ -36,20 +46,42 @@ def fail(message: str) -> int:
     print(f"ERROR: {message}", file=sys.stderr); return 1
 
 
-def validate(entry: dict, is_error: bool, strict: bool = True) -> str | None:
+def validate(entry: dict, is_error: bool, schema: str | None = SCHEMA_CURRENT) -> str | None:
+    if schema not in {None, SCHEMA_V2, SCHEMA_CURRENT}:
+        return f"unsupported schema_version {schema!r}"
     if is_error:
         missing = {"symptom", "tag", "root_cause"} - entry.keys()
         if missing: return f"error-ledger record missing fields: {sorted(missing)}"
         if entry["tag"] not in ERROR_TAGS: return f"unknown error tag {entry['tag']!r}"
         return None
     etype = entry.get("type")
-    if etype not in FEATURE_TYPES: return f"unknown entry type {etype!r}"
-    required = FEATURE_TYPES[etype] if strict else LEGACY_REQUIRED[etype]
+    required_map = (
+        CURRENT_REQUIRED if schema == SCHEMA_CURRENT
+        else V2_REQUIRED if schema == SCHEMA_V2
+        else LEGACY_REQUIRED
+    )
+    if etype not in required_map: return f"unknown entry type {etype!r}"
+    required = required_map[etype]
     missing = required - entry.keys()
     if missing: return f"{etype} entry missing fields: {sorted(missing)}"
     if etype == "evidence" and entry["label"] not in EVIDENCE_LABELS: return f"unknown evidence label {entry['label']!r}"
-    if etype == "gap" and strict and entry.get("state") not in {"open", "resolved", "accepted"}: return "gap state must be open/resolved/accepted"
+    if etype == "gap" and schema in {SCHEMA_V2, SCHEMA_CURRENT} and entry.get("state") not in {"open", "resolved", "accepted"}: return "gap state must be open/resolved/accepted"
     if etype == "gate" and entry["status"] not in {"Approved", "Issues Found"}: return "gate status must be Approved or Issues Found"
+    if etype == "gate" and schema == SCHEMA_CURRENT:
+        rounds = entry.get("rounds")
+        if not isinstance(rounds, int) or isinstance(rounds, bool) or not 1 <= rounds <= 3:
+            return "gate rounds must be an integer from 1 to 3 (initial review plus at most two repairs)"
+        flow = entry.get("flow")
+        if flow is not None and flow != "increment-v1":
+            return "gate flow must be increment-v1 when present"
+        if entry.get("gate") in {"reality", "final"} and flow != "increment-v1":
+            return "reality/final gates require flow increment-v1"
+        if flow == "increment-v1" and entry.get("gate") not in {"reality", "final"}:
+            return "increment-v1 gate must be reality or final"
+    if etype == "dispatch" and schema == SCHEMA_CURRENT and entry.get("context_mode") not in {"none", "summary"}:
+        return "dispatch context_mode must be none or summary; full-context dispatch is forbidden"
+    if etype == "phase" and entry.get("result") not in {"ok", "failed", "blocked", "paused"}:
+        return "phase result must be ok/failed/blocked/paused"
     if etype == "release" and entry.get("stage") not in RELEASE_STAGES: return f"unknown release stage {entry.get('stage')!r}"
     if etype == "release" and entry.get("result") not in {"ok", "failed", "blocked"}: return "release result must be ok/failed/blocked"
     if "rule_state" in entry and entry["rule_state"] not in RULE_STATES: return f"unknown rule state {entry['rule_state']!r}"
@@ -58,10 +90,11 @@ def validate(entry: dict, is_error: bool, strict: bool = True) -> str | None:
 
 def append_entry(ledger: Path, entry: dict, strict: bool = True) -> None:
     is_error = ledger.name == "error-ledger.jsonl"
-    problem = validate(entry, is_error, strict)
+    schema = SCHEMA_CURRENT if strict else None
+    problem = validate(entry, is_error, schema)
     if problem: raise ValueError(problem)
     entry.setdefault("ts", datetime.now(timezone.utc).isoformat(timespec="seconds"))
-    if strict: entry.setdefault("schema_version", SCHEMA_V2)
+    if strict: entry["schema_version"] = SCHEMA_CURRENT
     ledger.parent.mkdir(parents=True, exist_ok=True)
     with ledger.open("a", encoding="utf-8") as handle: handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
@@ -91,7 +124,7 @@ def cmd_append(args) -> int:
 
 def cmd_span_start(args) -> int:
     entry = json.loads(args.json)
-    if entry.get("type") not in {"gate", "dispatch"}: return fail("spans support gate or dispatch entries")
+    if entry.get("type") not in {"gate", "dispatch", "phase"}: return fail("spans support gate, dispatch, or phase entries")
     span_id = f"span-{uuid.uuid4().hex[:16]}"
     repo = Path(args.repo).resolve(); directory = state_dir(repo); directory.mkdir(parents=True, exist_ok=True)
     state = {"span_id": span_id, "ledger": str(Path(args.ledger).resolve()), "entry": entry, "started_at": datetime.now(timezone.utc).isoformat(), "started_ns": time.time_ns(), "usage_start": capture_usage(args.usage_source, args.usage_input)}
@@ -115,23 +148,58 @@ def cmd_span_end(args) -> int:
     path.unlink(); print(json.dumps(entry, ensure_ascii=False)); return 0
 
 
-def audit_ledger(ledger: Path, enforce_from: str | None = None) -> dict:
+def audit_ledger(
+    ledger: Path, enforce_from: str | None = None,
+    require_increment_complete: bool = False,
+) -> dict:
     threshold = datetime.fromisoformat(enforce_from).timestamp() if enforce_from else None
     errors, warnings = [], []
+    increment_gates = []
     for line, entry, parse_error in read_entries(ledger):
         if parse_error:
             errors.append({"line": line, "code": "invalid_json", "message": parse_error}); continue
-        strict = entry.get("schema_version") == SCHEMA_V2
-        problem = validate(entry, ledger.name == "error-ledger.jsonl", strict)
-        if not problem: continue
+        schema = entry.get("schema_version")
+        problem = validate(entry, ledger.name == "error-ledger.jsonl", schema)
+        if not problem:
+            if schema == SCHEMA_CURRENT and entry.get("type") == "gate" and entry.get("flow") == "increment-v1":
+                increment_gates.append((line, entry))
+            continue
         finding = {"line": line, "code": problem.split(":", 1)[0].replace(" ", "_"), "message": problem, "ts": entry.get("ts")}
         timestamp = datetime.fromisoformat(entry["ts"]).timestamp() if entry.get("ts") else None
-        (errors if strict or threshold is None or timestamp is None or timestamp >= threshold else warnings).append(finding)
+        versioned = schema is not None
+        (errors if versioned or threshold is None or timestamp is None or timestamp >= threshold else warnings).append(finding)
+    total_repairs = sum(max(0, int(entry.get("rounds", 1)) - 1) for _, entry in increment_gates)
+    if total_repairs > 2:
+        errors.append({
+            "line": increment_gates[-1][0], "code": "increment_repair_stop_loss",
+            "message": f"increment-v1 used {total_repairs} repair rounds; maximum is 2 across the increment",
+        })
+    gate_names = [entry.get("gate") for _, entry in increment_gates]
+    if len(gate_names) > 2 or len(gate_names) != len(set(gate_names)):
+        errors.append({
+            "line": increment_gates[-1][0] if increment_gates else 0,
+            "code": "increment_review_count",
+            "message": "increment-v1 permits one reality review and one final review",
+        })
+    if require_increment_complete:
+        if gate_names != ["reality", "final"]:
+            errors.append({
+                "line": increment_gates[-1][0] if increment_gates else 0,
+                "code": "increment_gate_chain_incomplete",
+                "message": "completed increment requires ordered v3 gates: reality then final",
+            })
+        elif any(entry.get("status") != "Approved" for _, entry in increment_gates):
+            errors.append({
+                "line": increment_gates[-1][0], "code": "increment_gate_not_approved",
+                "message": "completed increment requires Approved reality and final gates",
+            })
     return {"ok": not errors, "ledger": str(ledger), "errors": errors, "warnings": warnings}
 
 
 def cmd_audit(args) -> int:
-    report = audit_ledger(Path(args.ledger), args.enforce_from); print(json.dumps(report, ensure_ascii=False, indent=2)); return 0 if report["ok"] else 1
+    report = audit_ledger(
+        Path(args.ledger), args.enforce_from, args.require_increment_complete,
+    ); print(json.dumps(report, ensure_ascii=False, indent=2)); return 0 if report["ok"] else 1
 
 
 def cmd_summary(args) -> int:
@@ -139,7 +207,7 @@ def cmd_summary(args) -> int:
     by_type = Counter(entry.get("type", entry.get("tag", "unknown")) for entry in entries)
     phases = defaultdict(lambda: {"entries": 0, "wall_secs": 0.0, "tokens": 0, "cost_coverage": 0})
     for entry in entries:
-        if entry.get("type") not in {"gate", "dispatch"}: continue
+        if entry.get("type") not in {"gate", "dispatch", "phase"}: continue
         key = entry.get("phase") or entry.get("gate") or entry.get("contract") or "unknown"
         phases[key]["entries"] += 1; phases[key]["wall_secs"] += float(entry.get("wall_secs", 0)); phases[key]["tokens"] += int(entry.get("token_usage", {}).get("total_tokens", entry.get("tokens_est", 0)) or 0)
         if "wall_secs" in entry: phases[key]["cost_coverage"] += 1
@@ -157,7 +225,7 @@ def main() -> int:
     app = sub.add_parser("append"); app.add_argument("--ledger", required=True); app.add_argument("--json", required=True); app.add_argument("--legacy", action="store_true"); app.set_defaults(func=cmd_append)
     start = sub.add_parser("span-start"); start.add_argument("--ledger", required=True); start.add_argument("--json", required=True); start.add_argument("--repo", default="."); start.add_argument("--usage-source", default="auto"); start.add_argument("--usage-input"); start.set_defaults(func=cmd_span_start)
     end = sub.add_parser("span-end"); end.add_argument("--span", required=True); end.add_argument("--json", required=True); end.add_argument("--repo", default="."); end.add_argument("--usage-source", default="auto"); end.add_argument("--usage-input"); end.add_argument("--child-session", action="append"); end.set_defaults(func=cmd_span_end)
-    audit = sub.add_parser("audit"); audit.add_argument("--ledger", required=True); audit.add_argument("--enforce-from"); audit.set_defaults(func=cmd_audit)
+    audit = sub.add_parser("audit"); audit.add_argument("--ledger", required=True); audit.add_argument("--enforce-from"); audit.add_argument("--require-increment-complete", action="store_true"); audit.set_defaults(func=cmd_audit)
     summary = sub.add_parser("summary"); summary.add_argument("--ledger", required=True); summary.add_argument("--json", action="store_true"); summary.set_defaults(func=cmd_summary)
     args = parser.parse_args(); return args.func(args)
 

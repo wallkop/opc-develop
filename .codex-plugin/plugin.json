@@ -1,15 +1,15 @@
 {
   "name": "opc-develop",
-  "version": "0.4.1+codex.20260712092302",
-  "description": "Product development suite from fastest human-accepted vibe coding to taste-first design, contract TDD, evidence-labeled verification, retro, and executable harness capabilities",
+  "version": "0.5.0+codex.20260713090721",
+  "description": "Budget-first product development with real core journeys, runnable increments, revision-bound evidence, and reviews that stop",
   "author": {
     "name": "wallkop"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "opc_develop",
-    "shortDescription": "Fast vibe coding through contract TDD, verification, and retro",
-    "longDescription": "opc-develop (OPC = One Person Company) is a loop-engineering development workflow suite for Claude Code and Codex. The full flow captures the builder's taste in three artifacts \u2014 a grilled decision-first requirement (brainstorm), an experienceable prototype inside the real codebase (demo), and a gated PRD with numbered acceptance criteria (prd, ending in a pushed product-to-architecture handoff), and a technical design with ADR-style decision records after an architecture intake pass (architect) \u2014 then hands execution to agents: a build skill that completes everything local in one run \u2014 contract partitioning, TDD implementation with RED/GREEN evidence, mock retirement, local deploy with dev-environment migrations, and full black-box regression (build), a test-environment release with gated manifest, automated regression, and the human acceptance touchpoint (ship), a fail-closed production release with preflight, backups, prod-safe regression, and a watch window (deploy), and production incident response with diagnostic reports and expedited hotfixes (oncall). Lite handles small changes with zero ceremony. Retro mines per-feature ledgers and the error ledger for rework routing and recurring mistakes, crystallizing human-approved rules at the lowest enforcement layer. Harness assesses and builds the project's run/reset/observe/drive capabilities by executing them. Reviews are gated by content-SHA freshness and structural validation scripts. Output and artifact language must follow the applicable project AGENTS.md target language; only machine-readable tokens stay normative. Where isolated subagents are unavailable, gates degrade honestly with recorded labels instead of blocking.",
+    "shortDescription": "Budgeted increments through real user journeys and fresh evidence",
+    "longDescription": "opc-develop is a budget-first product development suite for Claude Code and Codex. Use vibe only for explicitly human-accepted unverified code, lite for one change under 60 minutes, and build for one 1-4 hour standard increment. Build creates a one-page result card, proves one real core journey, reaches a production-assembled vertical slice within 45 minutes, expands in runnable slices, verifies from cheap logic checks through browser and optional one-shot provider canary, and emits a revision-bound acceptance receipt. UI completion requires the browser to perform the key action. A reality review and final review share a hard two-repair stop-loss; subagents are exceptional cold-context tasks and full-conversation dispatch is forbidden. Brainstorm, demo, PRD, and architecture remain explicit opt-in decision tools. Ship, deploy, oncall, harness, retro, executable benchmarks, SHA freshness, language-adaptive reports, and release safety complete the loop.",
     "developerName": "wallkop",
     "category": "Coding",
     "capabilities": [
@@ -20,8 +20,7 @@
     "defaultPrompt": [
       "Use $vibe to implement this immediately without tests; I will perform the acceptance.",
       "Use $lite to handle this small request on the current branch with targeted tests and before/after evidence.",
-      "Use $brainstorm to grill this raw idea into a decision-first requirement with a numbered feature branch.",
-      "Use $retro to audit measured cost and data quality, replay compressed incident cases, verify rule effectiveness, and present a plain-language HTML report."
+      "Use $build to deliver this as one <=4-hour increment through a real core journey with a fresh acceptance receipt."
     ]
   }
 }

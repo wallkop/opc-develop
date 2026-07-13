@@ -1,13 +1,13 @@
 ---
 name: architect
-description: "Use after the PRD gate is Approved — typically after pulling a feature branch handed off by the product owner — to run architecture intake and produce the gated technical design: ADR-style TD records with reversibility tags, public contracts, system boundaries, runtime evidence plan, risk spikes, thin slice. Ends at the architecture sign-off touchpoint."
+description: "Use only when an increment changes a public boundary, makes a one-way technical decision, or has an explicit product-to-architecture handoff. Runs intake and produces a gated ADR-style technical design with contracts and runtime evidence. It is optional and not a prerequisite for ordinary build increments of up to four hours."
 license: MIT
 ---
 
 # architect
 
-The engineering taste document. Starts with intake — understand before designing — because in a
-duo the architect was not in the room when the requirement and PRD were shaped.
+The engineering decision document. Start with intake because the architect may not have shaped the
+result card or optional PRD.
 
 ## Load
 
@@ -20,21 +20,18 @@ duo the architect was not in the room when the requirement and PRD were shaped.
 
 ## Process
 
-1. **Intake** (skippable when the same person just ran `prd`): pull the feature branch; verify
-   PRD/demo gate freshness (`check_freshness.py`); read the owning domain's living spec
-   (`docs/opc/specs/`, when it exists) for the current system truth, then requirement.md and
-   prd.md; exercise the demo. Produce an intake note: what the feature does, the ACs that constrain architecture, and
-   any understanding questions. Questions route to the product owner as `revise` (PRD/requirement
-   wrong or incomplete) or get answered from artifacts — never silently self-answered.
-2. **Risk spike**: if the risk profile has categories and no `risk-spike.md` yet, run the
-   time-boxed spike now (`risk-readiness.md`). Technical decisions made before the spike are
-   guesses.
+1. **Intake**: pull the branch; read the result card, current code/architecture, living spec when
+   present, and any optional requirement/demo/PRD with their fresh reviews. Exercise the existing
+   real entry or demo when relevant. Record the outcome, constraints, and understanding questions;
+   never silently answer missing product judgment.
+2. **Matching risk spike**: run only the time-boxed experiment that could invalidate this public or
+   one-way decision. Include it inside the increment budget; do not spike every category by default.
 3. Commit to one route. Write `technical.md` per the format: numbered TD records with
    reversibility tags, public contracts, system boundaries, the runtime evidence plan written
-   against the project's actual observability, thin-slice designation. Inspect the codebase for
+   against the project's actual observability and core-slice impact. Inspect the codebase for
    the architecture baseline; divergence is a `[ONE-WAY]` TD record.
-4. Gate it (fresh reviewer, `rubrics/technical.md`, L0 precheck). Fix-and-re-gate until
-   Approved. Ledger each round.
+4. Gate it (fresh reviewer, `rubrics/technical.md`, L0 precheck). Apply the shared two-repair
+   stop-loss; unresolved blockers force scope reduction or a new decision. Ledger each round.
 5. **Architecture sign-off touchpoint**: write `reports/technical.md` as a faithful plain-language
    summary with the technical artifact SHA, render/lint `reports/technical.html` per
    `formats/report-style.md`, then present the TD decision sheet to the human architect.

@@ -14,7 +14,7 @@ artifact, not the author. Cite line/section for every blocking finding. End with
    advocacy, not analysis.
 4. **Open questions are safe**: none of them could change scope, core behavior, or risk
    classification. Each has a trigger condition or owning phase.
-5. **Risk profile plausibility**: check the feature description against the five categories in
+5. **Risk profile plausibility**: check the feature description against the eight categories in
    `packs/risk-readiness.md`; a feature calling external APIs classified `none identified` is wrong.
 6. **Length**: over 150 lines ⇒ the summary has leaked detail; reject with what to move or cut.
 7. **Acceptance signals are observable**: someone could check them without reading code.

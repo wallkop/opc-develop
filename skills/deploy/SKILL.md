@@ -1,6 +1,6 @@
 ---
 name: deploy
-description: "Use when a feature (or a batch of features) has passed test acceptance and is merged to the trunk, to release it to production safely: fail-closed preflight, production environment changes (DDL, data backfills, config, servers) with backups and per-item rollback, the deploy itself per runbook, prod-safe online regression, and a watch window. Every destructive step requires explicit human confirmation."
+description: "Use when one or more increments have a fresh human-accepted acceptance receipt and are merged to trunk, to release them to production safely: fail-closed preflight, production environment changes with backups/rollback, deploy per runbook, prod-safe regression, and a watch window. Every destructive step requires explicit human confirmation."
 license: MIT
 ---
 
@@ -26,10 +26,16 @@ Resume after the last `release` ledger entry with `result: ok`.
      since the last `deploy-prod: ok` ledger entry (or release tag), or an explicit
      human-declared list. Record the set — slugs + merge commits — in the ledger; everything
      below is checked per feature in the set;
-   - test acceptance recorded `ok` in the ledger for every feature in the set, and
-     `check_gate_chain.py` passes for each;
    - all released code merged to the trunk (`develop` or per AGENTS.md) — verify the merge
      commits, not the claim;
+   - after the release set is fixed and all merge commits are present, refresh every receipt once
+     on that same combined trunk: run cheap checks, each increment's core journey, and focused
+     regression, then obtain the human verdict again. This is the documented reconciliation for
+     whole-tree fingerprints; a later merge intentionally stales earlier evidence. Use offline
+     replay before at most one release-set provider canary when that provider path changed;
+   - test acceptance recorded `ok` in the ledger for every increment, and
+     `opc_increment.py check --require human-accepted` passes for each refreshed receipt; optional
+     legacy artifact chains are checked only when those artifacts exist;
    - release manifests complete for every feature: every DDL item has a rollback entry, every
      env var is provisioned (names verified, values via human/secret manager), every third-party
      item has an owner;
@@ -61,5 +67,4 @@ hotfixes flow back through `build` → `ship` → `deploy` on the expedited path
 ## Output
 
 Released production feature with staged evidence, backups and rollback paths recorded, watch
-window observed. This skill produces no artifacts other than ledger entries and runbook-defined
-release records.
+window observed, plus the Markdown/HTML human handoff under `docs/opc/deploy/`.

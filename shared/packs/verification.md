@@ -1,53 +1,31 @@
-# Local Verification (build phase C)
+# Verification
 
-Prove the feature black-box on the local stack before anything leaves the machine. Internal to
-`build`. Gate rubric: `rubrics/e2e.md`.
+Standard `build` uses `packs/increment.md` and `opc_increment.py`; this pack summarizes the runtime
+rules shared with release flows and explicit legacy artifacts.
 
-## Local Deploy
+## Prepare the real local surface
 
-- Bring the stack up per harness L1 (`run`); reset + seed per L2.
-- Apply this feature's migrations/DDL and config changes to the local or shared dev database
-  **per the safety rules in `release-ops.md`** (backup before DDL on shared data, expand →
-  migrate → contract, destructive changes need human confirmation when data is shared). Record
-  what was applied in the ledger — these entries seed the release manifest later.
-- **Shared dev infra is a serialized resource across features**: before applying DDL/config to a
-  shared database or environment, check other active features' ledgers for un-reverted env
-  entries; two features mutating shared schema concurrently coordinate through the humans, not
-  by racing. (Feature-internal parallelism is already isolated by worktrees; this rule is about
-  two *features* building at once — the PM/architect duo case.)
-- Missing verbs ⇒ record `gap` entries and note the label caps they force.
+- Start through the production entry/runbook, not a test-only assembly.
+- Reset to scratch state and import the declared seed or source-hashed snapshot.
+- Apply local migrations/config under `release-ops.md`; back up shared data before DDL and require
+  approval for destructive/one-way changes.
+- Record build ID, origin, session/auth mode, scratch DB path, object IDs, and trace ID.
 
-## Tier-1 First (skeletons → green)
+## Run by cost
 
-- Run the full Tier-1 suite: the Phase A skeletons plus all pre-existing regression specs.
-  Capture output and exit codes. The skeletons turning green is the feature's primary acceptance
-  signal — they were written from the approved test cases before implementation existed.
-- A skeleton that cannot go green without weakening its assertion is a triage, not an edit:
-  implementation defect (fix the code) vs testcase artifact defect (`revise` to `prd`, stale
-  cascade). Nobody edits a skeleton to make it pass.
-- Per AC, assemble the evidence triangle: interface assertion, correlation-ID log chain, state
-  assertion. Record per-AC `evidence` ledger entries with honest labels.
+1. targeted logic/build;
+2. real local service + scratch DB;
+3. core browser journey for UI;
+4. saved-provider replay;
+5. one external-provider canary;
+6. human acceptance.
 
-## Agentic Gap Hunt → Distillation
+Use targeted tests during debugging. Run the core journey at slice boundaries and final delivery,
+not after every patch. Run the full regression only when slices integrate or final delivery needs
+it. A canary failure caused by harness/DOM/seed/timing returns to offline layers before any repeat.
 
-- With the cases green, drive the running app *beyond* them — browser tooling for UI, real
-  requests for APIs: unlisted paths, hostile inputs, state left by one case entering another.
-- Demo parity: exercise the contractual interactions from PRD Demo alignment; divergence is a
-  finding — triage implementation defect vs artifact defect, don't assume.
-- Distill every discovery that matters into an additional committed Tier-1 spec annotated with
-  its AC-IDs, named seed, and an `explored` marker (it proves behavior the cases missed —
-  candidate TCs for testcases.md next revision).
+## Complete honestly
 
-## Acceptance Sheet
-
-Write `docs/features/<slug>/acceptance.md` — one line per AC: verdict, label, evidence pointer,
-reproduction entry point; plus recorded gaps and their caps. Immutable after the gate; human
-verdicts go to the ledger. The sheet travels with the feature: the human normally exercises it
-on the test environment at `ship`'s acceptance touchpoint, not locally (a local spot-check is
-welcome but not a gate).
-
-## Gate
-
-Fresh reviewer on `rubrics/e2e.md`: AC coverage, seed declarations, triangles, label honesty,
-distillation, regression freshness. Computer-use style verification stays advisory; blocking
-evidence is Tier-1 output.
+The generated acceptance receipt is the machine truth. `opc_increment.py check` must reach the
+required level on the current content tree. Review findings, test counts, and prebuilt receipt
+matrices cannot substitute for commands from this revision.

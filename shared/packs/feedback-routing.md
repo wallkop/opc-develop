@@ -8,7 +8,8 @@ One state machine for every human touchpoint. Classify first, route second.
   "this copy is off"). Stay in the current phase and iterate. Not recorded, not counted, unlimited.
   The demo vibe-loop is tune by definition.
 - **revise** — an upstream artifact captured the wrong judgment. Identify the **earliest broken
-  layer** (requirement → demo → PRD → technical → impl-contract → implementation), fix there,
+  layer** (feature plan, or an explicitly used requirement → demo → PRD → technical record, then
+  slice implementation), fix there,
   cascade staleness downward, replay forward. Record one ledger `rework` entry with `routed_to`.
 - **park** — this line of work stops (deprioritized, cancelled, superseded). Record the decision
   and its reason in the ledger, close the branch per `branch-worktree.md`.
@@ -45,9 +46,9 @@ destinations and different ledger records:
 
 | Case | Test | Route | Ledger |
 |---|---|---|---|
-| Implementation defect | code ≠ artifact (an AC fails) | fix in `build`, artifacts untouched | `rework` → `implementation` |
-| Artifact defect | code = artifact, artifact was wrong | `revise` at earliest broken layer + cascade | `rework` → `<layer>` |
-| Taste change | artifact was right, intent moved | new increment via `brainstorm` (fast path) | `change` (not rework) |
+| Implementation defect | code ≠ plan/artifact | fix the affected `build` slice | `rework` → `implementation` |
+| Plan/artifact defect | code matches the wrong journey/object | revise the result card or earliest opt-in artifact; invalidate receipts | `rework` → `<layer>` |
+| Taste change | captured intent was right, intent moved | start a new result card/increment; use `brainstorm` only when product judgment needs it | `change` (not rework) |
 
 Never let a taste change masquerade as a defect: it poisons rework metrics and creates unwinnable
 fix loops. Attribution is the agent's job; arbitration is the human's.

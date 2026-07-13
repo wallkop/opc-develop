@@ -1,13 +1,13 @@
 ---
 name: prd
-description: "Use after the demo gate is Approved to produce and gate the PRD: decision sheet with numbered PD records, AC-IDs, state machine, permissions, and appendix — plus the black-box test cases (testcases.md) that state how every AC will be proven. Ends at the product sign-off touchpoint (typically the PM), then commits and pushes the feature branch as the product-to-architecture handoff."
+description: "Use only when durable product decisions, a state machine/permission contract, or a PM-to-architecture handoff independently justifies a PRD. Produces numbered PD/AC records and structurally validated black-box testcases. It is optional and not a prerequisite for a normal build increment of up to four hours."
 license: MIT
 ---
 
 # prd
 
-Convert the experienced prototype into the product taste document. Owned by whoever holds product
-judgment — the PM in a duo, the builder solo. Ends with a pushed branch another person can pick up.
+Record durable product truth. Owned by whoever holds product judgment — the PM in a duo, the
+builder solo. Ends with a pushed branch when another person must pick it up.
 
 ## Load
 
@@ -20,9 +20,9 @@ judgment — the PM in a duo, the builder solo. Ends with a pushed branch anothe
 
 ## Process
 
-1. Precheck upstream freshness (`check_freshness.py` on the demo review). Stale ⇒ route per
-   `feedback-routing.md`.
-2. From requirement.md, the exercised demo, and the mock inventory, write `prd.md` per the
+1. Read the result card and whichever requirement/demo artifacts exist; verify freshness for every
+   upstream review that is present. Missing optional layers are not gaps.
+2. From those inputs and the human's durable product decisions, write `prd.md` per the
    format. Before writing ACs, check the owning domain's living spec (`docs/opc/specs/`, when it
    exists) for conflicts with existing system behavior — a new AC that contradicts a live one
    must declare the supersession explicitly. ACs are the spine — every contractual demo
@@ -33,24 +33,24 @@ judgment — the PM in a duo, the builder solo. Ends with a pushed branch anothe
    PRD will ever get — an AC you cannot phrase as a case is not testable; fix the AC now, not in
    build.
 4. Gate the PRD + testcases together (fresh reviewer, `rubrics/prd.md`, L0 precheck via
-   `validate_artifacts.py`). Fix-and-re-gate until Approved. Ledger each round.
+   `validate_artifacts.py --prd <prd>`). Apply the shared two-repair stop-loss; unresolved blockers
+   reduce scope or return to product judgment. Ledger each round.
 5. **Product sign-off touchpoint**: write faithful plain-language `reports/prd.md` and
    `reports/testcases.md` summaries with source artifact SHAs, render/lint their `.html` companions
    per `report-style.md`, and present the decision sheet plus testcase coverage map to the product
    owner. Two-way doors were decided and logged; `[ONE-WAY]` PD records need an explicit yes.
    Feedback routes tune/revise/park.
-6. **Handoff**: commit the feature artifacts and push the feature branch. Print a handoff
-   summary for the architect: branch name, demo entry point, AC and TC counts, open questions
-   with triggers, risk profile, and any recorded gaps.
+6. **Handoff when needed**: commit and push. If architecture work is justified, print branch,
+   entry point, AC/TC counts, open questions, risk profile, and gaps. Otherwise return to `build`.
 
 ## Fail-open
 
-Product questions the demo/requirement can't answer go back to the product owner as five-piece
-decisions — never guessed. If the demo gate is missing entirely (legacy or imported feature),
-record the gap, note the fidelity caps it implies, and continue with the human's ack.
+Product questions the available inputs cannot answer go back to the product owner as five-piece
+decisions—never guessed. An optional demo being absent is not a gap; claiming interaction taste was
+exercised when it was not is.
 
 ## Output
 
 `prd.md` and `testcases.md` (gated together, PD/AC/TC numbered), HTML sign-off reports, pushed
 feature branch, handoff summary, ledger entries.
-Next: `architect` — same person or a different one.
+Next: `build`, or `architect` only for a changed public boundary/one-way decision.

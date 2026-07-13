@@ -3,4 +3,4 @@ interface:
   short_description: "Grill a raw idea into a decision-first requirement"
   default_prompt: "Use $brainstorm to grill the raw idea one question at a time, capture tradeoffs, non-goals, and risk profile, then create the numbered feature branch and requirement.md."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

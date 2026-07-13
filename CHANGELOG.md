@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.5.0 - 2026-07-13
+
+Breaking default-flow change driven by a measured 38-hour false-green incident: standard work is
+now budget-first and core-journey-first. The former full artifact/contract pipeline remains opt-in.
+
+- Rebuild `build` around one 1-4 hour standard increment: 240-minute hard budget, one-page
+  `feature-plan.md`, one real core journey, a <=45-minute first vertical slice, and 30-90 minute
+  runnable follow-up slices. Larger work splits before implementation; ordinary <=60-minute work
+  routes to `lite`, while release-bound/oncall quick work keeps the receipt chain.
+- Add `opc_increment.py`, a generated revision-bound `acceptance.json` receipt with automatic
+  command/time/exit/output/head/content-tree capture, runtime metadata, four completion levels, and
+  automatic staleness after code/test/plan/seed/config changes, canonical exclusions, hash-chained
+  command history, per-receipt interprocess locking, hashed output/evidence files, and
+  latest-attempt-wins failure semantics.
+- Make UI completion require a browser-driven key action through the production assembly. Add real
+  `testcases.md` L0 validation for level, seed, Given/When/Then, bidirectional AC coverage, and
+  `ui-e2e` browser action instead of returning “nothing checked.”
+- Enforce cheap-to-expensive verification. External Provider canaries remain locked until local
+  build, real core journey, and offline replay pass; allow one attempt per revision by default.
+- Replace per-contract review loops with one reality review plus one final review. Ledger audit now
+  enforces at most two repair rounds across the increment, rejects extra gates, and forbids
+  full-conversation dispatch context. New records use `opc-ledger-v3`; v2 remains readable.
+- Default to one main executor. Subagents are exceptional, bounded, cold-context tasks; heavy
+  brainstorm/demo/PRD/architect skills are opt-in and disabled for implicit invocation.
+- Update `ship`/`deploy` to gate on real-service/human-accepted receipts, keep optional decision
+  artifacts optional, and invalidate downstream conclusions when the user rejects the tested object
+  or journey. Multi-increment releases refresh all receipts once on the final combined trunk.
+- Make applicable project `AGENTS.md` target language mandatory across artifacts, reviews, reports,
+  conversation, and human-readable ledger values; parser-required tokens/identifiers stay stable.
+- Replace the English/Chinese public workflow image and documentation around the new default.
+  Helper tests increase from 32 to 60.
+
 ## 0.4.1 - 2026-07-12
 
 - Add `vibe`, an explicit fastest-path skill that writes code directly without plans, tests,
@@ -21,13 +53,6 @@
   conclusion and user impact, and explain specialist terms beside their first occurrence.
 - Add project-agnostic compressed incident fixtures for child stderr deadlock, approval decline
   termination, and external-directory deletion safety. Helper tests increase from 23 to 32.
-
-## Unreleased
-
-- Make the applicable project `AGENTS.md` target language mandatory across every opc-develop
-  artifact, review, report, conversation, and human-readable ledger value. Reviewers now block
-  mismatched artifact/report language; only parser-required tokens and identifiers remain in
-  their normative spelling.
 
 ## 0.3.0 - 2026-07-08
 

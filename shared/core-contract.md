@@ -1,118 +1,144 @@
 # OPC Core Contract
 
-Always loaded. Everything else loads on demand — see the Pack Index at the bottom.
-Enforcement lives at the lowest possible layer: script/hook (L0) > structured artifact (L1) > this prose (L2).
+Load this contract for every opc-develop skill. Load other packs only when the current role needs
+them. Enforce at the lowest useful layer: script/hook (L0) > structured artifact (L1) > prose (L2).
 
-## Status Tokens
+## Route by elapsed-time budget
+
+- `vibe`: only when the human explicitly owns all acceptance and requests no tests/verification.
+- `lite`: one result credibly <=60 minutes; no feature artifacts or subagents. Do not use when the
+  result must enter `ship`/`deploy` and therefore needs a revision-bound receipt.
+- `build`: one standard increment of 1-4 hours, or a release-bound/oncall quick increment; one plan,
+  one core journey, runnable slices.
+- >4 hours or several independently useful outcomes: split before implementation.
+
+Risk adds a matching check; it does not automatically promote work into the full
+demo/PRD/technical/contract chain. Those artifacts are explicit, opt-in tools for durable product
+decisions, public-boundary changes, or separately requested governance.
+
+## Status tokens
 
 Reviews end with exactly one line: `**Status:** Approved` or `**Status:** Issues Found`.
 Implementers report exactly one of: `DONE`, `DONE_WITH_CONCERNS`, `NEEDS_CONTEXT`, `BLOCKED`.
-Tokens are machine-parsed (`shared/scripts/parse_review_status.py`). Never translate, rephrase, or duplicate them.
+Tokens are machine-parsed (`shared/scripts/parse_review_status.py`). Never translate or duplicate
+them.
 
-## Evidence Before Claim
+## Core journey and evidence before claim
+
+Define one external journey before implementation: traceable starting data, real entry, user
+action, production assembly, visible result, durable state, and two safety invariants. UI acceptance
+requires the browser to perform the key action; API/DB preparation may not manufacture the accepted
+result. If the user named existing data, a synthetic lookalike is not equivalent—use a permitted
+source-hashed snapshot or real object.
 
 Never claim passed, fixed, verified, done, or releasable without fresh evidence from the current
-code revision: command, exit code, report path, branch/commit. A subagent report alone is not
-evidence — inspect the actual diff, test output, or runtime artifacts.
-
-Every verification claim carries one authenticity label:
+content tree: command, exit code, output path, branch/commit, and authenticity label. A report alone
+is a claim to inspect. Every verification uses one label:
 `mock passed` | `seeded passed` | `local real service passed` | `external provider passed` |
 `human accepted` | `long-run passed` | `not run` | `pending` | `blocked`.
-Never report a lower-realism label as a higher one. Missing environment does not block work;
-it caps the achievable label, and the cap is reported honestly.
 
-## Feedback Taxonomy
+Report the highest achieved completion level exactly:
 
-All human feedback, at any touchpoint, classifies as exactly one of:
+1. `code-build`
+2. `automated-core-journey`
+3. `real-service-core-journey`
+4. `human-accepted`
 
-- `tune` — same intent, different execution. Iterate inside the current phase. Free, unlimited, unrecorded.
-- `revise` — an upstream artifact was wrong. Route to the earliest broken layer, mark every
-  downstream artifact stale (freshness cascade), replay forward. Record in the ledger.
-- `park` — stop this line of work. Record the decision, close out cleanly.
+`opc_increment.py` binds standard-increment receipts to code, tests, plan, seed, and tracked config;
+any change invalidates old command conclusions. Missing environment capability caps the level and
+creates a visible gap. It never upgrades a claim.
 
-Acceptance failures additionally classify three ways before routing:
-implementation defect (code ≠ artifact → fix code), artifact defect (code = artifact, artifact
-wrong → `revise` upstream), taste change (artifact was right, intent moved → new increment, not rework).
+## Verification cost order
+
+Use logic/build -> local service + scratch state -> browser core journey -> saved-provider replay ->
+one real-provider canary -> human acceptance. Cheap targeted tests may run after relevant edits;
+browser journeys run at slice boundaries; full gates run at integration/final; provider canaries
+never serve as the ordinary debug loop.
+
+Tests may use public interfaces, independent provider fakes, source-hashed snapshots, and read-only
+state assertions. Production code must not expose a test control that directly creates the
+Run/Event/Artifact/Receipt the test later calls success.
+
+## Reviews and stop-loss
+
+A standard increment has one reality review after the first vertical slice and one final integration
+review. The first pass returns a complete severity-ordered finding list. Across both reviews, allow
+at most two repair rounds total; remaining blockers force scope reduction or redesign, not another
+patch loop. Over-broad review scope is itself blocking.
+
+Start reviewers cold with the rubric, plan/artifact, diff, receipt/evidence, and project rules only.
+Use `fork_turns: none` or the host equivalent. Never copy the full conversation. If isolation is
+unavailable, self-review after a deliberate cold reread and disclose `self-reviewed (no isolation)`.
+
+## Subtasks and context
+
+The main executor implements by default. Dispatch only truly independent bounded work, with one
+implementer and one reviewer at most concurrently. Every task receives a one-page packet with paths,
+scope, commands, and acceptance—not creator reasoning or unrelated history. `fork_turns: all` and
+`context_mode: all` are forbidden. End long stages with a <=1-page handoff: goal, current code,
+unresolved issue, and next command.
+
+## Feedback taxonomy
+
+Classify human feedback as exactly one of:
+
+- `tune` — same intent, different execution; iterate in the current slice.
+- `revise` — plan/upstream truth was wrong; fix the earliest broken layer, invalidate downstream
+  evidence, and replay forward.
+- `park` — stop this line of work and close it cleanly.
+
+Acceptance failures additionally separate implementation defect, artifact/plan defect, and taste
+change. If the human says the tested object or journey is not theirs, mark the candidate rejected,
+invalidate tests/receipts, rewrite the result card, and re-evaluate budget before coding again.
 
 ## Freshness
 
-A review is valid only for the exact content it reviewed. Reviews record `Reviewed-SHA` per
-artifact (via `git hash-object`); `shared/scripts/check_freshness.py` verifies. Never trust mtimes.
-Any `revise` invalidates downstream approvals automatically.
+Reviews record `Reviewed-SHA` per artifact using `git hash-object`; `check_freshness.py` verifies.
+Standard command receipts use a content-tree fingerprint so an unchanged commit does not invalidate
+them while content changes do. Never trust mtimes or manually copied SHAs.
 
-## Failure Philosophy
+## Failure philosophy
 
-Fail open with a recorded gap: when an environment assumption is unmet (missing runbook, missing
-service, no subagent support), degrade honestly — record the gap in the ledger, cap evidence labels
-accordingly, and continue. Fail closed only for destructive or irreversible actions (deleting work,
-force-push, production mutation, external publication) and for guessing product/technical decisions
-that belong to the human.
+Fail open with a recorded cap for missing runbooks, services, observability, or isolation. Fail
+closed for destructive/irreversible actions, production mutations, external publication, and human
+product/technical decisions that cannot safely be inferred.
 
-## Ledger
+## Ledger and measurement
 
-Every gate outcome, rework routing, evidence label, resolved failure, and recorded gap appends one
-JSON line to the feature ledger (`docs/features/<slug>/ledger.jsonl`) via `shared/scripts/opc_ledger.py`.
-Resolved failures also append root-cause records to `docs/opc/error-ledger.jsonl`.
-The ledger is the substrate for `retro`; unrecorded events are invisible to improvement.
+Append gate, phase, dispatch, rework, evidence, release, and gap records through
+`shared/scripts/opc_ledger.py`. Wrap measurable phases/gates/dispatches in `span-start`/`span-end`;
+wall time is automatic and token usage is recorded when exposed. Never invent missing usage.
 
-### Cost spans
+Dispatch records require `context_mode: none|summary`. Standard gates use `flow: increment-v1` and
+`gate: reality|final`; `opc_ledger.py audit` rejects more than two total repair rounds. Command and
+provider counts live in the generated acceptance receipt. Missing telemetry prevents efficiency
+claims but does not block implementation.
 
-Every `gate` and `dispatch` is wrapped by `opc_ledger.py span-start` / `span-end`. The span records
-wall time and captures token deltas when the host exposes usage. Never invent missing usage: write
-`cost_source: wall-only`, record an `observe` gap for unmapped controller/subagent cost, and let
-retro cap the claim. New records use `opc-ledger-v2`; old JSONL remains readable.
+Resolved high-value failures (P0/P1, false-green, irreversible-risk, recurrence) link a project
+benchmark case or a human-approved waiver. A rule becomes verified only after GREEN -> RED -> GREEN.
 
-Resolved high-value failures (P0/P1, false-green gates, irreversible-risk bugs, or recurrences)
-must link a project-local OPC benchmark case or a human-approved waiver. One case is one problem;
-its profiles reproduce the same ground truth at different cost. A rule is not `verified` until its
-case proves GREEN → RED → GREEN.
+## Language and human reports
 
-## Language
+Read applicable project `AGENTS.md` files from repository root to artifact scope. Target-language
+rules govern conversation, artifacts, review findings, reports, and human-readable ledger values.
+Only parser-required tokens, IDs, commands, paths, code identifiers, evidence labels, and fixed
+format keys retain normative spelling.
 
-Before writing or reviewing any artifact, read the applicable project `AGENTS.md` files from the
-repository root down to the artifact's scope. If they declare a target language, that language is
-mandatory for conversation, generated artifacts, review findings, rendered reports, and
-human-readable ledger values. A template, existing example, upstream artifact, or the language of
-this suite never overrides the project's declared target language.
+Markdown/JSON is machine truth. When a workflow calls for a human report, provide the self-contained
+HTML companion per `formats/report-style.md`, lead with conclusion/user impact, and explain specialist
+terms at first use.
 
-Language resolution order is strict: applicable `AGENTS.md` target language → explicit project
-language rule → user's language for this feature → language of the surrounding artifact. If no
-rule can be found, use the user's language. Reviewers treat a target-language mismatch as a
-blocking finding and may not return `Approved` until it is fixed.
+## Pack index
 
-Only machine-parsed tokens and identifiers remain in their normative form: status tokens,
-`Reviewed-SHA`, ledger keys, AC/TC/PD/TD IDs, commands, paths, code identifiers, evidence labels,
-and protocol vocabulary whose parser requires the original spelling. Do not use these exceptions
-to leave ordinary headings, prose, Given/When/Then content, findings, or reports untranslated.
-
-## Human Reports
-
-Markdown/JSON remains the review and machine source of truth. Every output presented to a human as
-a report has a self-contained HTML companion generated and linted per `formats/report-style.md`.
-Reports lead with the conclusion and user impact. In Chinese, use short plain sentences; explain
-each specialist term beside its first occurrence and do not repeat the explanation.
-
-## Isolation
-
-Parallel implementers require worktrees; without worktrees, dispatch serially. Reviews run in fresh
-subagents given the rubric and the artifact — never the creator's chat history, reasoning, or
-desired outcome. If subagent isolation is unavailable, perform the gate inline with a cold restart
-of context, record `self-reviewed (no isolation)` in the ledger, and surface it at the next human
-touchpoint.
-
-## Pack Index
-
-Read a pack only when your current role needs it:
-
-- `packs/gate-protocol.md` — running any review gate; freshness mechanics; convergence stop-loss.
-- `packs/decision-protocol.md` — presenting decisions to the human; doors; decision-spikes.
-- `packs/feedback-routing.md` — handling tune/revise/park in detail; stale cascade; acceptance triage.
-- `packs/evidence.md` — evidence triangle; RED/GREEN fields; prohibited claims.
-- `packs/contracting.md` — partitioning work into implementation contracts (build phase A).
-- `packs/tdd-implement.md` — dispatching implementers; status protocol; controller duties.
-- `packs/verification.md` — local deploy, agentic pass, Tier-1 distillation (build phase C).
-- `packs/mock-retirement.md` — prototype mock inventory and retirement lifecycle.
-- `packs/risk-readiness.md` — risk categories, spikes, thin-slice gates.
-- `packs/branch-worktree.md` — branch rules, worktree mechanics, destructive-op confirmation.
-- `packs/harness-verbs.md` — run/reset/observe/drive standards; seed scenarios; E2E tiers.
-- `packs/release-ops.md` — release manifest, environment-change safety, online regression.
+- `packs/increment.md` — budget-first standard increment and verification ladder.
+- `packs/gate-protocol.md` — isolated review mechanics, freshness, aggregate stop-loss.
+- `packs/evidence.md` — receipt fields, labels, RED/GREEN, runtime evidence.
+- `packs/risk-readiness.md` — matching risk checks and first-slice spikes.
+- `packs/tdd-implement.md` — targeted TDD/debugging and exceptional bounded dispatch.
+- `packs/decision-protocol.md` — human decisions and reversible/one-way doors.
+- `packs/feedback-routing.md` — tune/revise/park, invalidation, acceptance triage.
+- `packs/branch-worktree.md` — branch/worktree rules and destructive-operation confirmation.
+- `packs/harness-verbs.md` — run/reset/observe/drive standards and named seeds.
+- `packs/release-ops.md` — test/production release safety.
+- `packs/mock-retirement.md` — prototype mock inventory and slice-based retirement.
+- `packs/contracting.md` — optional coordination contracts only when explicitly justified.

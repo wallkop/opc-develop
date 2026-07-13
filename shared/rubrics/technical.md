@@ -1,8 +1,8 @@
 # Rubric: technical.md
 
-You are reviewing a technical design against `formats/technical-format.md`, the approved PRD, and
-the project's existing architecture (inspect the codebase — do not take the document's word for
-what exists). End with one `**Status:**` line and `Reviewed-SHA:` lines per reviewed file.
+You are reviewing a technical design against `formats/technical-format.md`, the result card, any
+approved PRD that exists, and the project's actual architecture. Inspect the codebase; do not take
+the document's word for what exists. End with one `**Status:**` line and `Reviewed-SHA:` lines.
 
 ## Blocking checks
 
@@ -16,16 +16,17 @@ what exists). End with one `**Status:**` line and `Reviewed-SHA:` lines per revi
    the project, not the document.
 4. **Public contracts fully specified**: every endpoint has request/response shapes and an error
    envelope; every schema change has a forward migration and a rollback note.
-5. **AC coverage**: every PRD AC is implementable under this design; name any AC the design cannot
-   satisfy.
+5. **Outcome/AC coverage**: the result-card journey is implementable; when a PRD exists, every AC is
+   supported. Name any constraint the design cannot satisfy.
 6. **Runtime Evidence Plan present and concrete**: per AC-cluster, named log events with
    correlation IDs, DB assertions, or dump commands — written against the project's actual
    observability (check `packs/harness-verbs.md` L3). "We will add logging" is not a plan.
-7. **Boundary discipline**: no internal module design, no TDD detail — that belongs to
-   impl-contracts. Leakage downward is a defect, not thoroughness.
-8. **Risk integration**: spike results referenced, thin slice designated when risk categories exist.
-9. **Demo alignment**: the design supports the contractual demo interactions (data shapes, latency
-   class, state visibility).
+7. **Boundary discipline**: no broad internal module plan or future test matrix. Slice-level detail
+   stays in `feature-plan.md`; leakage downward is not thoroughness.
+8. **Risk integration**: matching spike results are referenced only where the decision needed them;
+   the 45-minute core slice remains viable.
+9. **Demo alignment**: when an optional demo exists, the design supports its contractual
+   interactions (data shapes, latency class, state visibility).
 
 ## Non-blocking
 
