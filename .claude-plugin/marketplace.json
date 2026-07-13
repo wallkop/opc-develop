@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "opc-develop",
-      "description": "Budget-first product development with real core journeys, runnable increments, revision-bound evidence, and reviews that stop",
-      "version": "0.5.1",
+      "description": "Human-approved black-box semantics, executable testcase manifests, trusted runtime evidence, and semantics-routed product delivery",
+      "version": "0.6.0",
       "source": "./",
       "author": {
         "name": "wallkop",

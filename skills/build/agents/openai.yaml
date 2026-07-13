@@ -1,6 +1,6 @@
 interface:
   display_name: "build"
-  short_description: "Deliver one budgeted increment through a real core journey"
-  default_prompt: "Use $build to deliver this as one <=4-hour increment: write the one-page result card, prove the real core journey, implement runnable slices, and produce a fresh acceptance receipt."
+  short_description: "Deliver one semantics-routed increment through a real core journey"
+  default_prompt: "Use $build after demo, PRD, and testcase approval to implement the approved Core-Case and produce runner-derived evidence."
 policy:
   allow_implicit_invocation: true

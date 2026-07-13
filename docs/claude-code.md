@@ -30,6 +30,9 @@ Then invoke skills by their Claude plugin namespace, for example:
 
 ```text
 /opc-develop:brainstorm
+/opc-develop:demo
+/opc-develop:prd
+/opc-develop:testcase
 /opc-develop:build
 /opc-develop:lite
 /opc-develop:retro

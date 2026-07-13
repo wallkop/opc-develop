@@ -19,7 +19,7 @@ environment), `deploy` (production), and standard increments with local environm
 ## Third-party / Provider
 - <dashboard settings, webhooks, API scopes> — who applies it (agent | human handoff)
 ## Data Backfills
-- <script/command> — idempotent: yes/no — estimated scope
+- <script/command> — idempotent: yes/no — semantic scope and risk
 ## Not Releasing
 - <changes in the diff deliberately excluded, with reason>
 ```

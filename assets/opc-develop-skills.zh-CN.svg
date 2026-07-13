@@ -15,7 +15,7 @@
 
   <!-- Title -->
   <text x="52" y="88" font-family="Georgia, serif" font-size="52" font-style="italic" font-weight="bold" fill="#1a1a1a">OPC-Develop 全景架构</text>
-  <text x="660" y="88" font-family="Georgia, serif" font-size="26" font-style="italic" fill="#888">v0.5.1 · 预算优先循环工程</text>
+  <text x="660" y="88" font-family="Georgia, serif" font-size="26" font-style="italic" fill="#888">v0.6.0 · 人工批准 Oracle 的循环工程</text>
 
   <!-- Legend -->
   <g font-size="20" fill="#333">
@@ -72,8 +72,8 @@
     <rect x="1580" y="130" width="270" height="150" rx="10" fill="#666"/>
     <text x="1715" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">drive</text>
     <rect x="1596" y="182" width="238" height="76" rx="6" fill="#d9d9d9"/>
-    <text x="1715" y="215" text-anchor="middle" font-size="18" fill="#222">Tier-1 E2E 用例</text>
-    <text x="1715" y="240" text-anchor="middle" font-size="18" fill="#222">← agent 探索蒸馏</text>
+    <text x="1715" y="215" text-anchor="middle" font-size="18" fill="#222">已批准 Case Runner</text>
+    <text x="1715" y="240" text-anchor="middle" font-size="18" fill="#222">→ 结构化证据</text>
   </g>
 
   <!-- ═══════════ FLOW BANDS ═══════════ -->
@@ -81,7 +81,7 @@
   <text x="130" y="358" text-anchor="middle" font-size="24" font-style="italic" font-weight="bold" fill="#fff">流程</text>
 
   <rect x="240" y="320" width="1240" height="60" rx="6" fill="#3f51a3"/>
-  <text x="860" y="358" text-anchor="middle" font-size="26" fill="#fff">交付主线 — 按需决策 → build 标准增量 → ship → deploy</text>
+  <text x="860" y="358" text-anchor="middle" font-size="26" fill="#fff">交付 — demo → PRD → testcase → build → ship → deploy</text>
 
   <line x1="1510" y1="320" x2="1510" y2="1080" stroke="#777" stroke-width="2" stroke-dasharray="8,7"/>
 
@@ -94,10 +94,10 @@
     <path d="M 250 414 L 250 406 L 941 406 L 941 414"/>
     <path d="M 958 414 L 958 406 L 1472 406 L 1472 414"/>
   </g>
-  <text x="595" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">按需决策工具（使用 0～4 个）</text>
-  <text x="1215" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">默认交付路径</text>
+  <text x="595" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">brainstorm 可选 · 产品定义必经</text>
+  <text x="1215" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">architect 按需 · 再 build + 发布</text>
 
-  <!-- 7 skills: brainstorm demo prd architect build ship deploy -->
+  <!-- 产品定义链 + build/release；architect 为按需侧向决策。 -->
   <g font-size="22" font-weight="bold" fill="#123">
     <!-- brainstorm -->
     <circle cx="330" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
@@ -114,11 +114,11 @@
     <text x="684" y="440" text-anchor="middle" font-size="16" fill="#4a3000">3</text>
     <rect x="604" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
     <text x="684" y="498" text-anchor="middle">prd</text>
-    <!-- architect -->
+    <!-- testcase -->
     <circle cx="861" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
     <text x="861" y="440" text-anchor="middle" font-size="16" fill="#4a3000">4</text>
     <rect x="781" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="861" y="498" text-anchor="middle">architect</text>
+    <text x="861" y="498" text-anchor="middle">testcase</text>
     <!-- build -->
     <rect x="958" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
     <text x="1038" y="498" text-anchor="middle">build</text>
@@ -156,8 +156,8 @@
     <text x="507" y="576">mock 清单</text>
     <text x="684" y="556">prd.md (AC/PD)</text>
     <text x="684" y="576">过门禁后推送</text>
-    <text x="861" y="556">intake → 风险spike →</text>
-    <text x="861" y="576">technical.md (TD)</text>
+    <text x="861" y="556">testcases.md/json</text>
+    <text x="861" y="576">人工批准 Oracle</text>
     <text x="1038" y="556">结果卡 → 纵向切片 →</text>
     <text x="1038" y="576">新鲜验收收据</text>
     <text x="1215" y="556">变更清单 → 测试环境</text>
@@ -168,8 +168,8 @@
 
   <!-- ═══════════ GATE BAND ═══════════ -->
   <rect x="250" y="620" width="1230" height="96" rx="10" fill="#dff4f4" stroke="#5a4632" stroke-width="2.5"/>
-  <text x="865" y="658" text-anchor="middle" font-size="23" font-weight="bold" fill="#123">门禁 — 按需工件独立评审；标准增量只有现实 / 最终评审</text>
-  <text x="865" y="692" text-anchor="middle" font-size="19" fill="#345">L0 校验 · 内容新鲜度 · 与版本绑定的收据 · 两个评审合计最多两轮修复</text>
+  <text x="865" y="658" text-anchor="middle" font-size="23" font-weight="bold" fill="#123">门禁 — demo + PRD + testcase 必经；build 有现实 / 最终评审</text>
+  <text x="865" y="692" text-anchor="middle" font-size="19" fill="#345">L0 校验 · 内容新鲜度 · 与版本绑定的收据 · 评审直到收敛</text>
 
   <!-- gate diamonds connecting pipeline to gate band -->
   <g fill="#fff" stroke="#5a4632" stroke-width="2">
@@ -203,13 +203,13 @@
   <g font-size="18" fill="#365220" text-anchor="middle">
     <text x="1695" y="506">vibe：人工验收</text>
     <text x="1695" y="538">不做任何验证</text>
-    <text x="1695" y="562">lite：单一结果 ≤60 分钟</text>
-    <text x="1695" y="594">不创建 feature 工件</text>
-    <text x="1695" y="618">定向测试 + 真实入口</text>
-    <text x="1695" y="650">需要发布 → build</text>
-    <text x="1695" y="674">1～4 小时 → build</text>
-    <text x="1695" y="706">&gt;4 小时 / 多个结果</text>
-    <text x="1695" y="730">→ 先拆分</text>
+    <text x="1695" y="562">lite：E2E 语义不变</text>
+    <text x="1695" y="594">文案 / 样式不跑 E2E</text>
+    <text x="1695" y="618">定向检查 + 真实入口</text>
+    <text x="1695" y="650">新行为 → build</text>
+    <text x="1695" y="674">需要发布 → build</text>
+    <text x="1695" y="706">多个独立旅程</text>
+    <text x="1695" y="730">→ 按语义拆分</text>
   </g>
 
   <!-- oncall skill box on right -->
@@ -234,7 +234,7 @@
   <!-- ledgers -->
   <rect x="240" y="1130" width="380" height="180" rx="12" fill="#f0f0f0" stroke="#5a4632" stroke-width="2.5"/>
   <text x="430" y="1168" text-anchor="middle" font-size="22" font-weight="bold" fill="#123">账本（追加式 JSONL）</text>
-  <text x="430" y="1202" text-anchor="middle" font-size="18" fill="#345">ledger.jsonl + acceptance.json</text>
+  <text x="430" y="1202" text-anchor="middle" font-size="18" fill="#345">testcase 签署 + acceptance.json</text>
   <text x="430" y="1228" text-anchor="middle" font-size="17" fill="#666">门禁 · 返工路由 · 证据标签 · 缺口</text>
   <text x="430" y="1262" text-anchor="middle" font-size="18" fill="#345">docs/opc/error-ledger.jsonl</text>
   <text x="430" y="1288" text-anchor="middle" font-size="17" fill="#666">失败解决时刻记录根因</text>

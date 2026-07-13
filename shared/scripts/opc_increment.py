@@ -9,8 +9,8 @@ Typical flow:
   opc_increment.py init --plan docs/features/7-x/feature-plan.md \
     --receipt docs/features/7-x/acceptance.json
   opc_increment.py run --receipt ... --kind build --label seeded\ passed -- <build command>
-  opc_increment.py run --receipt ... --kind browser --label local\ real\ service\ passed \
-    --core --browser-action --production-assembly --data-hash sha256:... -- <journey command>
+  opc_increment.py run --receipt ... --kind browser --core --case-id TC-1 \
+    --case-evidence .git/opc-evidence/run/case-evidence.json -- <project case runner>
   opc_increment.py check --receipt ... --require real-service-core-journey
 
 Exit codes: command exit code for `run`; 0 success, 1 failed guard/check, 2 usage error otherwise.
@@ -31,6 +31,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+from opc_testcase import check_feature_ready, validate_case_evidence
 from validate_artifacts import check_feature_plan, field
 
 try:
@@ -60,6 +61,7 @@ REAL_LABELS = {
 }
 GLOBAL_PROCESS_PATHS = (
     ":(glob)docs/features/*/acceptance.json",
+    ":(glob)docs/features/*/testcase-approval.json",
     ":(glob)docs/features/*/reviews/**",
     ":(glob)docs/features/*/ledger.jsonl",
     ":(glob)docs/features/*/reports/**",
@@ -108,6 +110,7 @@ def canonical_exclusions(receipt_rel: str) -> list[str]:
         artifact_path("ledger.jsonl"),
         artifact_path("reports"),
         artifact_path("release-manifest.md"),
+        artifact_path("testcase-approval.json"),
     ]))
 
 
@@ -277,18 +280,17 @@ def resolve_plan(repo: Path, receipt: dict) -> Path:
     inventory = plan.parent / "demo" / "mock-inventory.md"
     prd = plan.parent / "prd.md"
     technical = plan.parent / "technical.md"
+    testcases = plan.parent / "testcases.md"
     check_feature_plan(
         plan.read_text(encoding="utf-8"), findings,
         inventory.read_text(encoding="utf-8") if inventory.exists() else None,
         prd.read_text(encoding="utf-8") if prd.exists() else None,
         technical.read_text(encoding="utf-8") if technical.exists() else None,
+        testcases.read_text(encoding="utf-8") if testcases.exists() else None,
     )
     if findings:
         raise ValueError("invalid feature plan: " + "; ".join(findings))
-    if field(plan.read_text(encoding="utf-8"), "Class") == "split":
-        raise ValueError(
-            "split plans are plan-only; choose one <=240-minute standard increment and initialize its receipt"
-        )
+    check_feature_ready(repo, plan.parent, require_approved=True)
     return plan
 
 
@@ -338,11 +340,17 @@ def valid_commands(receipt: dict, revision: str, repo: Path) -> list[dict]:
 
 
 def core_is_real(command: dict, plan_text: str) -> bool:
-    if not command.get("core") or not command.get("production_assembly"):
+    evidence = command.get("case_evidence")
+    axes = evidence.get("axes", {}) if isinstance(evidence, dict) else {}
+    if not command.get("core") or not isinstance(evidence, dict):
+        return False
+    if not command.get("production_assembly") or axes.get("assembly") != "production":
         return False
     if command.get("label") not in REAL_LABELS:
         return False
     if not command.get("evidence_complete"):
+        return False
+    if axes.get("observation") != "complete" or axes.get("product_outcome") != "passed":
         return False
     journey_type = field(plan_text, "Journey-Type")
     if journey_type == "ui" and (
@@ -353,6 +361,8 @@ def core_is_real(command: dict, plan_text: str) -> bool:
         return False
     data_kind = field(plan_text, "Data-Kind")
     if data_kind in {"snapshot", "real"}:
+        if axes.get("data") not in {"canonical-clone", "live-real"}:
+            return False
         return command.get("data_hash") == field(plan_text, "Data-Hash")
     return True
 
@@ -404,18 +414,17 @@ def cmd_init(args: argparse.Namespace) -> int:
         inventory = plan.parent / "demo" / "mock-inventory.md"
         prd = plan.parent / "prd.md"
         technical = plan.parent / "technical.md"
+        testcases = plan.parent / "testcases.md"
         check_feature_plan(
             plan.read_text(encoding="utf-8"), findings,
             inventory.read_text(encoding="utf-8") if inventory.exists() else None,
             prd.read_text(encoding="utf-8") if prd.exists() else None,
             technical.read_text(encoding="utf-8") if technical.exists() else None,
+            testcases.read_text(encoding="utf-8") if testcases.exists() else None,
         )
         if findings:
             return fail("invalid feature plan: " + "; ".join(findings))
-        if field(plan.read_text(encoding="utf-8"), "Class") == "split":
-            return fail(
-                "split plans are plan-only; choose one <=240-minute standard increment first"
-            )
+        check_feature_ready(repo, plan.parent, require_approved=True)
         excluded = canonical_exclusions(receipt_rel)
         for item in excluded:
             if Path(item).is_absolute() or item == ".." or item.startswith("../"):
@@ -477,27 +486,20 @@ def provider_precheck(receipt: dict, revision: str, plan_text: str, repo: Path,
 
 
 def structured_evidence_problem(args: argparse.Namespace) -> str | None:
-    if not (args.core and args.label in REAL_LABELS) and args.kind != "provider":
+    if not (args.core or args.kind in {"browser", "provider"}):
         return None
-    missing = []
-    for value, label in (
-        (args.origin, "--origin"), (args.session_type, "--session-type"),
-        (args.trace_id, "--trace-id"),
-    ):
-        if not value:
-            missing.append(label)
-    if not args.object_id:
-        missing.append("--object-id")
-    if not args.artifact:
-        missing.append("--artifact")
-    if args.core and not args.scratch_db:
-        missing.append("--scratch-db")
+    missing = [
+        name for value, name in (
+            (args.case_id, "--case-id"),
+            (args.case_evidence, "--case-evidence"),
+        ) if not value
+    ]
     if missing:
-        return "real evidence requires " + ", ".join(missing)
+        return "E2E evidence must come from an approved testcase runner: " + ", ".join(missing)
     return None
 
 
-def artifact_snapshot(repo: Path, paths: list[str]) -> dict[str, tuple[str, int, int]]:
+def artifact_snapshot(repo: Path, paths: list[str]) -> dict[str, str]:
     snapshot = {}
     for raw in paths:
         path = Path(raw)
@@ -509,9 +511,7 @@ def artifact_snapshot(repo: Path, paths: list[str]) -> dict[str, tuple[str, int,
             continue
         if path.is_file():
             content = path.read_bytes()
-            snapshot[rel] = (
-                hashlib.sha256(content).hexdigest(), path.stat().st_mtime_ns, len(content),
-            )
+            snapshot[rel] = hashlib.sha256(content).hexdigest()
     return snapshot
 
 
@@ -530,7 +530,7 @@ def artifact_metadata(repo: Path, paths: list[str]) -> tuple[list[dict], str | N
         content = path.read_bytes()
         records.append({
             "path": rel, "sha256": hashlib.sha256(content).hexdigest(),
-            "bytes": len(content), "mtime_ns": path.stat().st_mtime_ns,
+            "bytes": len(content),
         })
     return records, None
 
@@ -554,16 +554,9 @@ def cmd_run(args: argparse.Namespace) -> int:
         if args.core:
             if field(plan_text, "Journey-Type") == "ui" and args.kind != "browser":
                 return fail("the UI core journey must use kind=browser")
-            if not args.production_assembly:
-                return fail("a core journey must run through production assembly")
-            if field(plan_text, "Journey-Type") == "ui" and not args.browser_action:
-                return fail("the UI core journey must drive the key action in a browser")
-            expected_hash = field(plan_text, "Data-Hash")
-            if field(plan_text, "Data-Kind") in {"snapshot", "real"} and args.data_hash != expected_hash:
-                return fail(f"core journey must use the plan Data-Hash ({expected_hash})")
+            if args.case_id and args.case_id != field(plan_text, "Core-Case"):
+                return fail(f"core journey must execute Core-Case {field(plan_text, 'Core-Case')}")
         if args.kind == "provider":
-            if args.label != "external provider passed":
-                return fail("a successful provider canary must use label 'external provider passed'")
             problem = provider_precheck(
                 receipt, revision, plan_text, repo, args.allow_provider_repeat,
                 args.reason,
@@ -573,12 +566,32 @@ def cmd_run(args: argparse.Namespace) -> int:
         evidence_problem = structured_evidence_problem(args)
         if evidence_problem:
             return fail(evidence_problem)
-        structured_required = (args.core and args.label in REAL_LABELS) or args.kind == "provider"
-        before_artifacts = artifact_snapshot(repo, args.artifact)
+        structured_required = args.core or args.kind in {"browser", "provider"}
+        if not structured_required and not args.label:
+            return fail("non-E2E commands require --label")
+        evidence_path = Path(args.case_evidence).resolve() if args.case_evidence else None
+        before_paths = list(args.artifact)
+        if evidence_path is not None:
+            before_paths.append(str(evidence_path))
+        before_artifacts = artifact_snapshot(repo, before_paths)
 
         started = now()
+        run_env = os.environ.copy()
+        if structured_required and evidence_path is not None:
+            manifest = plan.parent / "testcases.json"
+            run_env.update({
+                "OPC_CASE_ID": args.case_id,
+                "OPC_CASE_MANIFEST": str(manifest),
+                "OPC_CASE_MANIFEST_SHA256": (
+                    "sha256:" + hashlib.sha256(manifest.read_bytes()).hexdigest()
+                ),
+                "OPC_CASE_EVIDENCE": str(evidence_path),
+            })
         try:
-            proc = subprocess.run(command, cwd=repo, capture_output=True, text=True, errors="replace")
+            proc = subprocess.run(
+                command, cwd=repo, env=run_env,
+                capture_output=True, text=True, errors="replace",
+            )
             command_exit = proc.returncode
             output = proc.stdout + (("\n" if proc.stdout and proc.stderr else "") + proc.stderr)
         except OSError as exc:
@@ -592,16 +605,57 @@ def cmd_run(args: argparse.Namespace) -> int:
         log.write_text(output, encoding="utf-8")
         log_content = log.read_bytes()
         after = tree_fingerprint(repo, excluded)
-        artifact_records, artifact_problem = artifact_metadata(repo, args.artifact)
-        artifact_changed = any(
-            before_artifacts.get(record["path"]) != (
-                record["sha256"], record["mtime_ns"], record["bytes"],
+        validated: dict | None = None
+        artifact_problem: str | None = None
+        artifact_paths = list(args.artifact)
+        if structured_required and command_exit == 0 and evidence_path is not None:
+            try:
+                validated = validate_case_evidence(repo, plan.parent, args.case_id, evidence_path)
+                if validated["label"] == "blocked":
+                    artifact_problem = "case outcome is failed or inconclusive"
+                elif args.kind == "provider" and validated["label"] != "external provider passed":
+                    artifact_problem = "provider canary evidence must prove provider.mode=live"
+                elif args.core and field(plan_text, "Data-Kind") in {"snapshot", "real"} and (
+                    validated.get("data_hash") != field(plan_text, "Data-Hash")
+                ):
+                    artifact_problem = (
+                        f"case data hash does not match plan Data-Hash ({field(plan_text, 'Data-Hash')})"
+                    )
+                elif args.label and args.label != validated["label"]:
+                    artifact_problem = (
+                        f"caller label {args.label!r} conflicts with runner-derived label "
+                        f"{validated['label']!r}"
+                    )
+                artifact_paths.extend(validated["artifact_paths"])
+                artifact_paths.append(str(evidence_path))
+            except (ValueError, OSError) as exc:
+                artifact_problem = str(exc)
+        artifact_paths = list(dict.fromkeys(artifact_paths))
+        artifact_records, metadata_problem = artifact_metadata(repo, artifact_paths)
+        if artifact_problem is None:
+            artifact_problem = metadata_problem
+        if structured_required and evidence_path is not None and evidence_path.is_file():
+            evidence_rel = relative_inside(evidence_path, repo)
+            artifact_changed = before_artifacts.get(evidence_rel) != hashlib.sha256(
+                evidence_path.read_bytes()
+            ).hexdigest()
+        else:
+            artifact_changed = any(
+                before_artifacts.get(record["path"]) != record["sha256"]
+                for record in artifact_records
             )
-            for record in artifact_records
-        )
         if structured_required and artifact_problem is None and not artifact_changed:
-            artifact_problem = "structured evidence artifact was not created or updated by the command"
+            artifact_problem = "structured evidence content was not created or changed by the command"
         effective_exit = command_exit if command_exit != 0 else (1 if artifact_problem else 0)
+        derived_label = validated["label"] if validated else args.label
+        case_evidence = None
+        if validated and evidence_path is not None:
+            case_evidence = {
+                "path": relative_inside(evidence_path, repo),
+                "sha256": hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+                "manifest_sha256": validated["manifest_sha256"],
+                "axes": validated["axes"],
+            }
         entry = {
             "id": f"CMD-{len(receipt['commands']) + 1}",
             "kind": args.kind,
@@ -619,20 +673,26 @@ def cmd_run(args: argparse.Namespace) -> int:
             "revision": revision,
             "revision_after": after,
             "mutated_worktree": revision != after,
-            "label": args.label if effective_exit == 0 else "blocked",
+            "label": derived_label if effective_exit == 0 else "blocked",
             "core": args.core,
-            "browser_action": args.browser_action,
-            "production_assembly": args.production_assembly,
-            "data_hash": args.data_hash,
-            "build_id": args.build_id,
-            "origin": args.origin,
-            "session_type": args.session_type,
-            "scratch_db": args.scratch_db,
-            "object_ids": args.object_id,
-            "trace_id": args.trace_id,
+            "case_id": args.case_id,
+            "case_evidence": case_evidence,
+            "browser_action": validated["browser_action"] if validated else False,
+            "production_assembly": validated["production_assembly"] if validated else False,
+            "data_hash": validated["data_hash"] if validated else None,
+            "build_id": (
+                validated["evidence"].get("assembly", {}).get("build_id") if validated else None
+            ),
+            "origin": validated["origin"] if validated else None,
+            "session_type": validated["session_type"] if validated else None,
+            "scratch_db": validated["scratch_db"] if validated else None,
+            "object_ids": validated["object_ids"] if validated else [],
+            "trace_id": validated["trace_id"] if validated else None,
             "artifacts": artifact_records,
             "artifact_changed": artifact_changed,
-            "evidence_complete": artifact_problem is None,
+            "evidence_complete": artifact_problem is None and (
+                not structured_required or validated is not None
+            ),
             "evidence_problem": artifact_problem,
             "external_provider": args.kind == "provider",
             "provider_repeat_override": args.reason if args.allow_provider_repeat else None,
@@ -721,17 +781,21 @@ def main() -> int:
     run.add_argument("--repo", default=".")
     run.add_argument("--receipt", required=True)
     run.add_argument("--kind", choices=KINDS, required=True)
-    run.add_argument("--label", choices=COMMAND_PASS_LABELS, required=True)
+    run.add_argument("--label", choices=COMMAND_PASS_LABELS)
     run.add_argument("--core", action="store_true")
-    run.add_argument("--browser-action", action="store_true")
-    run.add_argument("--production-assembly", action="store_true")
-    run.add_argument("--data-hash")
-    run.add_argument("--build-id")
-    run.add_argument("--origin")
-    run.add_argument("--session-type")
-    run.add_argument("--scratch-db")
-    run.add_argument("--object-id", action="append", default=[])
-    run.add_argument("--trace-id")
+    run.add_argument("--case-id")
+    run.add_argument("--case-evidence")
+    # Accepted only so old commands fail on the new case-evidence guard with a useful message.
+    # These caller claims are never used to derive E2E authenticity.
+    run.add_argument("--browser-action", action="store_true", help=argparse.SUPPRESS)
+    run.add_argument("--production-assembly", action="store_true", help=argparse.SUPPRESS)
+    run.add_argument("--data-hash", help=argparse.SUPPRESS)
+    run.add_argument("--build-id", help=argparse.SUPPRESS)
+    run.add_argument("--origin", help=argparse.SUPPRESS)
+    run.add_argument("--session-type", help=argparse.SUPPRESS)
+    run.add_argument("--scratch-db", help=argparse.SUPPRESS)
+    run.add_argument("--object-id", action="append", default=[], help=argparse.SUPPRESS)
+    run.add_argument("--trace-id", help=argparse.SUPPRESS)
     run.add_argument("--artifact", action="append", default=[])
     run.add_argument("--allow-provider-repeat", action="store_true")
     run.add_argument("--reason")

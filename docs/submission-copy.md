@@ -2,47 +2,49 @@
 
 ## Short description
 
-Budget-first product development for Codex and Claude Code: one real core journey, runnable slices,
-revision-bound evidence, and reviews that stop.
+Human-approved black-box semantics for Codex and Claude Code: executable testcase manifests,
+runner-derived evidence, semantics-routed increments, and convergent reviews.
 
 ## Medium description
 
-opc-develop helps solo builders ship one real user outcome inside an explicit time budget. Small
-changes use `lite`; 1-4 hour features use `build`; larger work is split before implementation. A
-standard increment keeps one page of planning, reaches a production-assembled core journey within
-45 minutes, expands in runnable slices, verifies from cheap logic checks to browser and one final
-provider canary, and records a content-tree-bound acceptance receipt. UI completion requires the
-browser to perform the key action. Two review moments share a hard two-repair stop-loss.
+opc-develop makes product test semantics visible before implementation. Small changes that reuse
+existing semantics use `lite`; standard/releasable increments follow
+`demo -> prd -> testcase -> build`. The human approves the prototype, durable AC truth, and exact
+Given/When/Then cases; a deterministic manifest drives Playwright and structured evidence. Builds
+route by changed product semantics and risk, reach a real vertical path, and do not enforce effort
+estimates or fixed repair quotas.
 
 ## Long description
 
 opc-develop is an opinionated, project-agnostic workflow suite for builders who personally own
-product and engineering judgment. Version 0.5 makes the standard increment the default instead of
-front-loading a complete requirement/demo/PRD/technical/contract/test matrix.
+product and engineering judgment. Version 0.6 separates testcase from PRD and requires approved
+demo, PRD, and testcase artifacts before a standard or releasable build.
 
-The route is selected by elapsed-time budget: `vibe` for explicitly human-accepted unverified code,
-`lite` for one <=60-minute change, `build` for one 1-4 hour increment, and split for anything larger.
+The route is selected by semantics and risk: `vibe` for explicitly human-accepted unverified code,
+`lite` for localized changes that do not create or change E2E semantics, and `build` for approved
+new/changed behavior or release-bound work. Predicted duration never routes or blocks a request.
 Risk adds only its matching protection—migration snapshot/rollback, permission allow/deny,
 concurrency/idempotency, or provider replay/canary.
 
-`build` creates a one-page result card with the real entry, traceable data, user action, production
-assembly, visible result, two safety invariants, and bounded slices. It runs the core journey before
-implementation, then reaches the first vertical path within 45 minutes. UI work must be accepted by
-a browser-driven key action; API-created success followed by browser inspection is rejected.
+`testcase` compiles `testcases.md` into deterministic `testcases.json` only after fresh demo/PRD
+approval, then requires independent review and explicit product-owner approval. `build` selects an
+approved Core-Case and reaches the first real vertical path. UI uses Playwright as the
+primary driver; Computer Use is limited to a reasoned atomic fallback.
 
-The standard-library `opc_increment.py` helper records commands, exits, timestamps, output, commit,
-content-tree fingerprint, authenticity label, runtime metadata, object IDs, traces, and artifacts.
+The standard-library helpers record commands, exits, output, commit, fingerprints, object IDs,
+traces, and artifacts. E2E runners emit separate assembly, data, provider, driver, observation, and
+product-outcome axes; authenticity labels are derived rather than supplied by CLI flags.
 Code/test/plan/seed/config changes make old evidence stale. External providers stay locked until
 offline layers pass and allow one canary attempt per revision. Completion is reported as code build,
 automated core journey, real-service core journey, or human accepted.
 
 Independent reviewers start with empty context and receive only the rubric, plan, diff, receipt,
-project rules, and commands. A reality review after the first slice and a final integration review
-share at most two repair rounds. Ledger validation rejects extra gates, excessive repairs, and
-full-conversation task dispatch.
+project rules, and commands. A reality review follows the first slice and a final integration review
+follows the scoped work. Repairs continue until approval or a genuine blocker; ledger validation
+rejects invalid review chains and full-conversation task dispatch.
 
-Optional `brainstorm`, `demo`, `prd`, and `architect` skills remain available for durable product
-judgment, interaction taste, PM handoff, public contracts, or one-way technical decisions. Harness,
+`brainstorm` remains optional before the mandatory product-definition chain; `architect` remains
+conditional after testcase for public contracts or one-way technical decisions. Harness,
 ship, deploy, oncall, retro, executable incident benchmarks, SHA freshness, HTML reports, and
 language-adaptive output complete the suite.
 
@@ -53,6 +55,6 @@ language-adaptive output complete the suite.
 
 ## Submission notes
 
-Submit one suite-level listing linked to `https://github.com/wallkop/opc-develop`. The 12 skills
+Submit one suite-level listing linked to `https://github.com/wallkop/opc-develop`. The 13 skills
 share repository-level packs, formats, rubrics, and scripts; verify that a catalog preserves those
 shared resources rather than installing isolated skill folders.

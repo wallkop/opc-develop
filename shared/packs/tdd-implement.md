@@ -10,7 +10,7 @@ GREEN. For straightforward new behavior, use the cheapest test that protects the
 manufacture a ceremonial RED after the code already exists.
 
 Never pre-author the entire future test matrix. Add the highest-value regression as each runnable
-slice lands. Run targeted tests frequently; run the browser journey at slice boundaries and the full
+slice lands. Run targeted tests frequently; run the approved testcase runner at slice boundaries and the full
 gate only at integration/final.
 
 ## Exceptional implementer dispatch

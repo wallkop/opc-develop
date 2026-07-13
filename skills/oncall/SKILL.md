@@ -37,8 +37,8 @@ the log chain and state that prove it, no fix without a covering test.
 4. **Decide the path** (five-piece set to the human when contested):
    - **rollback** — hand to `deploy`'s rollback path; fastest when the trigger is a recent release;
    - **hotfix (expedited path)** — minimal fix on a hotfix branch per project flow; route every
-     release-bound hotfix through `build` (`Class: quick` when <=60 minutes, otherwise standard),
-     preserve RED/GREEN evidence for the defect and targeted regression, then `ship` (test env, compressed) →
+     release-bound hotfix through `build` regardless of predicted duration, preserve RED/GREEN
+     evidence for the defect and targeted regression, then `ship` (test env, compressed) →
      `deploy` with the incident referenced. Expedited ≠ unverified: the RED test and prod-safe
      regression are not skippable;
    - **mitigation** — config/flag/scale change with its own evidence and a revert note.

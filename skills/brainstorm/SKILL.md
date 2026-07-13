@@ -1,6 +1,6 @@
 ---
 name: brainstorm
-description: "Use only when product intent is genuinely uncertain or the human explicitly asks to be grilled before implementation. Sharpens durable product judgment, domain language, tradeoffs, and non-goals into requirement.md. It is optional and is not a prerequisite for ordinary build increments of up to four hours or taste changes already clear enough for a result card."
+description: "Use only when product intent is genuinely uncertain or the human explicitly asks to be grilled before implementation. Sharpens durable product judgment, domain language, tradeoffs, and non-goals into requirement.md. It is optional and is not a prerequisite for work whose product intent is already clear."
 license: MIT
 ---
 
@@ -56,5 +56,5 @@ human defers, record the recommended answer as provisional with a trigger.
 
 ## Output
 
-`requirement.md` (gated), feature branch, initialized ledger. Next: `build` by default; use `demo`,
-`prd`, or `architect` only for the unresolved judgment each one owns.
+`requirement.md` (gated), feature branch, initialized ledger. Next: `demo`; the full build path is
+`demo -> prd -> testcase -> build`, with `architect` inserted only for a public/one-way boundary.

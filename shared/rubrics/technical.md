@@ -24,10 +24,10 @@ the document's word for what exists. End with one `**Status:**` line and `Review
 7. **Boundary discipline**: no broad internal module plan or future test matrix. Slice-level detail
    stays in `feature-plan.md`; leakage downward is not thoroughness.
 8. **Risk integration**: matching spike results are referenced only where the decision needed them;
-   the 45-minute core slice remains viable.
-9. **Demo alignment**: when an optional demo exists, the design supports its contractual
+   the first core slice remains independently runnable.
+9. **Demo alignment**: the mandatory approved demo is supported for every contractual
    interactions (data shapes, latency class, state visibility).
 
 ## Non-blocking
 
-Capacity estimates, sequencing detail, appendix depth.
+Observed capacity facts, sequencing detail, appendix depth.

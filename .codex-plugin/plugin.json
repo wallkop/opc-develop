@@ -1,15 +1,15 @@
 {
   "name": "opc-develop",
-  "version": "0.5.1+codex.20260713094600",
-  "description": "Budget-first product development with real core journeys, runnable increments, revision-bound evidence, and reviews that stop",
+  "version": "0.6.0+codex.20260713151843",
+  "description": "Human-approved black-box semantics, executable testcase manifests, trusted runtime evidence, and semantics-routed product delivery",
   "author": {
     "name": "wallkop"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "opc_develop",
-    "shortDescription": "Budgeted increments through real user journeys and fresh evidence",
-    "longDescription": "opc-develop is a budget-first product development suite for Claude Code and Codex. Use vibe only for explicitly human-accepted unverified code, lite for one change under 60 minutes, and build for one 1-4 hour standard increment. Build creates a one-page result card, proves one real core journey, reaches a production-assembled vertical slice within 45 minutes, expands in runnable slices, verifies from cheap logic checks through browser and optional one-shot provider canary, and emits a revision-bound acceptance receipt. UI completion requires the browser to perform the key action. A reality review and final review share a hard two-repair stop-loss; subagents are exceptional cold-context tasks and full-conversation dispatch is forbidden. Brainstorm, demo, PRD, and architecture remain explicit opt-in decision tools. Ship, deploy, oncall, harness, retro, executable benchmarks, SHA freshness, language-adaptive reports, and release safety complete the loop.",
+    "shortDescription": "Approved testcase semantics and runner-derived delivery evidence",
+    "longDescription": "opc-develop separates product truth from test code. Standard and releasable increments follow demo, PRD, testcase, then build: the human first approves an experienceable prototype, durable ACs, and exact black-box cases; testcase compiles a deterministic manifest; build implements only those approved cases. Project runners use Playwright as the primary deterministic UI driver, limit Computer Use to an atomic fallback, pre-arm success and failure observers, and emit structured evidence whose assembly, data, provider, driver, observation, and product-outcome axes determine authenticity. CLI flags cannot upgrade a result. Vibe remains explicitly unverified; lite handles localized changes without new E2E semantics, and copy/static-style/docs changes do not run E2E by default. Routing never uses predicted duration. Architect remains conditional, and ship/deploy/oncall/harness/retro close the engineering loop.",
     "developerName": "wallkop",
     "category": "Coding",
     "capabilities": [
@@ -20,7 +20,8 @@
     "defaultPrompt": [
       "Use $opc-develop:vibe to implement this immediately without tests; I will perform the acceptance.",
       "Use $opc-develop:lite to handle this small request on the current branch with targeted tests and before/after evidence.",
-      "Use $opc-develop:build to deliver this as one <=4-hour increment through a real core journey with a fresh acceptance receipt."
+      "Use $opc-develop:testcase after the approved demo and PRD to show me, review, and compile the exact executable black-box cases.",
+      "Use $opc-develop:build after testcase approval to implement the approved Core-Case with runner-derived evidence."
     ]
   }
 }

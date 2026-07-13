@@ -15,7 +15,7 @@ rules shared with release flows and explicit legacy artifacts.
 
 1. targeted logic/build;
 2. real local service + scratch DB;
-3. core browser journey for UI;
+3. approved testcase runner for UI/API E2E;
 4. saved-provider replay;
 5. one external-provider canary;
 6. human acceptance.

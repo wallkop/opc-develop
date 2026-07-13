@@ -2,11 +2,11 @@
 
 ## Command receipt
 
-Every verification records command argv, exit code, start/end time, working directory, output path
-or excerpt, branch/commit, content-tree fingerprint, and authenticity label. Browser/runtime checks
-also record the available build ID, origin, session type, scratch DB, core object IDs, screenshot or
-artifact, and correlation/trace ID. Use `opc_increment.py` for standard increments so code, tests,
-plan, seed, or tracked-config changes invalidate old results automatically.
+Every verification records command argv, exit code, time, working directory, output, branch/commit,
+content-tree fingerprint, and authenticity label. E2E labels are derived from runner-generated
+`opc-case-evidence-v1`, which records independent assembly, data, provider, driver, observation, and
+product-outcome axes plus build/origin/session/scratch/object/correlation artifacts. CLI metadata
+cannot upgrade a result. Use `opc_increment.py` so source or manifest changes invalidate evidence.
 
 ## Runtime evidence
 
@@ -15,6 +15,9 @@ A `local real service passed` claim proves the production assembly, not just an 
 1. interface evidence—browser assertion for UI, real HTTP/CLI/job result otherwise;
 2. correlation-linked log/trace evidence for the route actually executed;
 3. read-only state evidence for the durable result and safety invariants.
+
+The testcase runner pre-arms positive and negative observers before the action, then captures at
+most three human-facing screenshots. A late model/agent DOM inspection is not atomic evidence.
 
 If the harness cannot expose a corner, record the gap and cap the label. Do not rerun expensive
 checks merely to compensate for missing observability; route that gap to `harness`.
@@ -27,7 +30,7 @@ failure; label it honestly. Never delete working code just to recreate ceremonia
 
 ## Data provenance
 
-Distinguish synthetic seed, source-hashed read-only snapshot, and real object/provider. Report what
+Distinguish synthetic seed, source-hashed canonical clone, and real object/provider. Report what
 each can prove. If the requested journey concerns existing user data, only the allowed snapshot or
 real object supports compatibility claims.
 

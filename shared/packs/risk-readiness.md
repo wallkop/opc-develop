@@ -18,17 +18,14 @@ load the full artifact chain.
 - **Cross-shell UI** — one core journey per materially different shell only when both are in scope;
   otherwise split.
 
-## Time-boxed spike
+## Focused spike
 
-Run a spike only when a risk remains unproven and could invalidate the chosen slice. Time-box it
-inside the increment budget and test the smallest real capability. Record evidence and a verdict:
+Run a spike only when a risk remains unproven and could invalidate the chosen slice. Test the
+smallest real capability without assigning a predicted effort budget. Record evidence and a verdict:
 ready, ready-with-constraints, or blocked. Reasoning without execution is not a spike.
-
-If the risk cannot be retired without pushing the increment beyond four hours, split or stop. Do
-not hide the spike cost outside the budget.
 
 ## First slice
 
-Put the highest-risk boundary inside the 45-minute vertical slice when feasible, but keep the slice
-to one user-visible result. A slice that combines many unrelated risk categories is too broad and
-must be decomposed.
+Put the highest-risk boundary inside the first vertical slice when feasible, but keep the slice to
+one user-visible result. A slice that combines many unrelated risk categories should be decomposed
+when doing so improves independent verification.

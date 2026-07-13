@@ -3,18 +3,17 @@
 [简体中文](README.zh-CN.md)
 
 opc-develop is a product-development skill suite for Claude Code and Codex. It is not one heavy
-pipeline that every project must run end to end. It is a set of routes that compose by situation:
-use `lite` for a daily small change, `build` for a standard product increment, opt into decision
-skills only when product or architecture judgment is unresolved, and enter separate safety flows
-for release and incidents.
+pipeline for every edit. It is a set of routes: use `lite` for a daily change that does not create
+or alter E2E product semantics; use the mandatory `demo -> prd -> testcase -> build` chain for a
+standard or releasable product increment; add `architect` only for public/one-way boundaries; and
+enter separate safety flows for release and incidents.
 
-Its core promise is: **prove one real user journey first, then use evidence bound to the current
-revision to say exactly how complete the result is.** The human still owns product judgment, design
+Its core promise is: **make the human approve the black-box oracle before implementation, then prove
+that exact journey with runner-generated evidence bound to the current revision.** The human owns product judgment, design
 taste, and architecture direction. The agent implements and verifies inside those boundaries.
 
-> Version 0.5 changed the default route; it did not remove the architecture. The Harness,
-> delivery, feedback, measurement, and rule-crystallization loops still exist. `brainstorm`,
-> `demo`, `prd`, and `architect` moved from mandatory predecessors to opt-in decision tools.
+> Version 0.6 separates testcase from PRD and makes demo, PRD, and testcase mandatory before build.
+> This closes the false-oracle gap: Playwright drives an approved case; it does not invent the case.
 
 ## Who it is for
 
@@ -42,9 +41,9 @@ product and architecture direction, more gates create ceremony rather than lever
 Read the map from top to bottom:
 
 1. The **Harness layer** makes `run`, `reset`, `observe`, and `drive` executable for the agent.
-2. The **delivery layer** routes by budget to `vibe`, `lite`, or `build`. Use `brainstorm`, `demo`,
-   `prd`, and `architect` before `build` only for a real durable uncertainty. `ship` and `deploy`
-   then own test and production release.
+2. The **delivery layer** routes by scope to `vibe`, `lite`, or the standard chain
+   `demo -> prd -> testcase -> build`. `brainstorm` is optional before demo; `architect` is
+   conditional after testcase. `ship` and `deploy` own test and production release.
 3. The **feedback layer** classifies human feedback as `tune`, `revise`, or `park`, so work returns
    to the earliest broken layer instead of accumulating patches at the code layer.
 4. The **measurement layer** combines feature ledgers, acceptance receipts, the error ledger, and
@@ -85,8 +84,10 @@ triggering also works, but explicit invocation is easier for onboarding and high
 $opc-develop:lite Fix duplicate submission on the settings save button. Change only this issue.
 
 # Codex: a standard product increment
-$opc-develop:build Within a four-hour budget, deliver “a user can export this month's invoice”.
-Prove one real core journey first.
+$opc-develop:demo Prototype “a user can export this month's invoice” in the real app shell.
+$opc-develop:prd Turn the approved demo into durable AC product truth.
+$opc-develop:testcase Define and obtain my approval for the executable black-box cases.
+$opc-develop:build Implement the approved Core-Case with runner-derived evidence.
 
 # Codex: assess the project workbench
 $opc-develop:harness Assess run/reset/observe/drive. Return evidence and the top three gaps only.
@@ -96,37 +97,39 @@ In Claude Code, replace `$` with `/`:
 
 ```text
 /opc-develop:lite Fix duplicate submission on the settings save button. Change only this issue.
-/opc-develop:build Deliver “a user can export this month's invoice” within four hours.
+/opc-develop:testcase Compile and approve the cases after demo and PRD.
+/opc-develop:build Implement the approved Core-Case with runner-derived evidence.
 ```
 
-### 3. Choose the smallest route
+### 3. Route by semantics and risk
 
-Ask two questions first: **must this change enter test/production release, and can it credibly
-finish in one hour?**
+Ask two questions first: **does this create or change product E2E semantics, and must it enter a
+test/production release?** Never route or block work using a predicted duration.
 
 | Route | Use when | What it does | What it does not do |
 | --- | --- | --- | --- |
 | `vibe` | You explicitly want the fastest code and will accept it yourself | Edits immediately and hands over the diff | No tests, runtime check, or evidence; cannot claim releasable |
-| `lite` | One result, credibly <=60 minutes | Targeted regression plus one real-entry check | No feature artifacts or subagents |
-| `build` | One 1-4 hour product increment | One-page result card, real core journey, runnable slices, two reviews, fresh receipt | Does not require a full PRD/technical chain |
-| `build` quick | A <=60-minute change must still pass `ship` / `deploy` | Uses a compact increment while preserving release evidence | Cannot use `lite` to bypass the receipt/reviews |
-| split | >4 hours or several independently useful outcomes | Defines separate standard increments and implements the first | Does not spread one increment across the full scope |
+| `lite` | One localized result with no new or changed E2E semantics | Proportional targeted checks plus lightweight real-entry evidence | Pure copy/static style/docs do not run E2E by default |
+| `build` | New/changed behavior or release-bound work after product-definition approval | Approved Core-Case, runnable slices, reviews, fresh receipt | Cannot invent or change E2E semantics during implementation |
+| decompose | Several independently useful outcomes | Separates journeys for clarity and independent proof | Never uses an effort estimate as a stop gate |
 
-![OPC-Develop budget routing](assets/opc-develop-routing.png)
+![OPC-Develop semantics routing](assets/opc-develop-routing.png)
 
 This is a **routing and single-increment diagram**, not the system architecture map.
 
-### 4. Decision skills are overlays, not mandatory predecessors
+### 4. Product definition is mandatory; architecture remains conditional
 
 | Unresolved question | Use first | Skip it when |
 | --- | --- | --- |
 | Product value, user, non-goals, or core behavior is unclear | `brainstorm` | You can already state the user action, visible result, and non-goals |
-| Interaction taste cannot be decided in prose | `demo` | The interaction is already designed or the work is not experience-sensitive |
-| State, permissions, durable product rules, or a PM handoff needs a contract | `prd` | It is an ordinary increment without durable product truth to record |
+| What the experience should be | `demo` | Never for build; non-UI work uses a runnable skeleton |
+| What durable behavior must remain true | `prd` | Never for build; PRD follows the approved demo |
+| What exact external experiment proves it | `testcase` | Never for build or E2E; it requires approved demo + PRD |
 | A public API/event/schema boundary or one-way technical choice changes | `architect` | The change follows existing architecture and is local/reversible |
 
-The default is not `brainstorm → demo → prd → architect → build`. Start a clear request directly
-with `lite` or `build`; add only the skill that owns a real uncertainty.
+The standard path is `demo -> prd -> testcase -> build`. `brainstorm` is optional before demo;
+`architect` is inserted after testcase only for a changed public/one-way boundary. `lite` stays
+small only while it reuses existing semantics and makes no new E2E/release claim.
 
 ## Which skill does what
 
@@ -136,15 +139,16 @@ with `lite` or `build`; add only the skill that owns a real uncertainty.
 | --- | --- | --- | --- |
 | `vibe` | Disposable experiment; explicitly human-accepted unverified code | Code diff plus a no-tests disclosure | Human review; rerun through `build` before release |
 | `lite` | Bug, copy/layout, config, minor behavior | Scoped change, narrow regression, real-entry before/after evidence | Done; route widening scope to `build` |
-| `build` | Clear 1-4 hour product increment; release-bound quick fix | `feature-plan.md`, implementation, regressions, `acceptance.json`, reviews | `ship` after local completion |
+| `build` | Approved new/changed product behavior or release-bound fix | `feature-plan.md`, case-driven implementation, `acceptance.json`, reviews | `ship` after local completion |
 
-### Opt-in decisions
+### Product definition and conditional architecture
 
 | Skill | Typical use | Primary result | Next |
 | --- | --- | --- | --- |
-| `brainstorm` | Raw idea needs one-question-at-a-time grilling | `requirement.md`, risk profile, non-goals, feature branch | `build` by default; `demo` only if taste is unresolved |
-| `demo` | UI/interaction taste needs experience before implementation | Prototype in the real app shell, `prototype.md`, `mock-inventory.md` | `build` by default; `prd` only for durable product truth |
-| `prd` | Permission/state/long-lived behavior needs a product contract or PM handoff | `prd.md`, numbered AC/PD records, black-box `testcases.md`, sign-off report | `build`; `architect` only for public/one-way boundaries |
+| `brainstorm` | Raw idea needs one-question-at-a-time grilling | `requirement.md`, risk profile, non-goals, feature branch | `demo` |
+| `demo` | Make the experience concrete before product/test semantics | Prototype in the real app shell, `prototype.md`, `mock-inventory.md` | `prd` |
+| `prd` | Turn the approved demo into durable product truth | `prd.md`, numbered AC/PD records, demo alignment | `testcase` |
+| `testcase` | Make the black-box oracle human-reviewable and executable | `testcases.md`, compiled `testcases.json`, review, product approval | `architect` when needed; otherwise `build` |
 | `architect` | Public boundary, irreversible technical choice, or architecture handoff | Intake, risk spike, `technical.md`, numbered TD records, sign-off report | `build` |
 
 ### Release, incidents, and loop improvement
@@ -162,11 +166,11 @@ with `lite` or `build`; add only the skill that owns a real uncertainty.
 | Request | Recommended route | Why |
 | --- | --- | --- |
 | Change one label or fix one local bug | `lite` | One result does not justify feature artifacts |
-| A 30-minute hotfix must ship today | `build` quick → `ship` → `deploy` | Release requires revision-bound evidence |
-| Add a clear export flow | `build` | The normal standard increment needs no prerequisite PRD |
-| “Build an AI study coach,” but user/value is unclear | `brainstorm` → `build` | Resolve product judgment before implementation |
-| A new checkout interaction is not decided | `demo` → `build` | Resolve taste with an experienceable prototype |
-| New permission model plus a public API | `prd` → `architect` → `build` | Both durable product truth and a public boundary change |
+| A hotfix must ship today | `build` → `ship` → `deploy` | Release requires revision-bound evidence regardless of duration |
+| Add a clear export flow | `demo` → `prd` → `testcase` → `build` | Even clear intent needs an inspectable oracle before E2E |
+| “Build an AI study coach,” but user/value is unclear | `brainstorm` → `demo` → `prd` → `testcase` → `build` | Resolve intent, experience, truth, and proof in order |
+| A new checkout interaction is not decided | `demo` → `prd` → `testcase` → `build` | Approve the experience before encoding its oracle |
+| New permission model plus a public API | `demo` → `prd` → `testcase` → `architect` → `build` | Product oracle precedes the conditional public-boundary design |
 | One request contains admin, mobile, and operations journeys | split → first `build` | Independently useful journeys should not share one increment |
 | Production error rate spikes | `oncall` | Diagnose and stabilize with evidence before guessing a fix |
 | Every agent rediscovers start commands and test data | `harness` | The problem is the engineering workbench, not a feature |
@@ -175,17 +179,18 @@ with `lite` or `build`; add only the skill that owns a real uncertainty.
 
 1. **Start from the user action.** State who enters where, performs what action, and sees what
    result. Avoid an internal task name such as “finish the export module.”
-2. **Route by budget and number of outcomes.** Risk adds its matching check; it does not load every
-   document. A release-bound quick fix still uses `build` quick.
-3. **Protect one core journey per increment.** Split independently useful journeys. Slice 1 must
-   cross the production router/service/page assembly within 45 minutes; later slices take 30-90
-   minutes and keep the previous path runnable.
-4. **Use decision artifacts only for durable judgment.** `brainstorm` owns intent, `demo` taste,
-   `prd` long-lived product contracts, and `architect` public/one-way technical boundaries.
+2. **Route by semantics and risk, never predicted duration.** Localized changes that reuse an
+   existing oracle may use `lite`; new behavior and releasable increments use demo/PRD/testcase
+   before build. Pure copy/static appearance/docs do not run E2E by default.
+3. **Protect one core journey per increment.** Decompose independently useful journeys when that
+   improves reviewability. Slice 1 crosses the production router/service/page assembly; later
+   slices keep the previous path runnable.
+4. **Separate four truths.** `demo` owns experienced behavior, `prd` durable product truth,
+   `testcase` the approved black-box experiment, and `architect` public/one-way technical boundaries.
 5. **Verify from cheap to expensive.** Logic/build → local production service + scratch state → UI
    browser journey → provider replay → one real canary → human acceptance.
-6. **Make the browser perform the accepted UI action.** Creating the result through an API and
-   merely viewing it proves a read path, not the UI action.
+6. **Make the project testcase runner perform the accepted UI action.** It pre-arms success and
+   failure observers, uses Playwright primarily, and emits evidence; raw Playwright is not a gate.
 7. **Never use a real provider as the debug loop.** Stabilize local and replay paths first; one
    revision normally gets one real provider attempt.
 8. **Route feedback to the earliest broken layer.** `tune` changes execution under the same intent;
@@ -197,17 +202,18 @@ with `lite` or `build`; add only the skill that owns a real uncertainty.
 
 ## Solo builder and PM handoff
 
-A **solo builder** does not need to manufacture handoff artifacts. Start a clear feature directly
-with `build`; add a decision skill only while your own product, experience, or architecture
-judgment is unresolved.
+A **solo builder** still approves product semantics explicitly. For a standard increment, run the
+demo/PRD/testcase chain yourself, inspect the rendered cases, then build. `lite` avoids the chain
+only when it reuses existing semantics and makes no E2E/release claim.
 
 A **PM + architect/builder pair** can hand off at the judgment boundary:
 
-1. The product owner uses `brainstorm` / `demo` only for real uncertainty, then uses `prd` to
-   record durable PD/AC decisions and black-box testcases.
-2. `prd` commits and pushes the feature branch with ACs, risks, open questions, and Harness gaps.
-3. The builder pulls and runs intake. Use `architect` only when a public or one-way technical
-   decision changes; otherwise continue directly to `build`.
+1. The product owner approves the demo, records durable PD/AC truth in PRD, then reviews each
+   testcase's object, action, success/failure oracle, and data provenance.
+2. `testcase` compiles `testcases.json`, gets independent review and explicit product approval,
+   then commits/pushes the branch.
+3. The builder pulls and verifies the testcase chain. Use `architect` only when a public or one-way
+   technical decision changes; otherwise continue to `build`.
 4. The builder never silently answers missing product judgment. Questions return as `revise` to
    the earliest owning layer.
 5. `ship` test acceptance is the shared touchpoint where both roles see the real result again.
@@ -236,15 +242,14 @@ Minimum useful state:
 
 A bare repository can begin with `run` and `reset`. opc-develop does not choose the framework or
 product direction for you. When necessary, use `brainstorm` to define the first user value, then
-let `build` create the minimum runnable product slice.
+run demo/PRD/testcase before the first build.
 
 ### First feature: deliver one journey
 
-- Clear intent: go directly to `$opc-develop:build ...`.
-- Unclear product intent: run `brainstorm`, confirm, then `build`.
-- Unresolved experience: run `demo`, accept the feel, then `build`.
-- Do not introduce PRD, architecture docs, full CI, and production deployment together. Add only
-  the capability the current uncertainty or release boundary requires.
+- Clear intent: start at `demo`, then `prd -> testcase -> build`.
+- Unclear product intent: run `brainstorm`, then the standard chain.
+- Non-UI feature: demo supplies a runnable production-shaped skeleton before PRD.
+- Add architecture docs only when a public/one-way boundary requires them.
 
 ### First release
 
@@ -283,16 +288,19 @@ directory is required yet.
 
 ### Step 3: pilot one low-risk `build`
 
-Choose one clear, reversible, 1-4 hour core journey. Let it create the first:
+Choose one clear, reversible core journey. Pilot the full product-definition chain and create:
 
 ```text
 docs/features/<slug>/feature-plan.md
+docs/features/<slug>/testcases.md
+docs/features/<slug>/testcases.json
+docs/features/<slug>/testcase-approval.json
 docs/features/<slug>/acceptance.json
 docs/features/<slug>/ledger.jsonl
 ```
 
-Judge whether the 45-minute first slice, two reviews, and receipt freshness reduce false green.
-Do not backfill every historical feature with PRDs or testcases.
+Judge whether human testcase review, the first real vertical slice, and receipt freshness reduce false
+green. Do not backfill every historical feature; apply the chain to new or semantically changed E2E.
 
 ### Step 4: adopt release separately
 
@@ -302,9 +310,10 @@ Do not enable `deploy` without an explicit runbook and rollback capability.
 
 ### Compatibility rules
 
-- Existing requirement/demo/PRD/technical artifacts remain valid constraints for `build`; no
-  rewrite is required.
-- Missing optional artifacts are not gaps. A normal new increment can start with one result card.
+- Existing requirement/demo/PRD/technical artifacts remain source material, but a new build still
+  needs fresh demo, PRD, testcase compilation/review, and product approval.
+- Existing E2E tests may sit behind the project testcase runner once mapped to approved cases; raw
+  tests are not automatically product truth.
 - Historical v2 ledgers remain readable; new standard increments use v3 ledgers and generated
   `acceptance.json` receipts.
 - Do not backfill history, replace existing tests, or install project hooks in one batch. CI/hook
@@ -314,20 +323,20 @@ Do not enable `deploy` without an explicit runbook and rollback capability.
 
 ```mermaid
 flowchart LR
-  A["Budget gate"] --> B["One-page result card"]
-  B --> C["Core journey fails meaningfully"]
-  C --> D["45-minute vertical slice"]
+  A["Approved demo + PRD + testcase"] --> B["Semantic scope + one-page result card"]
+  B --> C["Approved Core-Case fails meaningfully"]
+  C --> D["Real vertical slice"]
   D --> E["Reality review"]
-  E --> F["30-90 minute runnable slices"]
+  E --> F["Runnable slices"]
   F --> G["Cheap-to-expensive verification"]
   G --> H["Final review"]
   H --> I["Fresh acceptance receipt"]
 ```
 
-By default, `build` creates only `docs/features/<slug>/feature-plan.md`. It records the user action,
-real entry, visible result, non-goals, data provenance, two safety invariants, one core journey,
-runnable slices, and acceptance commands. `opc_increment.py` generates `acceptance.json` and binds
-command conclusions to the current content tree.
+`build` consumes the approved `testcases.json` and creates `feature-plan.md`. It records the chosen
+Core-Case, user action, real entry, data provenance, safety invariants, runnable slices, and project
+case-runner commands. `opc_increment.py` generates `acceptance.json`, derives authenticity from
+runner evidence, and binds conclusions to the current content tree.
 
 There are four completion levels:
 
@@ -336,14 +345,16 @@ There are four completion levels:
 3. `real-service-core-journey`: the path crosses local production assembly and the real entry;
 4. `human-accepted`: a human explicitly accepts this candidate revision.
 
-A standard increment has only two code-review points: a reality review after the first vertical
-slice and a final integration review after the scoped work. They share at most two repair rounds;
-remaining blockers force scope reduction or redesign.
+A standard increment has two code-review points: a reality review after the first vertical slice
+and a final integration review after the scoped work. Repair and re-review until approved or a
+genuine blocker requires user input, external state, or redesign; no fixed round quota applies.
 
 Common mechanical checks:
 
 ```bash
 python3 shared/scripts/validate_artifacts.py docs/features/<slug>/feature-plan.md
+python3 shared/scripts/opc_testcase.py check \
+  --feature-dir docs/features/<slug> --require-approved
 python3 shared/scripts/opc_increment.py check \
   --receipt docs/features/<slug>/acceptance.json \
   --require real-service-core-journey
@@ -358,15 +369,15 @@ python3 shared/scripts/opc_ledger.py audit --require-increment-complete \
 - `deploy` owns production: fix the release set, refresh receipts on the final trunk, backup and
   rollback, deploy, prod-safe regression, and watch. Every destructive step needs human approval.
 - `oncall` triages and diagnoses first. The human chooses rollback, hotfix, or mitigation. A
-  release-bound hotfix still routes through `build` quick → `ship` → `deploy`; expedited does not
+  release-bound hotfix still routes through `build` → `ship` → `deploy`; expedited does not
   mean unverified.
 
 ## Repository and project artifacts
 
 Plugin repository:
 
-- `skills/`: the 12 user entry points;
-- `shared/core-contract.md`: budget, evidence, completion, feedback, and safety invariants;
+- `skills/`: the 13 user entry points;
+- `shared/core-contract.md`: semantic routing, evidence, completion, feedback, and safety invariants;
 - `shared/packs/`: on-demand implementation, risk, review, release, and Harness rules;
 - `shared/formats/`: result-card, receipt, PRD, technical, testcase, and ledger formats;
 - `shared/rubrics/`: independent review checklists;

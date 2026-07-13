@@ -1,6 +1,6 @@
 interface:
   display_name: "demo"
   short_description: "Make the idea experienceable before any PRD"
-  default_prompt: "Use $demo to build a high-fidelity prototype inside the real frontend with frontend-only mocks (or a runnable skeleton for non-UI features), run the vibe-loop, and gate it."
+  default_prompt: "Use $demo to create and human-approve the mandatory experienceable prototype before PRD, testcase, and build."
 policy:
   allow_implicit_invocation: false

@@ -15,7 +15,7 @@
 
   <!-- Title -->
   <text x="52" y="88" font-family="Georgia, serif" font-size="52" font-style="italic" font-weight="bold" fill="#1a1a1a">OPC-Develop System Map</text>
-  <text x="760" y="88" font-family="Georgia, serif" font-size="26" font-style="italic" fill="#888">v0.5.1 · budget-first loop engineering</text>
+  <text x="760" y="88" font-family="Georgia, serif" font-size="26" font-style="italic" fill="#888">v0.6.0 · approved-oracle loop engineering</text>
 
   <!-- Legend -->
   <g font-size="20" fill="#333">
@@ -72,8 +72,8 @@
     <rect x="1580" y="130" width="270" height="150" rx="10" fill="#666"/>
     <text x="1715" y="165" text-anchor="middle" font-size="24" font-weight="bold" fill="#fff">drive</text>
     <rect x="1596" y="182" width="238" height="76" rx="6" fill="#d9d9d9"/>
-    <text x="1715" y="215" text-anchor="middle" font-size="18" fill="#222">Tier-1 E2E specs</text>
-    <text x="1715" y="240" text-anchor="middle" font-size="18" fill="#222">← agentic explore</text>
+    <text x="1715" y="215" text-anchor="middle" font-size="18" fill="#222">approved case runner</text>
+    <text x="1715" y="240" text-anchor="middle" font-size="18" fill="#222">→ structured evidence</text>
   </g>
 
   <!-- ═══════════ FLOW BANDS ═══════════ -->
@@ -81,7 +81,7 @@
   <text x="130" y="358" text-anchor="middle" font-size="24" font-style="italic" font-weight="bold" fill="#fff">Flow</text>
 
   <rect x="240" y="320" width="1240" height="60" rx="6" fill="#3f51a3"/>
-  <text x="860" y="358" text-anchor="middle" font-size="26" fill="#fff">Delivery map — optional decisions → build → ship → deploy</text>
+  <text x="860" y="358" text-anchor="middle" font-size="26" fill="#fff">Delivery — demo → PRD → testcase → build → ship → deploy</text>
 
   <line x1="1510" y1="320" x2="1510" y2="1080" stroke="#777" stroke-width="2" stroke-dasharray="8,7"/>
 
@@ -94,10 +94,10 @@
     <path d="M 250 414 L 250 406 L 941 406 L 941 414"/>
     <path d="M 958 414 L 958 406 L 1472 406 L 1472 414"/>
   </g>
-  <text x="595" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">optional decision tools (use 0–4)</text>
-  <text x="1215" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">default delivery path</text>
+  <text x="595" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">brainstorm optional · product definition mandatory</text>
+  <text x="1215" y="398" text-anchor="middle" font-size="17" font-style="italic" fill="#666">architect conditional · then build + release</text>
 
-  <!-- 7 skills: brainstorm demo prd architect build ship deploy -->
+  <!-- Product-definition chain plus build/release. Architect remains a conditional side decision. -->
   <g font-size="22" font-weight="bold" fill="#123">
     <!-- brainstorm -->
     <circle cx="330" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
@@ -114,11 +114,11 @@
     <text x="684" y="440" text-anchor="middle" font-size="16" fill="#4a3000">3</text>
     <rect x="604" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
     <text x="684" y="498" text-anchor="middle">prd</text>
-    <!-- architect -->
+    <!-- testcase -->
     <circle cx="861" cy="434" r="14" fill="#ffb300" stroke="#8a5a00" stroke-width="2"/>
     <text x="861" y="440" text-anchor="middle" font-size="16" fill="#4a3000">4</text>
     <rect x="781" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
-    <text x="861" y="498" text-anchor="middle">architect</text>
+    <text x="861" y="498" text-anchor="middle">testcase</text>
     <!-- build -->
     <rect x="958" y="458" width="160" height="66" rx="10" fill="#7fd8d8" stroke="#5a4632" stroke-width="2.5"/>
     <text x="1038" y="498" text-anchor="middle">build</text>
@@ -156,8 +156,8 @@
     <text x="507" y="576">mock inventory</text>
     <text x="684" y="556">prd.md (AC/PD)</text>
     <text x="684" y="576">gate, then push</text>
-    <text x="861" y="556">intake → spike →</text>
-    <text x="861" y="576">technical.md (TD)</text>
+    <text x="861" y="556">testcases.md/json</text>
+    <text x="861" y="576">human-approved oracle</text>
     <text x="1038" y="556">result card → slices →</text>
     <text x="1038" y="576">fresh acceptance receipt</text>
     <text x="1215" y="556">manifest → test env</text>
@@ -168,8 +168,8 @@
 
   <!-- ═══════════ GATE BAND ═══════════ -->
   <rect x="250" y="620" width="1230" height="96" rx="10" fill="#dff4f4" stroke="#5a4632" stroke-width="2.5"/>
-  <text x="865" y="658" text-anchor="middle" font-size="23" font-weight="bold" fill="#123">gates — optional artifacts reviewed; standard increment has reality + final reviews</text>
-  <text x="865" y="692" text-anchor="middle" font-size="19" fill="#345">L0 validation · content freshness · revision-bound receipt · at most 2 repair rounds total</text>
+  <text x="865" y="658" text-anchor="middle" font-size="23" font-weight="bold" fill="#123">gates — demo + PRD + testcase mandatory; build has reality + final reviews</text>
+  <text x="865" y="692" text-anchor="middle" font-size="19" fill="#345">L0 validation · content freshness · revision-bound receipt · review until convergence</text>
 
   <!-- gate diamonds connecting pipeline to gate band -->
   <g fill="#fff" stroke="#5a4632" stroke-width="2">
@@ -203,13 +203,13 @@
   <g font-size="18" fill="#365220" text-anchor="middle">
     <text x="1695" y="506">vibe: human accepts</text>
     <text x="1695" y="538">no verification</text>
-    <text x="1695" y="562">lite: one result ≤60m</text>
-    <text x="1695" y="594">no feature artifacts</text>
-    <text x="1695" y="618">targeted test + real entry</text>
-    <text x="1695" y="650">release-bound → build</text>
-    <text x="1695" y="674">1–4h → build</text>
-    <text x="1695" y="706">&gt;4h / many outcomes</text>
-    <text x="1695" y="730">→ split first</text>
+    <text x="1695" y="562">lite: stable E2E semantics</text>
+    <text x="1695" y="594">copy / style: no E2E</text>
+    <text x="1695" y="618">targeted check + real entry</text>
+    <text x="1695" y="650">new behavior → build</text>
+    <text x="1695" y="674">release-bound → build</text>
+    <text x="1695" y="706">independent journeys</text>
+    <text x="1695" y="730">→ decompose by semantics</text>
   </g>
 
   <!-- oncall skill box on right -->
@@ -234,7 +234,7 @@
   <!-- ledgers -->
   <rect x="240" y="1130" width="380" height="180" rx="12" fill="#f0f0f0" stroke="#5a4632" stroke-width="2.5"/>
   <text x="430" y="1168" text-anchor="middle" font-size="22" font-weight="bold" fill="#123">ledgers (append-only JSONL)</text>
-  <text x="430" y="1202" text-anchor="middle" font-size="18" fill="#345">ledger.jsonl + acceptance.json</text>
+  <text x="430" y="1202" text-anchor="middle" font-size="18" fill="#345">testcase approval + acceptance.json</text>
   <text x="430" y="1228" text-anchor="middle" font-size="17" fill="#666">gates · rework routing · evidence labels · gaps</text>
   <text x="430" y="1262" text-anchor="middle" font-size="18" fill="#345">docs/opc/error-ledger.jsonl</text>
   <text x="430" y="1288" text-anchor="middle" font-size="17" fill="#666">root causes captured at resolution time</text>

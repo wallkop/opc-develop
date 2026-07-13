@@ -1,6 +1,6 @@
 interface:
   display_name: "prd"
-  short_description: "Optionally turn durable product decisions into a gated PRD"
-  default_prompt: "Use $prd when durable product decisions need a contract: derive prd.md and black-box testcases.md from whichever approved requirement/demo/result-card inputs exist, gate product sign-off, then return to build by default."
+  short_description: "Turn an approved demo into the mandatory gated PRD"
+  default_prompt: "Use $prd after the approved demo to define durable PD/AC product truth only, then hand off to the separate testcase phase."
 policy:
   allow_implicit_invocation: false

@@ -1,20 +1,17 @@
 # Rubric: E2E & acceptance readiness
 
-You are reviewing the verify stage's output: Tier-1 specs, the acceptance sheet
-(`docs/features/<slug>/acceptance.md`), and evidence. Inputs: prd.md (AC list), testcases.md
-(TC list), the spec files, test run outputs, the feature ledger's evidence entries. End with one
+You are reviewing the build/verify output: project testcase-runner adapters, the generated
+acceptance receipt, and evidence. Inputs: approved `testcases.md` + `testcases.json`, runner code,
+test run outputs, and feature-ledger evidence entries. End with one
 `**Status:**` line and `Reviewed-SHA:` lines for the acceptance sheet and spec files.
 
 ## Blocking checks
 
-1. **AC coverage through the chain**: every non-struck AC traces AC → TC → green Tier-1 spec, or
+1. **AC coverage through the chain**: every non-struck AC traces AC → approved TC → green runner case, or
    carries a recorded, human-visible gap entry. Coverage claims are verified by reading spec
    annotations, not the report.
-1b. **Skeleton provenance**: the specs proving ACs are the Phase A skeletons (TC-annotated, with
-   a captured acceptance-RED run predating implementation), turned green without weakened
-   assertions — diff the skeleton against its gated version; a loosened assertion ⇒ reject.
-   Specs without TC provenance are acceptable only when marked `explored` (distilled from the
-   gap hunt) — an unmarked test-after spec standing in for a TC ⇒ reject.
+1b. **Manifest provenance**: every E2E run names an approved case and current manifest SHA. Direct
+   raw Playwright runs, unapproved cases, or hand-copied expectations cannot stand in for a TC.
 2. **Seed declarations**: every spec declares its named seed scenario; specs that depend on
    leftover state from other specs ⇒ reject (non-deterministic).
 3. **Evidence triangle**: each `local real service passed` or higher claim has all three corners

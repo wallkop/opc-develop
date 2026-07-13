@@ -31,7 +31,7 @@ decision-spike. Never present a raw open question to the human.
 Answer with evidence: cite code, artifacts, demo behavior, or research. "I believe" is not an
 answer. A question you cannot answer with evidence becomes either:
 
-- a **decision-spike**: a time-boxed experiment (prototype, benchmark, data query) that produces
+- a **decision-spike**: the smallest real experiment (prototype, benchmark, data query) that produces
   the missing evidence, then returns to the decision; or
 - an **open question with a trigger**: proceed on the recommended path and record
   "revisit when <condition>" in the artifact and ledger.

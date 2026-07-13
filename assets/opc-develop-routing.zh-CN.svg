@@ -5,48 +5,48 @@
     <filter id="shadow" x="-10%" y="-15%" width="120%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#17333d" flood-opacity=".12"/></filter>
   </defs>
   <rect width="1600" height="1000" fill="url(#bg)"/><rect width="1600" height="134" fill="#102d36"/>
-  <text x="70" y="66" font-size="42" font-weight="750" fill="#fff">OPC Develop v0.5.1</text>
-  <text x="70" y="104" font-size="23" fill="#bfe7df">预算优先交付 · 一条真实旅程 · 与版本绑定的证据</text>
-  <text x="1460" y="74" text-anchor="end" font-size="18" fill="#82cfc3">标准增量 ≤ 4 小时</text>
-  <text x="70" y="184" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">按预计耗时分流</text>
+  <text x="70" y="66" font-size="42" font-weight="750" fill="#fff">OPC Develop v0.6.0</text>
+  <text x="70" y="104" font-size="23" fill="#bfe7df">人工批准用例 · Runner 自动产证 · 按语义交付</text>
+  <text x="1460" y="74" text-anchor="end" font-size="18" fill="#82cfc3">不设耗时门禁</text>
+  <text x="70" y="184" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">按产品语义与风险分流</text>
   <g filter="url(#shadow)">
     <rect x="70" y="210" width="280" height="116" rx="18" fill="#fff" stroke="#d7e5e8"/><rect x="370" y="210" width="280" height="116" rx="18" fill="#fff" stroke="#d7e5e8"/>
     <rect x="670" y="195" width="430" height="146" rx="20" fill="#d9f3ed" stroke="#5eb9aa" stroke-width="2"/><rect x="1120" y="210" width="410" height="116" rx="18" fill="#fff4db" stroke="#e9bd5a"/>
   </g>
   <text x="98" y="247" font-size="24" font-weight="700" fill="#17333d">Vibe</text><text x="98" y="279" font-size="18" fill="#536b73">人类明确承担全部验收</text><text x="98" y="304" font-size="16" fill="#82949a">不暗示已自动验证</text>
-  <text x="398" y="247" font-size="24" font-weight="700" fill="#17333d">Lite · ≤ 60 分钟</text><text x="398" y="279" font-size="18" fill="#536b73">一个小结果</text><text x="398" y="304" font-size="16" fill="#82949a">无功能文档、无子代理</text>
-  <text x="704" y="241" font-size="28" font-weight="780" fill="#0f4b43">Build · 1–4 小时</text><text x="704" y="276" font-size="19" fill="#2b635b">默认产品增量</text><text x="704" y="307" font-size="16" fill="#4e746f">需发布的快速修复也使用 quick 类别</text>
-  <text x="1150" y="247" font-size="24" font-weight="700" fill="#6d4b08">拆分 · &gt; 4 小时</text><text x="1150" y="279" font-size="18" fill="#745f36">先选择一个有用增量</text><text x="1150" y="304" font-size="16" fill="#927d52">大范围实现前停止</text>
+  <text x="398" y="247" font-size="24" font-weight="700" fill="#17333d">Lite · 语义不变</text><text x="398" y="279" font-size="18" fill="#536b73">局部改动</text><text x="398" y="304" font-size="16" fill="#82949a">文案 / 静态样式不跑 E2E</text>
+  <text x="704" y="241" font-size="28" font-weight="780" fill="#0f4b43">Build · 行为变化</text><text x="704" y="276" font-size="19" fill="#2b635b">在 Demo · PRD · Testcase 批准后</text><text x="704" y="307" font-size="16" fill="#4e746f">必须发布的改动也走 Build</text>
+  <text x="1150" y="247" font-size="24" font-weight="700" fill="#6d4b08">按旅程拆分</text><text x="1150" y="279" font-size="18" fill="#745f36">多个独立结果</text><text x="1150" y="304" font-size="16" fill="#927d52">绝不按预计工时拆分</text>
   <text x="70" y="398" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">标准增量</text>
   <g fill="#fff" stroke="#b8ced3" stroke-width="2" filter="url(#shadow)">
     <rect x="70" y="430" width="180" height="100" rx="16"/><rect x="285" y="430" width="180" height="100" rx="16"/><rect x="500" y="430" width="180" height="100" rx="16"/><rect x="715" y="430" width="180" height="100" rx="16"/><rect x="930" y="430" width="180" height="100" rx="16"/><rect x="1145" y="430" width="180" height="100" rx="16"/><rect x="1360" y="430" width="170" height="100" rx="16"/>
   </g>
   <g stroke="#42606b" stroke-width="3" marker-end="url(#arrow)"><path d="M250 480H280"/><path d="M465 480H495"/><path d="M680 480H710"/><path d="M895 480H925"/><path d="M1110 480H1140"/><path d="M1325 480H1355"/></g>
   <g text-anchor="middle" fill="#17333d">
-    <text x="160" y="470" font-size="20" font-weight="700">结果卡</text><text x="160" y="500" font-size="15">一个用户结果</text>
-    <text x="375" y="470" font-size="20" font-weight="700">核心 RED</text><text x="375" y="500" font-size="15">真实入口失败</text>
-    <text x="590" y="470" font-size="20" font-weight="700">切片 1</text><text x="590" y="500" font-size="15">45 分钟内可运行</text>
-    <text x="805" y="470" font-size="20" font-weight="700">现实审查</text><text x="805" y="500" font-size="15">冷上下文、独立</text>
-    <text x="1020" y="470" font-size="20" font-weight="700">后续切片</text><text x="1020" y="500" font-size="15">30–90 分钟串行</text>
-    <text x="1235" y="470" font-size="20" font-weight="700">最终审查</text><text x="1235" y="500" font-size="15">集成真实性</text>
+    <text x="160" y="470" font-size="20" font-weight="700">Demo</text><text x="160" y="500" font-size="15">体验批准</text>
+    <text x="375" y="470" font-size="20" font-weight="700">PRD</text><text x="375" y="500" font-size="15">长期 AC 真相</text>
+    <text x="590" y="470" font-size="20" font-weight="700">Testcase</text><text x="590" y="500" font-size="15">Oracle 批准</text>
+    <text x="805" y="470" font-size="20" font-weight="700">核心 RED</text><text x="805" y="500" font-size="15">已批准用例失败</text>
+    <text x="1020" y="470" font-size="20" font-weight="700">切片 1 + 审查</text><text x="1020" y="500" font-size="15">真实路径可运行</text>
+    <text x="1235" y="470" font-size="20" font-weight="700">后续切片 + 终审</text><text x="1235" y="500" font-size="15">串行且可运行</text>
     <text x="1445" y="470" font-size="20" font-weight="700">验收收据</text><text x="1445" y="500" font-size="15">最新完成级别</text>
   </g>
-  <text x="70" y="570" font-size="16" fill="#60777f">总共两个审查时点 · 两次审查合计最多两轮修复 · 最多一个实现者与一个审查者</text>
+  <text x="70" y="570" font-size="16" fill="#60777f">现实评审 + 最终评审 · 修到批准或真实阻断 · 不设工时与轮次配额</text>
   <rect x="70" y="615" width="960" height="300" rx="24" fill="#102d36"/>
   <text x="108" y="662" font-size="21" font-weight="700" fill="#bfe7df" letter-spacing="1.2">按成本从低到高验证</text>
   <g font-size="19" fill="#fff">
-    <text x="112" y="715">1  逻辑 / 构建</text><text x="112" y="757">2  本地生产装配 + 临时状态</text><text x="112" y="799">3  UI 的浏览器核心旅程</text>
+    <text x="112" y="715">1  逻辑 / 构建</text><text x="112" y="757">2  本地生产装配 + 临时状态</text><text x="112" y="799">3  已批准 Testcase Runner</text>
     <text x="540" y="715">4  已保存的供应商响应回放</text><text x="540" y="757">5  一次真实供应商金丝雀</text><text x="540" y="799">6  人工验收</text>
   </g>
-  <line x1="108" y1="835" x2="990" y2="835" stroke="#3e6069"/><text x="108" y="872" font-size="17" fill="#8fd8cd">UI 证据 = 浏览器通过生产装配执行关键动作</text><text x="108" y="899" font-size="15" fill="#9fb9bf">产物哈希 + 对象 ID + Trace ID + 内容树新鲜度</text>
+  <line x1="108" y1="835" x2="990" y2="835" stroke="#3e6069"/><text x="108" y="872" font-size="17" fill="#8fd8cd">UI 证据 = Playwright 动作 + 原子成功/失败观测</text><text x="108" y="899" font-size="15" fill="#9fb9bf">组装 · 数据 · Provider · Driver · 观测 · 产品结果</text>
   <rect x="1060" y="615" width="470" height="300" rx="24" fill="#fff" stroke="#d7e5e8"/>
-  <text x="1098" y="662" font-size="21" font-weight="700" fill="#26434d" letter-spacing="1.2">按需启用的决策工具</text>
+  <text x="1098" y="662" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.0">产品定义 + 按需设计</text>
   <g font-size="18" fill="#3d5962">
     <circle cx="1110" cy="711" r="6" fill="#5eb9aa"/><text x="1130" y="718">Brainstorm — 产品意图未确定</text>
-    <circle cx="1110" cy="754" r="6" fill="#5eb9aa"/><text x="1130" y="761">Demo — 交互体验未确定</text>
-    <circle cx="1110" cy="797" r="6" fill="#5eb9aa"/><text x="1130" y="804">PRD — 需要长期产品契约</text>
-    <circle cx="1110" cy="840" r="6" fill="#5eb9aa"/><text x="1130" y="847">Architect — 公共或单向边界</text>
+    <circle cx="1110" cy="754" r="6" fill="#5eb9aa"/><text x="1130" y="761">Demo — 必经体验</text>
+    <circle cx="1110" cy="797" r="6" fill="#5eb9aa"/><text x="1130" y="804">PRD — 必经长期真相</text>
+    <circle cx="1110" cy="840" r="6" fill="#5eb9aa"/><text x="1130" y="847">Testcase — 必经人工批准 Oracle</text>
+    <circle cx="1110" cy="875" r="6" fill="#e9bd5a"/><text x="1130" y="882">Architect — 按边界需要</text>
   </g>
-  <text x="1098" y="886" font-size="16" fill="#7a8e95">风险只增加对应检查，不自动加载完整链路。</text>
-  <text x="70" y="963" font-size="15" fill="#70858c">机器事实：feature-plan.md · acceptance.json · Reviewed-Revision · opc-ledger-v3</text>
+  <text x="70" y="963" font-size="15" fill="#70858c">机器事实：testcases.json · testcase 签署 · acceptance.json · opc-ledger-v3</text>
 </svg>

@@ -2,6 +2,7 @@
 """Verify a feature's full gate chain: every expected review exists, is Approved, and is fresh.
 
 Expected reviews under <feature-dir>/reviews/:
+  demo-review.md, prd-review.md, testcase-review.md,
   reality-review.md, final-review.md      (standard increment with feature-plan.md)
   requirement-review.md, prd-review.md, technical-review.md, e2e-review.md   (always)
   demo-review.md                       (when <feature-dir>/demo/ exists)
@@ -128,7 +129,10 @@ def increment_revision(
 
 def expected_reviews(feature_dir: Path) -> list[str]:
     if (feature_dir / "feature-plan.md").exists():
-        return ["reality-review.md", "final-review.md"]
+        return [
+            "demo-review.md", "prd-review.md", "testcase-review.md",
+            "reality-review.md", "final-review.md",
+        ]
     names = ["requirement-review.md", "prd-review.md", "technical-review.md"]
     if (feature_dir / "demo").exists():
         names.insert(1, "demo-review.md")
@@ -169,17 +173,23 @@ def main() -> int:
         current_revision, receipt_revisions, revision_problem = increment_revision(feature_dir, root)
         if revision_problem:
             problems.append(revision_problem)
+        try:
+            from opc_testcase import check_feature_ready
+            check_feature_ready(root, feature_dir.resolve(), require_approved=True)
+        except (ValueError, OSError) as exc:
+            problems.append(f"testcase chain invalid: {exc}")
     checked = 0
     for name in expected_reviews(feature_dir):
         short = name.replace("-review.md", "")
         if short in args.skip:
             print(f"SKIPPED (declared exception): {name}")
             continue
-        revision = current_revision if standard_increment and name == "final-review.md" else None
+        revision_bound = standard_increment and name in {"reality-review.md", "final-review.md"}
+        revision = current_revision if revision_bound and name == "final-review.md" else None
         problems.extend(check_review(
             reviews_dir / name, root, revision,
-            require_revision=standard_increment,
-            allowed_revisions=receipt_revisions if standard_increment else None,
+            require_revision=revision_bound,
+            allowed_revisions=receipt_revisions if revision_bound else None,
         ))
         checked += 1
 

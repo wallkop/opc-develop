@@ -21,32 +21,32 @@ python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/opc_increment.py" run \
 
 python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/opc_increment.py" run \
   --receipt docs/features/<slug>/acceptance.json \
-  --kind browser --label "local real service passed" \
-  --core --browser-action --production-assembly --data-hash <plan-hash> \
-  --origin <origin> --session-type <session> --scratch-db <path> \
-  --object-id <durable-result-id> --trace-id <id> \
-  --artifact .git/opc-evidence/<screenshot-or-report> -- <browser journey command>
+  --kind browser --core --case-id TC-1 \
+  --case-evidence .git/opc-evidence/<run>/case-evidence.json -- \
+  python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/opc_testcase.py" run \
+    --feature-dir docs/features/<slug> --case TC-1 \
+    --evidence .git/opc-evidence/<run>/case-evidence.json -- \
+    npm run case -- TC-1
 
 python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/opc_increment.py" check \
   --receipt docs/features/<slug>/acceptance.json \
   --require real-service-core-journey
 ```
 
-The helper records command argv, working directory, start/end time, exit code, output path and
-excerpt, commit, content-tree fingerprint, authenticity label, build/runtime metadata, object IDs,
-trace ID, artifact hashes, output-log hash, and whether the command mutated the worktree. Level-3
-core evidence and provider canaries require origin, session type, object ID, trace ID, and an
-in-repository artifact created or updated by that command; core evidence also requires
-scratch-state metadata. The helper rehashes those files during every check. The receipt, review records, ledger, human
+The helper records command argv, working directory, time, exit code, output, commit, content-tree
+fingerprint, runner-derived authenticity label, evidence axes, build/runtime metadata, object IDs,
+trace ID, artifact hashes, output-log hash, and whether the command mutated the worktree. Browser,
+core, and provider commands require an approved case and fresh `opc-case-evidence-v1`; the runner,
+not CLI flags, supplies assembly/data/provider/driver/observation facts. The helper rehashes those
+files during every check. The receipt, review records, ledger, human
 reports, and release manifest are excluded from the product fingerprint so recording process
 evidence does not invalidate the code it proves; matching process records for other features are
 excluded too. The plan remains included. Store generated logs/artifacts under `.git/opc-evidence`
 or pass stable in-repository paths; do not record secrets.
 
-The receipt proves command history, metadata presence, artifact integrity, ordering, and freshness;
-it does not semantically prove that an arbitrary executable truly controlled a browser or contacted
-a provider. The independent reality/final reviewer must inspect the command and artifacts against
-the production assembly before approving the claim.
+The receipt proves command history, manifest identity, evidence structure, artifact integrity,
+ordering, and freshness. It still cannot make a malicious project runner trustworthy; the
+independent reality/final reviewer inspects runner code and artifacts against production assembly.
 
 ## Completion levels
 
@@ -55,9 +55,9 @@ the production assembly before approving the claim.
 3. `real-service-core-journey`
 4. `human-accepted`
 
-UI level 3 requires the key action to be browser-driven through the production assembly. A direct
-API-created result cannot stand in for the UI action. Snapshot/real data must match the plan's
-`Data-Hash`.
+UI level 3 requires the approved case's Playwright action through production assembly, complete
+interface/log/state observations, and canonical-clone/live-real data matching the plan `Data-Hash`.
+A direct API-created result or synthetic lookalike cannot stand in for that claim.
 
 Record level 4 only after the human accepts the fresh level-3 result:
 

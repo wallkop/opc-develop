@@ -1,7 +1,7 @@
 {
   "name": "opc-develop",
-  "version": "0.5.1",
-  "description": "Budget-first product development with real core journeys, runnable increments, revision-bound evidence, and reviews that stop",
+  "version": "0.6.0",
+  "description": "Human-approved black-box semantics, executable testcase manifests, trusted runtime evidence, and semantics-routed product delivery",
   "author": {
     "name": "wallkop",
     "email": "wallkop2026@zohomail.com"
@@ -19,6 +19,8 @@
     "retro",
     "e2e",
     "core-journey",
-    "acceptance-receipt"
+    "acceptance-receipt",
+    "testcase-manifest",
+    "runner-evidence"
   ]
 }

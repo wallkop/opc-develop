@@ -1,0 +1,4 @@
+interface:
+  display_name: "Testcase"
+  short_description: "Approve product cases and compile executable E2E regression"
+  default_prompt: "Use $testcase to turn the approved demo and PRD into reviewed executable black-box cases."

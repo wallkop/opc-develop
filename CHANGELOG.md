@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.6.0 - 2026-07-13
+
+- Remove all predicted-duration and implementation-effort gates. `lite`/`build` now route only by
+  changed product semantics, risk, and release needs; plans no longer require `Class`,
+  `Budget-Minutes`, or per-slice minute estimates. Reviews also have no fixed repair quota.
+- Add an explicit E2E applicability rule: copy, static styling, docs, comments, formatting, and
+  non-runtime configuration changes use proportional targeted/visual checks and do not run E2E by
+  default; semantic behavior changes continue through the approved testcase runner.
+- Split `testcase` out of PRD as a mandatory, separately invocable and reviewable phase after both
+  an Approved demo and Approved PRD. Standard/releasable delivery now follows
+  `demo -> prd -> testcase -> build`; architecture remains conditional.
+- Add deterministic `testcases.json` compilation, a fresh independent testcase review, explicit
+  product-owner `testcase-approval.json`, and automatic staleness when demo/PRD/case truth changes.
+- Require every downstream E2E regression to enter through the project testcase runner. Raw
+  Playwright commands cannot serve as acceptance commands; Playwright remains the primary UI
+  driver and Computer Use is limited to a reasoned atomic fallback.
+- Add `opc-case-evidence-v1`: runners report separate assembly, data, provider, driver,
+  observation, and product-outcome axes, per-step results, correlations, and hashed artifacts.
+  `opc_increment.py` derives labels and completion from this evidence instead of caller flags.
+- Close the mtime/touch false-green: structured evidence must have new content, not merely a changed
+  timestamp. Named real-object claims require canonical-clone/live-real provenance matching the
+  plan hash; synthetic lookalikes remain seeded evidence.
+- Require atomic positive/negative observation and the interface/log/state evidence triangle, cap
+  human-facing screenshots at three per case, and bind gate-chain checks to the mandatory product
+  definition and approval artifacts.
+
 ## 0.5.1 - 2026-07-13
 
 - Restored the full system architecture map instead of replacing it with the v0.5 increment flow.

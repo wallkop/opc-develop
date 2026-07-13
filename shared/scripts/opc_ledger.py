@@ -69,8 +69,8 @@ def validate(entry: dict, is_error: bool, schema: str | None = SCHEMA_CURRENT) -
     if etype == "gate" and entry["status"] not in {"Approved", "Issues Found"}: return "gate status must be Approved or Issues Found"
     if etype == "gate" and schema == SCHEMA_CURRENT:
         rounds = entry.get("rounds")
-        if not isinstance(rounds, int) or isinstance(rounds, bool) or not 1 <= rounds <= 3:
-            return "gate rounds must be an integer from 1 to 3 (initial review plus at most two repairs)"
+        if not isinstance(rounds, int) or isinstance(rounds, bool) or rounds < 1:
+            return "gate rounds must be a positive integer"
         flow = entry.get("flow")
         if flow is not None and flow != "increment-v1":
             return "gate flow must be increment-v1 when present"
@@ -168,12 +168,6 @@ def audit_ledger(
         timestamp = datetime.fromisoformat(entry["ts"]).timestamp() if entry.get("ts") else None
         versioned = schema is not None
         (errors if versioned or threshold is None or timestamp is None or timestamp >= threshold else warnings).append(finding)
-    total_repairs = sum(max(0, int(entry.get("rounds", 1)) - 1) for _, entry in increment_gates)
-    if total_repairs > 2:
-        errors.append({
-            "line": increment_gates[-1][0], "code": "increment_repair_stop_loss",
-            "message": f"increment-v1 used {total_repairs} repair rounds; maximum is 2 across the increment",
-        })
     gate_names = [entry.get("gate") for _, entry in increment_gates]
     if len(gate_names) > 2 or len(gate_names) != len(set(gate_names)):
         errors.append({

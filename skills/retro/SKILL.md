@@ -25,7 +25,7 @@ rule becomes active only after that experiment proves it can kill the bad varian
 2. **Collect**: feature summaries, exact-match error pre-groups, semantic clusters, normalized
    Codex/Claude usage, benchmark reports, and crystallized rules. Label script findings separately
    from semantic judgment.
-3. **Compute**: measured/estimated/no-data cost by phase, time to first runnable core path, command
+3. **Compute**: measured/no-data cost by phase, time to first runnable core path, command
    and repeated-test counts, subtask/context modes, review/repair rounds, provider calls/cost,
    rework routing, user corrections, post-completion fixes, recurring clusters, open gaps,
    benchmark coverage, and false-green gates. Do not call missing capture “zero recurrence” or

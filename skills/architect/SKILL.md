@@ -1,13 +1,13 @@
 ---
 name: architect
-description: "Use only when an increment changes a public boundary, makes a one-way technical decision, or has an explicit product-to-architecture handoff. Runs intake and produces a gated ADR-style technical design with contracts and runtime evidence. It is optional and not a prerequisite for ordinary build increments of up to four hours."
+description: "Use after approved testcase artifacts only when an increment changes a public boundary, makes a one-way technical decision, or has an explicit product-to-architecture handoff. Produces a gated ADR-style design before build."
 license: MIT
 ---
 
 # architect
 
 The engineering decision document. Start with intake because the architect may not have shaped the
-result card or optional PRD.
+approved testcase chain and result card.
 
 ## Load
 
@@ -20,18 +20,18 @@ result card or optional PRD.
 
 ## Process
 
-1. **Intake**: pull the branch; read the result card, current code/architecture, living spec when
-   present, and any optional requirement/demo/PRD with their fresh reviews. Exercise the existing
+1. **Intake**: pull the branch; require fresh approved demo, PRD, and testcase artifacts, then read
+   the result card, current code/architecture, and living spec. Exercise the existing
    real entry or demo when relevant. Record the outcome, constraints, and understanding questions;
    never silently answer missing product judgment.
-2. **Matching risk spike**: run only the time-boxed experiment that could invalidate this public or
-   one-way decision. Include it inside the increment budget; do not spike every category by default.
+2. **Matching risk spike**: run only the smallest real experiment that could invalidate this public
+   or one-way decision. Do not estimate it or spike every category by default.
 3. Commit to one route. Write `technical.md` per the format: numbered TD records with
    reversibility tags, public contracts, system boundaries, the runtime evidence plan written
    against the project's actual observability and core-slice impact. Inspect the codebase for
    the architecture baseline; divergence is a `[ONE-WAY]` TD record.
-4. Gate it (fresh reviewer, `rubrics/technical.md`, L0 precheck). Apply the shared two-repair
-   stop-loss; unresolved blockers force scope reduction or a new decision. Ledger each round.
+4. Gate it (fresh reviewer, `rubrics/technical.md`, L0 precheck). Repair and re-review until it
+   passes or reaches a genuine decision blocker. Ledger each round; no fixed round quota applies.
 5. **Architecture sign-off touchpoint**: write `reports/technical.md` as a faithful plain-language
    summary with the technical artifact SHA, render/lint `reports/technical.html` per
    `formats/report-style.md`, then present the TD decision sheet to the human architect.

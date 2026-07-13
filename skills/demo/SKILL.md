@@ -1,6 +1,6 @@
 ---
 name: demo
-description: "Use only when interaction taste is unresolved and the human explicitly wants an experienceable prototype before implementation. Builds a high-fidelity prototype in the real frontend (or a runnable non-UI skeleton), runs the vibe-loop, and inventories mocks. It is optional and not required for an ordinary standard increment with a clear core journey."
+description: "Use as the mandatory first product-definition phase before PRD, testcase, and build. Builds a human-approved experienceable prototype in the real frontend (or runnable non-UI skeleton), inventories every mock, and fixes interaction meaning before black-box cases are written."
 license: MIT
 ---
 
@@ -19,7 +19,8 @@ that `revise` happens at its cheapest possible moment.
 
 ## Process
 
-1. Verify a result card or `requirement.md` exists on the feature branch. Decide the variant:
+1. Verify a result card or `requirement.md` exists on the feature branch. Demo is mandatory for a
+   build flow because testcase semantics need an experienceable reference. Decide the variant:
    - **UI surface exists** → prototype in the real frontend codebase, reachable through the real
      app shell. No detached playgrounds, no query-param-only roots.
    - **No UI surface** (API/CLI/job/migration) → runnable skeleton: one real request/response or
@@ -48,5 +49,4 @@ proceed-with-cap — do not silently lower the bar.
 ## Output
 
 Running prototype in the real codebase, `mock-inventory.md`, `prototype.md`, demo gate Approved,
-ledger entries. Next: `build` by default; use `prd` only when the prototype reveals durable product
-decisions worth a product contract.
+ledger entries. Next: `prd`; do not skip directly to testcase or build.

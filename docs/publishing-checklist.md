@@ -9,7 +9,7 @@ This checklist tracks public distribution channels for opc-develop.
 - English-first `README.md`
 - Chinese `README.zh-CN.md`
 - System architecture image: `assets/opc-develop-skills.png`
-- Budget-routing image: `assets/opc-develop-routing.png`
+- Semantics-routing image: `assets/opc-develop-routing.png`
 - Codex plugin manifest: `.codex-plugin/plugin.json`
 - Claude Code plugin manifest: `.claude-plugin/plugin.json`
 - Claude marketplace manifest: `.claude-plugin/marketplace.json`
@@ -29,8 +29,8 @@ python3 -m json.tool .claude-plugin/plugin.json >/dev/null
 python3 -m json.tool .claude-plugin/marketplace.json >/dev/null
 python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
 ruby -ryaml -e 'Dir["skills/*/agents/openai.yaml"].each { |f| YAML.load_file(f) }'
-rg -q 'v0\.5\.1' assets/opc-develop-skills.svg assets/opc-develop-skills.zh-CN.svg
-rg -q 'Budget-first|预算优先' assets/opc-develop-routing.svg assets/opc-develop-routing.zh-CN.svg
+rg -q 'v0\.6\.0' assets/opc-develop-skills.svg assets/opc-develop-skills.zh-CN.svg
+rg -q 'PRODUCT SEMANTICS|产品语义' assets/opc-develop-routing.svg assets/opc-develop-routing.zh-CN.svg
 claude plugin validate .
 claude plugin validate .claude-plugin/plugin.json
 claude plugin tag --dry-run .

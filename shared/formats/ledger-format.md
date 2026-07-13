@@ -24,10 +24,10 @@ Common fields: `ts` (stamped by script), `feature`, `type`.
 Conventions:
 
 - New records are stamped `schema_version: opc-ledger-v3`. Auditing remains backward-compatible
-  with historical v2 rows; v3 alone enforces increment repair/context guardrails.
+  with historical v2 rows; v3 alone enforces increment review/context contracts.
 - `gate.isolation` is `subagent` normally, `self-reviewed (no isolation)` in degraded mode.
 - Standard increment gates use `flow: increment-v1`, exactly `reality` and `final`, with `rounds`
-  including the initial review. Across both gates, `rounds - 1` totals at most two repairs.
+  including the initial review. `rounds` is a positive count; no fixed repair quota applies.
   Partial-work audits may omit gates; final/ship runs add `--require-increment-complete`, which
   requires exactly one Approved v3 record for each gate.
 - Dispatch requires `context_mode: none|summary`; full conversation context is invalid.

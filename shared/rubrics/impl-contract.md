@@ -1,8 +1,8 @@
 # Rubric: implementation contracts
 
 You are reviewing an explicitly requested coordination contract tree against
-`formats/impl-contract-format.md`, the result card, and whichever optional PRD, technical, testcase,
-or mock artifacts exist. End with one `**Status:**` line and `Reviewed-SHA:` lines per reviewed
+`formats/impl-contract-format.md`, the result card, mandatory PRD/testcase, and any technical
+or mock artifacts that exist. End with one `**Status:**` line and `Reviewed-SHA:` lines per reviewed
 contract/source file. This review is optional governance, not a new standard-increment gate.
 
 ## Blocking checks

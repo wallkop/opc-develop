@@ -36,9 +36,11 @@ Non-goals                             inherited from requirement.md plus PRD-lev
 - Localize all ordinary headings and prose to the target language resolved from project
   `AGENTS.md`. The English headings in this template describe semantic sections, not mandatory
   display strings. Keep PD/AC IDs and parser-required tokens unchanged.
-- Every downstream artifact (technical, impl-contract, testcases, reviews, acceptance report)
+- Every downstream artifact (technical, impl-contract, testcase phase, reviews, acceptance report)
   references ACs by ID and never restates their text.
 - An AC that cannot be verified black-box is a spec detail, not an AC — move it to the appendix.
 - Behavior visible in the approved demo but absent from ACs is a gap: add the AC or mark the demo
   behavior placeholder in Demo alignment.
 - Changes to ACs after approval are a `revise` (stale cascade applies), never a silent edit.
+- PRD defines ACs but does not author, gate, or approve testcases. That responsibility belongs to
+  the separate `testcase` phase after both demo and PRD approval.

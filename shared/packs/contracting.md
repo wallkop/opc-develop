@@ -2,7 +2,7 @@
 
 Do not load this pack for normal standard increments. Use contracts only when the human explicitly
 needs multi-owner coordination or an approved public technical design has independently separable
-workstreams. Contracts are not a quality badge and never justify exceeding the four-hour increment.
+workstreams. Contracts are not a quality badge and never justify unnecessary coordination.
 
 ## Partition by runnable outcome
 
@@ -10,7 +10,8 @@ workstreams. Contracts are not a quality badge and never justify exceeding the f
 - Tables, services, modules, APIs, and migrations are child implementation tasks, not top-level
   completion nodes.
 - If a workstream is not independently demonstrable, keep it under the owning slice.
-- Any item estimated above two hours or requiring unrelated journeys must split again.
+- Separate unrelated journeys when they can be demonstrated independently; never split based on
+  predicted duration.
 - Start from the core vertical slice; do not create one giant “thin slice” containing the whole
   platform.
 

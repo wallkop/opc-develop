@@ -8,15 +8,16 @@ content tree; appending test/human evidence to the excluded receipt does not inv
 
 ## Blocking checks
 
-1. **Budget and outcome**: the plan is <=4 hours, has one user-visible outcome, and its slices are
-   independently runnable. Multiple unrelated journeys or a >2-hour slice means scope is too large.
+1. **Outcome coherence**: the plan has one coherent user-visible outcome and independently runnable
+   slices. Judge semantic coupling and reviewability, never predicted duration.
 2. **Real target**: the data/object is the one requested, or a source-hashed allowed snapshot. A
    hand-written lookalike cannot prove compatibility with existing user data.
 3. **Production assembly**: inspect the actual mount/startup path: router, session/origin/auth,
    service construction, datastore, scheduler/dispatcher when relevant. Tests against an alternate
    assembly do not count.
 4. **Core journey honesty**: the receipt is fresh and the accepted action originates at the real
-   interface. UI means the browser performs the key click/type/upload; API-created success is a
+   interface. UI means the approved testcase runner performs the Playwright click/type/upload;
+   API-created success is a
    bypass.
 5. **Safety**: verify both plan invariants and any matching data, permission, concurrency, money,
    rollback, or idempotency risk in the diff.

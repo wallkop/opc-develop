@@ -1,6 +1,6 @@
 interface:
   display_name: "lite"
-  short_description: "One <=60-minute change with a real-entry check"
-  default_prompt: "Use $lite for this single <=60-minute change with a focused regression and one real-entry before/after check, without feature documents or subagents."
+  short_description: "One localized non-semantic change with proportional checks"
+  default_prompt: "Use $lite for this localized change without new E2E semantics, with focused checks and proportional real-entry evidence, without feature documents or subagents."
 policy:
   allow_implicit_invocation: true

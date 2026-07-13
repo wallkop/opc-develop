@@ -5,7 +5,7 @@ description: "Use when the human explicitly wants the fastest possible implement
 
 # vibe
 
-Optimize for elapsed time to a human-reviewable implementation. The human owns all acceptance.
+Optimize for a directly human-reviewable implementation. The human owns all acceptance.
 
 ## Process
 

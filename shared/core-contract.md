@@ -3,18 +3,27 @@
 Load this contract for every opc-develop skill. Load other packs only when the current role needs
 them. Enforce at the lowest useful layer: script/hook (L0) > structured artifact (L1) > prose (L2).
 
-## Route by elapsed-time budget
+## Route by semantics and risk
 
 - `vibe`: only when the human explicitly owns all acceptance and requests no tests/verification.
-- `lite`: one result credibly <=60 minutes; no feature artifacts or subagents. Do not use when the
-  result must enter `ship`/`deploy` and therefore needs a revision-bound receipt.
-- `build`: one standard increment of 1-4 hours, or a release-bound/oncall quick increment; one plan,
-  one core journey, runnable slices.
-- >4 hours or several independently useful outcomes: split before implementation.
+- `lite`: one localized result that does not create or change E2E product semantics; no feature
+  artifacts or subagents. Do not use when the result must enter `ship`/`deploy` and therefore needs
+  a revision-bound receipt.
+- `build`: new or changed behavior, state, data, permissions, cross-module contracts, or
+  release-bound work; one plan, one core journey, runnable slices.
+- Independent outcomes may be decomposed for clarity. Never route, block, stop, or split work based
+  on a predicted duration or implementation-cost estimate.
 
-Risk adds a matching check; it does not automatically promote work into the full
-demo/PRD/technical/contract chain. Those artifacts are explicit, opt-in tools for durable product
-decisions, public-boundary changes, or separately requested governance.
+Risk adds a matching check; it does not automatically add architecture ceremony. Every `build`
+flow has one mandatory product-definition chain: `demo -> prd -> testcase -> build`. `architect`
+remains conditional on a public boundary or one-way technical decision. `vibe` and ordinary `lite`
+stay outside this chain only while they make no E2E or release claim.
+
+Pure copy, static styling, docs, comments, formatting, and configuration changes with no runtime
+behavior change do not run E2E by default. Verify them with the matching static/component/a11y
+check and, for UI, a lightweight real-entry visual/DOM before-and-after check. If the observed user
+journey, state, data, permission, routing, or contract semantics change, reclassify and execute the
+approved testcase through the project runner.
 
 ## Status tokens
 
@@ -25,11 +34,12 @@ them.
 
 ## Core journey and evidence before claim
 
-Define one external journey before implementation: traceable starting data, real entry, user
-action, production assembly, visible result, durable state, and two safety invariants. UI acceptance
-requires the browser to perform the key action; API/DB preparation may not manufacture the accepted
-result. If the user named existing data, a synthetic lookalike is not equivalent—use a permitted
-source-hashed snapshot or real object.
+Define and approve external journeys in the testcase phase before implementation: traceable
+starting data, real entry, user action, production assembly, positive and negative signals, visible
+result, durable state, and safety invariants. UI acceptance requires the project testcase runner to
+perform the Playwright action; API/DB preparation may not manufacture the accepted result. If the
+user named existing data, a synthetic lookalike is not equivalent—use a permitted source-hashed
+canonical clone or real object.
 
 Never claim passed, fixed, verified, done, or releasable without fresh evidence from the current
 content tree: command, exit code, output path, branch/commit, and authenticity label. A report alone
@@ -44,7 +54,8 @@ Report the highest achieved completion level exactly:
 3. `real-service-core-journey`
 4. `human-accepted`
 
-`opc_increment.py` binds standard-increment receipts to code, tests, plan, seed, and tracked config;
+`opc_increment.py` binds standard-increment receipts to code, the approved testcase manifest,
+tests, plan, seed, and tracked config;
 any change invalidates old command conclusions. Missing environment capability caps the level and
 creates a visible gap. It never upgrades a claim.
 
@@ -55,16 +66,19 @@ one real-provider canary -> human acceptance. Cheap targeted tests may run after
 browser journeys run at slice boundaries; full gates run at integration/final; provider canaries
 never serve as the ordinary debug loop.
 
-Tests may use public interfaces, independent provider fakes, source-hashed snapshots, and read-only
-state assertions. Production code must not expose a test control that directly creates the
+E2E regressions execute an approved testcase through the project case runner and emit
+runner-generated evidence. Caller flags cannot assert production assembly, data provenance, driver
+action, or trace completeness. Tests may use public interfaces, independent provider fakes,
+source-hashed snapshots, and read-only state assertions. Production code must not expose a test
+control that directly creates the
 Run/Event/Artifact/Receipt the test later calls success.
 
-## Reviews and stop-loss
+## Reviews
 
 A standard increment has one reality review after the first vertical slice and one final integration
-review. The first pass returns a complete severity-ordered finding list. Across both reviews, allow
-at most two repair rounds total; remaining blockers force scope reduction or redesign, not another
-patch loop. Over-broad review scope is itself blocking.
+review. The first pass returns a complete severity-ordered finding list. Repair and re-review until
+the work passes or a genuine blocker requires user input, external state, or redesign. Do not impose
+a fixed review or repair quota.
 
 Start reviewers cold with the rubric, plan/artifact, diff, receipt/evidence, and project rules only.
 Use `fork_turns: none` or the host equivalent. Never copy the full conversation. If isolation is
@@ -89,7 +103,7 @@ Classify human feedback as exactly one of:
 
 Acceptance failures additionally separate implementation defect, artifact/plan defect, and taste
 change. If the human says the tested object or journey is not theirs, mark the candidate rejected,
-invalidate tests/receipts, rewrite the result card, and re-evaluate budget before coding again.
+invalidate tests/receipts, and rewrite the result card before coding again.
 
 ## Freshness
 
@@ -110,7 +124,7 @@ Append gate, phase, dispatch, rework, evidence, release, and gap records through
 wall time is automatic and token usage is recorded when exposed. Never invent missing usage.
 
 Dispatch records require `context_mode: none|summary`. Standard gates use `flow: increment-v1` and
-`gate: reality|final`; `opc_ledger.py audit` rejects more than two total repair rounds. Command and
+`gate: reality|final`; `opc_ledger.py audit` verifies their order and approval. Command and
 provider counts live in the generated acceptance receipt. Missing telemetry prevents efficiency
 claims but does not block implementation.
 
@@ -130,8 +144,8 @@ terms at first use.
 
 ## Pack index
 
-- `packs/increment.md` — budget-first standard increment and verification ladder.
-- `packs/gate-protocol.md` — isolated review mechanics, freshness, aggregate stop-loss.
+- `packs/increment.md` — semantics-routed increment after mandatory product definition.
+- `packs/gate-protocol.md` — isolated review mechanics, freshness, and convergence.
 - `packs/evidence.md` — receipt fields, labels, RED/GREEN, runtime evidence.
 - `packs/risk-readiness.md` — matching risk checks and first-slice spikes.
 - `packs/tdd-implement.md` — targeted TDD/debugging and exceptional bounded dispatch.

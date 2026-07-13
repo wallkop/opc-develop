@@ -1,10 +1,10 @@
 # Rubric: demo / prototype
 
 You are reviewing a running frontend prototype (or runnable skeleton for non-UI features) against
-the source result card or `requirement.md`, plus the mock inventory. Use whichever source artifact
-actually exists; do not invent a mandatory predecessor. You must actually exercise it — a review
-from screenshots or code reading alone is invalid. End with one `**Status:**` line and
-`Reviewed-SHA:` lines for the inventory and reviewed source docs; record the preview URL/command.
+the source result card or `requirement.md`, plus `demo/prototype.md` and the mock inventory. Use
+whichever source artifact actually exists. You must actually exercise it — a review from screenshots
+or code reading alone is invalid. End with one `**Status:**` line and `Reviewed-SHA:` lines for both
+demo artifacts and any reviewed source docs; record the preview URL/command.
 
 ## Blocking checks
 

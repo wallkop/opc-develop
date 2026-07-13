@@ -49,7 +49,7 @@ Resume after the last `release` ledger entry with `result: ok`.
    human confirmation; batch approval is not a thing here.
 3. **deploy-prod**: release per the project runbook (canary/staged rollout when the runbook
    defines one), with explicit human confirmation to start.
-4. **regression-prod**: run the `@prod-safe` Tier-1 subset against production — read-only
+4. **regression-prod**: run the approved `@prod-safe` testcase subset through the project runner — read-only
    evidence triangle (interface + correlation-ID logs + state queries). Untagged specs never run
    here. Record `external provider passed` / real-surface labels only for what actually ran.
 5. **watch**: monitor the runbook's signals (error rates, key logs, business metrics) for its

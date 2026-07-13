@@ -37,27 +37,26 @@ The controller never transcribes or repairs a verdict. It parses the record with
 `parse_review_status.py`, compares it to the reviewer's returned status, verifies the actual diff
 and command output, then closes the ledger span.
 
-## Routing and aggregate stop-loss
+## Routing and convergence
 
 The first pass returns the complete finding list; it must not drip-feed one new subsystem per round.
-`Issues Found` routes to a targeted repair and re-review. Count repairs across the whole standard
-increment, not separately by finding or gate:
+`Issues Found` routes to a targeted repair and re-review. The first review is round 1; increment the
+round count for each re-review. Continue until the review passes or a genuine blocker requires user
+input, external state, or redesign. There is no fixed repair-round quota and no predicted-effort
+gate.
 
-- initial review is round 1;
-- at most two repair rounds are allowed across reality + final;
-- if blocking issues remain, stop patching and reduce scope or redesign.
-
-Record standard gates with `flow: increment-v1`, `gate: reality|final`, and `rounds: 1..3`.
-`opc_ledger.py audit` rejects a third repair round, duplicate gates, or any extra increment gate.
-For opt-in artifact gates, the same per-gate cap applies. A review object spanning unrelated user
-journeys or several major subsystems is immediately `Issues Found: slice too large`.
+Record standard gates with `flow: increment-v1`, `gate: reality|final`, and a positive `rounds`
+count. `opc_ledger.py audit` rejects duplicate or extra increment gates and verifies the ordered
+review chain. A review object spanning unrelated user journeys or several major subsystems should
+be decomposed when that makes findings actionable.
 
 ## Reviewer conduct
 
 - Judge the requested real object and production assembly, not effort or claimed test counts.
 - Check router mount, session/origin/auth, service construction, datastore, and runtime startup when
   relevant. “Targeted tests green” is not a production-assembly check.
-- For UI, verify the browser performs the key action. API-created success cannot substitute.
+- For UI, verify the approved testcase runner performs the Playwright action and emits atomic
+  success/failure evidence. API-created success or raw Playwright cannot substitute.
 - Check tests for direct-write controls that manufacture the asserted success.
 - Cite file/line, receipt command ID, and a concrete failure scenario for blocking findings.
 - Findings and status must agree. Style nits do not justify `Issues Found`.
