@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Route by engineering depth and change radius instead of whether product behavior changes.
+  Bounded changes through existing architecture now default to `lite`; `build` requires an explicit
+  complete-capability, shared-core-refactor, breaking-evolution, broad-regression, or
+  coordinated-rollout trigger.
+- Decouple risk and release from routing. Money, permissions, concurrency, providers, APIs,
+  databases, and release intent add matching safety checks but do not select Build by themselves.
+- Allow verified Lite increments to enter `ship` and `deploy` using focused evidence and the
+  project's complete release gate without manufacturing Build feature artifacts.
+
 ## 0.6.0 - 2026-07-13
 
 - Remove all predicted-duration and implementation-effort gates. `lite`/`build` now route only by

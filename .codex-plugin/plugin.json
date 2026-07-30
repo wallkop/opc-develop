@@ -1,15 +1,15 @@
 {
   "name": "opc-develop",
   "version": "0.6.0+codex.20260713151843",
-  "description": "Human-approved black-box semantics, executable testcase manifests, trusted runtime evidence, and semantics-routed product delivery",
+  "description": "Bounded Lite delivery by default, engineering-depth Build routing, human-approved black-box cases, and trusted runtime evidence",
   "author": {
     "name": "wallkop"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "opc_develop",
-    "shortDescription": "Approved testcase semantics and runner-derived delivery evidence",
-    "longDescription": "opc-develop separates product truth from test code. Standard and releasable increments follow demo, PRD, testcase, then build: the human first approves an experienceable prototype, durable ACs, and exact black-box cases; testcase compiles a deterministic manifest; build implements only those approved cases. Project runners use Playwright as the primary deterministic UI driver, limit Computer Use to an atomic fallback, pre-arm success and failure observers, and emit structured evidence whose assembly, data, provider, driver, observation, and product-outcome axes determine authenticity. CLI flags cannot upgrade a result. Vibe remains explicitly unverified; lite handles localized changes without new E2E semantics, and copy/static-style/docs changes do not run E2E by default. Routing never uses predicted duration. Architect remains conditional, and ship/deploy/oncall/harness/retro close the engineering loop.",
+    "shortDescription": "Fast Lite delivery and explicit engineering-depth Build routing",
+    "longDescription": "opc-develop defaults bounded changes through existing architecture to Lite, including localized behavior, billing, permission, provider, API, persistence, and release work. Build requires an explicit complete-capability, shared-core-refactor, breaking-evolution, broad-regression, or coordinated-rollout trigger; risk adds matching checks instead of selecting the route. Real Build increments follow demo, PRD, testcase, then build with human-approved black-box cases and runner-derived evidence. Copy/static-style/docs changes do not run E2E by default. Lite can ship with focused evidence and the project's release gate without manufacturing Build artifacts. Routing never uses predicted duration. Architect remains conditional, and ship/deploy/oncall/harness/retro close the engineering loop.",
     "developerName": "wallkop",
     "category": "Coding",
     "capabilities": [

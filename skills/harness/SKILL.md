@@ -44,16 +44,17 @@ The harness is executable capability, not documentation. Docs index; scripts pro
    and a project testcase runner that consumes approved manifests and emits case evidence. For UI,
    build one `performAndObserve` primitive that pre-arms network/DOM/log failure and success signals
    before the Playwright action. Follow the L1-L4 standards in `harness-verbs.md`.
-   Also build a change-applicability route: non-semantic copy/static-style/docs/formatting changes
-   select targeted checks and a lightweight UI visual/DOM check, while semantic behavior changes
-   select the approved testcase runner. The harness must not force E2E for every diff.
+   Also build a change-applicability route: copy/static-style/docs/formatting changes select
+   targeted checks and a lightweight UI visual/DOM check; bounded Lite behavior changes select the
+   narrowest useful real-entry check and reuse an approved testcase when one exists; Build runs its
+   approved testcase set. The harness must not force the full Build chain or E2E for every diff.
 6. Verify each build by using it once for real; record the command and output. Update AGENTS.md
    as the index pointing at everything built (keep it thin — pointers, not prose).
 7. **L0 wiring is a default recommendation, not an afterthought**: propose project-local hooks
    or CI steps invoking `validate_artifacts.py`, `opc_testcase.py check --require-approved`,
    `opc_increment.py check`, `opc_ledger.py audit`,
    `check_freshness.py`, and `check_gate_chain.py` at the appropriate gate points — "the gate and
-   real core journey must happen for semantic behavior changes" is the suite's most
+   real core journey must happen for Build increments and project release policy" is the suite's most
    important rule and deserves its strongest layer. Install on the human's yes (hooks change the
    project's behavior for everyone); a decline is recorded as a `gap` with the enforcement
    downgrade it implies.

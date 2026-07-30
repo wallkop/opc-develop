@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "opc-develop",
-      "description": "Human-approved black-box semantics, executable testcase manifests, trusted runtime evidence, and semantics-routed product delivery",
+      "description": "Bounded Lite delivery by default, engineering-depth Build routing, human-approved black-box cases, and trusted runtime evidence",
       "version": "0.6.0",
       "source": "./",
       "author": {

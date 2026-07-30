@@ -3,14 +3,16 @@
 [简体中文](README.zh-CN.md)
 
 opc-develop is a product-development skill suite for Claude Code and Codex. It is not one heavy
-pipeline for every edit. It is a set of routes: use `lite` for a daily change that does not create
-or alter E2E product semantics; use the mandatory `demo -> prd -> testcase -> build` chain for a
-standard or releasable product increment; add `architect` only for public/one-way boundaries; and
-enter separate safety flows for release and incidents.
+pipeline for every edit. `lite` is the default for a bounded change through existing architecture,
+including localized behavior changes. Use `build` only for an explicitly named engineering
+trigger: a complete new capability, shared-core refactor, breaking/destructive evolution, broad
+regression surface, or coordinated rollout. Release and risk add safety checks; they do not select
+Build by themselves.
 
-Its core promise is: **make the human approve the black-box oracle before implementation, then prove
-that exact journey with runner-generated evidence bound to the current revision.** The human owns product judgment, design
-taste, and architecture direction. The agent implements and verifies inside those boundaries.
+Its core promise is: **keep bounded work fast with focused proof, and make structurally deep Build
+work use a human-approved black-box oracle with revision-bound runner evidence.** The human owns
+product judgment, design taste, and architecture direction. The agent implements and verifies
+inside those boundaries.
 
 > Version 0.6 separates testcase from PRD and makes demo, PRD, and testcase mandatory before build.
 > This closes the false-oracle gap: Playwright drives an approved case; it does not invent the case.
@@ -101,23 +103,23 @@ In Claude Code, replace `$` with `/`:
 /opc-develop:build Implement the approved Core-Case with runner-derived evidence.
 ```
 
-### 3. Route by semantics and risk
+### 3. Route by engineering depth and change radius
 
-Ask two questions first: **does this create or change product E2E semantics, and must it enter a
-test/production release?** Never route or block work using a predicted duration.
+Default to `lite`, then ask whether the work hits an exact Build trigger. Never route or block work
+using predicted duration, generic risk, behavior change, or release intent.
 
 | Route | Use when | What it does | What it does not do |
 | --- | --- | --- | --- |
 | `vibe` | You explicitly want the fastest code and will accept it yourself | Edits immediately and hands over the diff | No tests, runtime check, or evidence; cannot claim releasable |
-| `lite` | One localized result with no new or changed E2E semantics | Proportional targeted checks plus lightweight real-entry evidence | Pure copy/static style/docs do not run E2E by default |
-| `build` | New/changed behavior or release-bound work after product-definition approval | Approved Core-Case, runnable slices, reviews, fresh receipt | Cannot invent or change E2E semantics during implementation |
+| `lite` | One bounded result through existing architecture, including localized behavior changes | Focused checks, matching risk protection, and proportional real-entry evidence | Does not manufacture feature artifacts solely because behavior changes or it must release |
+| `build` | Complete capability, shared-core refactor, breaking evolution, broad regression, or coordinated rollout | Approved Core-Case, runnable slices, reviews, fresh receipt | Cannot be selected without naming an exact trigger |
 | decompose | Several independently useful outcomes | Separates journeys for clarity and independent proof | Never uses an effort estimate as a stop gate |
 
-![OPC-Develop semantics routing](assets/opc-develop-routing.png)
+![OPC-Develop engineering-depth routing](assets/opc-develop-routing.png)
 
 This is a **routing and single-increment diagram**, not the system architecture map.
 
-### 4. Product definition is mandatory; architecture remains conditional
+### 4. Product definition is mandatory for Build; architecture remains conditional
 
 | Unresolved question | Use first | Skip it when |
 | --- | --- | --- |
@@ -128,8 +130,9 @@ This is a **routing and single-increment diagram**, not the system architecture 
 | A public API/event/schema boundary or one-way technical choice changes | `architect` | The change follows existing architecture and is local/reversible |
 
 The standard path is `demo -> prd -> testcase -> build`. `brainstorm` is optional before demo;
-`architect` is inserted after testcase only for a changed public/one-way boundary. `lite` stays
-small only while it reuses existing semantics and makes no new E2E/release claim.
+`architect` is inserted after testcase only for a changed public/one-way boundary. That chain
+applies to work with a real Build trigger. Clear bounded intent stays in `lite`; unclear product
+intent uses `brainstorm`/`demo` for definition, not as an automatic Build upgrade.
 
 ## Which skill does what
 
@@ -137,9 +140,9 @@ small only while it reuses existing semantics and makes no new E2E/release claim
 
 | Skill | Typical use | Primary result | Next |
 | --- | --- | --- | --- |
-| `vibe` | Disposable experiment; explicitly human-accepted unverified code | Code diff plus a no-tests disclosure | Human review; rerun through `build` before release |
-| `lite` | Bug, copy/layout, config, minor behavior | Scoped change, narrow regression, real-entry before/after evidence | Done; route widening scope to `build` |
-| `build` | Approved new/changed product behavior or release-bound fix | `feature-plan.md`, case-driven implementation, `acceptance.json`, reviews | `ship` after local completion |
+| `vibe` | Disposable experiment; explicitly human-accepted unverified code | Code diff plus a no-tests disclosure | Human review; use verified Lite or Build before release |
+| `lite` | Bounded bug, behavior, billing, permission, provider, API, persistence, UI, copy/layout, or config change | Scoped change, focused regression, matching risk checks, real-entry evidence | Upgrade only when an exact Build trigger appears |
+| `build` | Complete capability, structural refactor, breaking evolution, broad regression, or coordinated rollout | `feature-plan.md`, case-driven implementation, `acceptance.json`, reviews | `ship` after local completion |
 
 ### Product definition and conditional architecture
 
@@ -155,7 +158,7 @@ small only while it reuses existing semantics and makes no new E2E/release claim
 
 | Skill | Typical use | Primary result | Next |
 | --- | --- | --- | --- |
-| `ship` | `build` has a fresh real-service core journey | Test deploy, same-journey regression, human acceptance, trunk merge | Human chooses whether to `deploy` |
+| `ship` | A verified Lite or Build increment is ready for test | Test deploy, matching regression, human acceptance, trunk merge | Human chooses whether to `deploy` |
 | `deploy` | Human-accepted increments are merged and ready for production | Fail-closed preflight, backup/rollback, prod-safe regression, watch, MD/HTML handoff | Close or route anomalies to `oncall` |
 | `oncall` | Something is wrong on test or production | Severity triage, evidence chain, diagnostic report, rollback/hotfix/mitigation, error-ledger entry | Re-enter through `lite`, `build`, or a decision skill for the long-term fix |
 | `harness` | The agent cannot reliably start, reset, trace, or drive the system | Four-verb scores, executable scripts/seeds/log conventions, thin `AGENTS.md` index | Return to delivery after the highest-leverage gap closes |
@@ -166,11 +169,13 @@ small only while it reuses existing semantics and makes no new E2E/release claim
 | Request | Recommended route | Why |
 | --- | --- | --- |
 | Change one label or fix one local bug | `lite` | One result does not justify feature artifacts |
-| A hotfix must ship today | `build` → `ship` → `deploy` | Release requires revision-bound evidence regardless of duration |
-| Add a clear export flow | `demo` → `prd` → `testcase` → `build` | Even clear intent needs an inspectable oracle before E2E |
+| A localized hotfix must ship today | `lite` → `ship` → `deploy` | Release adds gates and evidence, not a Build upgrade |
+| Add an export action through the existing job/download architecture | `lite` | It is bounded and reuses an established chain |
+| Add a complete export subsystem with its own lifecycle and storage | `demo` → `prd` → `testcase` → `build` | A net-new complete capability is a Build trigger |
 | “Build an AI study coach,” but user/value is unclear | `brainstorm` → `demo` → `prd` → `testcase` → `build` | Resolve intent, experience, truth, and proof in order |
-| A new checkout interaction is not decided | `demo` → `prd` → `testcase` → `build` | Approve the experience before encoding its oracle |
-| New permission model plus a public API | `demo` → `prd` → `testcase` → `architect` → `build` | Product oracle precedes the conditional public-boundary design |
+| A bounded checkout interaction is not decided | clarify directly or `demo` → reclassify | Product ambiguity needs definition; it does not select Build |
+| Localized permission check plus a compatible API field | `lite` | Permission/API risk adds allow/deny and compatibility checks |
+| Replace the shared permission model plus its public API | `demo` → `prd` → `testcase` → `architect` → `build` | Shared-core replacement and public-boundary change trigger Build |
 | One request contains admin, mobile, and operations journeys | split → first `build` | Independently useful journeys should not share one increment |
 | Production error rate spikes | `oncall` | Diagnose and stabilize with evidence before guessing a fix |
 | Every agent rediscovers start commands and test data | `harness` | The problem is the engineering workbench, not a feature |
@@ -179,9 +184,10 @@ small only while it reuses existing semantics and makes no new E2E/release claim
 
 1. **Start from the user action.** State who enters where, performs what action, and sees what
    result. Avoid an internal task name such as “finish the export module.”
-2. **Route by semantics and risk, never predicted duration.** Localized changes that reuse an
-   existing oracle may use `lite`; new behavior and releasable increments use demo/PRD/testcase
-   before build. Pure copy/static appearance/docs do not run E2E by default.
+2. **Route by engineering depth and change radius.** Default bounded work to `lite`. Select Build
+   only after naming a complete-capability, shared-core-refactor, breaking-evolution,
+   broad-regression, or coordinated-rollout trigger. Risk and release add matching checks. Pure
+   copy/static appearance/docs do not run E2E by default.
 3. **Protect one core journey per increment.** Decompose independently useful journeys when that
    improves reviewability. Slice 1 crosses the production router/service/page assembly; later
    slices keep the previous path runnable.
@@ -202,9 +208,9 @@ small only while it reuses existing semantics and makes no new E2E/release claim
 
 ## Solo builder and PM handoff
 
-A **solo builder** still approves product semantics explicitly. For a standard increment, run the
-demo/PRD/testcase chain yourself, inspect the rendered cases, then build. `lite` avoids the chain
-only when it reuses existing semantics and makes no E2E/release claim.
+A **solo builder** still owns product judgment explicitly. Clear bounded changes stay in `lite`,
+even when behavior changes or the result will release. For work with an exact Build trigger, run
+the demo/PRD/testcase chain, inspect the rendered cases, then build.
 
 A **PM + architect/builder pair** can hand off at the judgment boundary:
 
@@ -300,7 +306,8 @@ docs/features/<slug>/ledger.jsonl
 ```
 
 Judge whether human testcase review, the first real vertical slice, and receipt freshness reduce false
-green. Do not backfill every historical feature; apply the chain to new or semantically changed E2E.
+green. Do not backfill every historical feature; apply the chain only when an exact Build trigger
+exists.
 
 ### Step 4: adopt release separately
 
@@ -368,16 +375,16 @@ python3 shared/scripts/opc_ledger.py audit --require-increment-complete \
   and trunk merge.
 - `deploy` owns production: fix the release set, refresh receipts on the final trunk, backup and
   rollback, deploy, prod-safe regression, and watch. Every destructive step needs human approval.
-- `oncall` triages and diagnoses first. The human chooses rollback, hotfix, or mitigation. A
-  release-bound hotfix still routes through `build` → `ship` → `deploy`; expedited does not
-  mean unverified.
+- `oncall` triages and diagnoses first. The human chooses rollback, hotfix, or mitigation. Classify
+  the hotfix by the same Lite/Build triggers, then use `ship` → `deploy`; expedited does not mean
+  unverified.
 
 ## Repository and project artifacts
 
 Plugin repository:
 
 - `skills/`: the 13 user entry points;
-- `shared/core-contract.md`: semantic routing, evidence, completion, feedback, and safety invariants;
+- `shared/core-contract.md`: engineering-depth routing, evidence, completion, feedback, and safety invariants;
 - `shared/packs/`: on-demand implementation, risk, review, release, and Harness rules;
 - `shared/formats/`: result-card, receipt, PRD, technical, testcase, and ledger formats;
 - `shared/rubrics/`: independent review checklists;

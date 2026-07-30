@@ -5,17 +5,17 @@
     <filter id="shadow" x="-10%" y="-15%" width="120%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#17333d" flood-opacity=".12"/></filter>
   </defs>
   <rect width="1600" height="1000" fill="url(#bg)"/><rect width="1600" height="134" fill="#102d36"/>
-  <text x="70" y="66" font-size="42" font-weight="750" fill="#fff">OPC Develop v0.6.0</text>
-  <text x="70" y="104" font-size="23" fill="#bfe7df">人工批准用例 · Runner 自动产证 · 按语义交付</text>
+  <text x="70" y="66" font-size="42" font-weight="750" fill="#fff">OPC Develop</text>
+  <text x="70" y="104" font-size="23" fill="#bfe7df">Lite 聚焦验证 · Build 人工批准用例 · 按工程深度选路</text>
   <text x="1460" y="74" text-anchor="end" font-size="18" fill="#82cfc3">不设耗时门禁</text>
-  <text x="70" y="184" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">按产品语义与风险分流</text>
+  <text x="70" y="184" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">默认 Lite · 命中明确工程触发器才走 Build</text>
   <g filter="url(#shadow)">
     <rect x="70" y="210" width="280" height="116" rx="18" fill="#fff" stroke="#d7e5e8"/><rect x="370" y="210" width="280" height="116" rx="18" fill="#fff" stroke="#d7e5e8"/>
     <rect x="670" y="195" width="430" height="146" rx="20" fill="#d9f3ed" stroke="#5eb9aa" stroke-width="2"/><rect x="1120" y="210" width="410" height="116" rx="18" fill="#fff4db" stroke="#e9bd5a"/>
   </g>
   <text x="98" y="247" font-size="24" font-weight="700" fill="#17333d">Vibe</text><text x="98" y="279" font-size="18" fill="#536b73">人类明确承担全部验收</text><text x="98" y="304" font-size="16" fill="#82949a">不暗示已自动验证</text>
-  <text x="398" y="247" font-size="24" font-weight="700" fill="#17333d">Lite · 语义不变</text><text x="398" y="279" font-size="18" fill="#536b73">局部改动</text><text x="398" y="304" font-size="16" fill="#82949a">文案 / 静态样式不跑 E2E</text>
-  <text x="704" y="241" font-size="28" font-weight="780" fill="#0f4b43">Build · 行为变化</text><text x="704" y="276" font-size="19" fill="#2b635b">在 Demo · PRD · Testcase 批准后</text><text x="704" y="307" font-size="16" fill="#4e746f">必须发布的改动也走 Build</text>
+  <text x="398" y="247" font-size="24" font-weight="700" fill="#17333d">Lite · 边界清楚</text><text x="398" y="279" font-size="18" fill="#536b73">沿用现有架构</text><text x="398" y="304" font-size="16" fill="#82949a">允许局部行为变化</text>
+  <text x="704" y="241" font-size="28" font-weight="780" fill="#0f4b43">Build · 结构性复杂</text><text x="704" y="276" font-size="19" fill="#2b635b">完整新能力 / 重构 / 破坏性演进</text><text x="704" y="307" font-size="16" fill="#4e746f">广泛回归 / 协调式发布</text>
   <text x="1150" y="247" font-size="24" font-weight="700" fill="#6d4b08">按旅程拆分</text><text x="1150" y="279" font-size="18" fill="#745f36">多个独立结果</text><text x="1150" y="304" font-size="16" fill="#927d52">绝不按预计工时拆分</text>
   <text x="70" y="398" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">标准增量</text>
   <g fill="#fff" stroke="#b8ced3" stroke-width="2" filter="url(#shadow)">

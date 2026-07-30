@@ -53,9 +53,11 @@ Provider-Command: <one final canary, when applicable>
 
 Rules:
 
-- Route by semantics and risk, never elapsed-time or implementation-cost estimates. Do not add
-  budget, duration, or effort fields to this plan. Localized non-semantic work uses `lite`; new or
-  changed product behavior uses the approved `demo -> prd -> testcase -> build` chain.
+- Route by engineering depth and change radius, never elapsed-time, implementation-cost estimates,
+  or generic risk labels. Do not add budget, duration, or effort fields to this plan. Bounded work
+  through existing architecture uses `lite`; create this Build plan only after naming a complete
+  capability, shared-core refactor, breaking/destructive evolution, broad regression surface, or
+  coordinated rollout trigger.
 - `Slice-1` reaches the real assembled path. Every slice adds one independently runnable,
   user-visible result; tables, services, and modules remain child tasks. Decompose unrelated
   outcomes for clarity, not because of a predicted duration.

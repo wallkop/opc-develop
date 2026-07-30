@@ -3,27 +3,37 @@
 Load this contract for every opc-develop skill. Load other packs only when the current role needs
 them. Enforce at the lowest useful layer: script/hook (L0) > structured artifact (L1) > prose (L2).
 
-## Route by semantics and risk
+## Route by engineering depth and change radius
 
 - `vibe`: only when the human explicitly owns all acceptance and requests no tests/verification.
-- `lite`: one localized result that does not create or change E2E product semantics; no feature
-  artifacts or subagents. Do not use when the result must enter `ship`/`deploy` and therefore needs
-  a revision-bound receipt.
-- `build`: new or changed behavior, state, data, permissions, cross-module contracts, or
-  release-bound work; one plan, one core journey, runnable slices.
+- `lite` is the default for one bounded result implemented through existing architecture. It may
+  change behavior, state, data, permissions, billing, provider calls, APIs, or persistence when the
+  change stays localized, backward-compatible, ordinarily reversible, and targetable checks can
+  establish safety. It has no mandatory feature artifacts or subagents.
+- `build` is reserved for work that hits at least one explicit engineering trigger:
+  1. a net-new complete product capability with its own lifecycle, runtime, or subsystem;
+  2. a structural refactor or replacement of a shared core path or architecture boundary;
+  3. a breaking or destructive API/schema/data evolution, migration, backfill, or dual-write;
+  4. a wide blast radius across unrelated consumers that requires a broad regression matrix;
+  5. a coordinated rollout across services, migrations, flags, or observation stages.
+- Selecting `build` requires naming the exact trigger. If no trigger applies, use `lite`.
 - Independent outcomes may be decomposed for clarity. Never route, block, stop, or split work based
-  on a predicted duration or implementation-cost estimate.
+  on predicted duration, implementation-cost estimates, or a generic “high risk” label.
 
-Risk adds a matching check; it does not automatically add architecture ceremony. Every `build`
-flow has one mandatory product-definition chain: `demo -> prd -> testcase -> build`. `architect`
-remains conditional on a public boundary or one-way technical decision. `vibe` and ordinary `lite`
-stay outside this chain only while they make no E2E or release claim.
+Risk is orthogonal to routing: it adds only the matching check. Money, permissions, concurrency,
+transactions, providers, API changes, database changes, and release intent are not `build` triggers
+by themselves. Every actual `build` flow has one mandatory product-definition chain:
+`demo -> prd -> testcase -> build`; `architect` remains conditional on a public boundary or
+one-way technical decision. Clear bounded intent may stay in `lite`; clarify unclear bounded intent
+directly. Use `brainstorm`/`demo` when the human wants formal product definition, then reclassify;
+product ambiguity does not automatically select `build`.
 
 Pure copy, static styling, docs, comments, formatting, and configuration changes with no runtime
 behavior change do not run E2E by default. Verify them with the matching static/component/a11y
-check and, for UI, a lightweight real-entry visual/DOM before-and-after check. If the observed user
-journey, state, data, permission, routing, or contract semantics change, reclassify and execute the
-approved testcase through the project runner.
+check and, for UI, a lightweight real-entry visual/DOM before-and-after check. Runtime behavior in
+`lite` gets the narrowest useful regression and real-entry check; use the project testcase runner
+when an applicable case exists, but do not create the full feature-artifact chain solely to prove a
+bounded Lite result. Discovering a `build` trigger requires explicit reclassification.
 
 ## Status tokens
 
@@ -34,12 +44,12 @@ them.
 
 ## Core journey and evidence before claim
 
-Define and approve external journeys in the testcase phase before implementation: traceable
-starting data, real entry, user action, production assembly, positive and negative signals, visible
-result, durable state, and safety invariants. UI acceptance requires the project testcase runner to
-perform the Playwright action; API/DB preparation may not manufacture the accepted result. If the
-user named existing data, a synthetic lookalike is not equivalent—use a permitted source-hashed
-canonical clone or real object.
+For Build, define and approve external journeys in the testcase phase before implementation:
+traceable starting data, real entry, user action, production assembly, positive and negative
+signals, visible result, durable state, and safety invariants. UI acceptance requires the project
+testcase runner to perform the Playwright action; API/DB preparation may not manufacture the
+accepted result. If the user named existing data, a synthetic lookalike is not equivalent—use a
+permitted source-hashed canonical clone or real object.
 
 Never claim passed, fixed, verified, done, or releasable without fresh evidence from the current
 content tree: command, exit code, output path, branch/commit, and authenticity label. A report alone
@@ -66,12 +76,13 @@ one real-provider canary -> human acceptance. Cheap targeted tests may run after
 browser journeys run at slice boundaries; full gates run at integration/final; provider canaries
 never serve as the ordinary debug loop.
 
-E2E regressions execute an approved testcase through the project case runner and emit
-runner-generated evidence. Caller flags cannot assert production assembly, data provenance, driver
-action, or trace completeness. Tests may use public interfaces, independent provider fakes,
-source-hashed snapshots, and read-only state assertions. Production code must not expose a test
-control that directly creates the
-Run/Event/Artifact/Receipt the test later calls success.
+Build E2E regressions execute an approved testcase through the project case runner and emit
+runner-generated evidence. Lite reuses that runner when a matching case exists or executes the
+narrowest project-native black-box check. Caller flags cannot assert production assembly, data
+provenance, driver action, or trace completeness. Tests may use public interfaces, independent
+provider fakes, source-hashed snapshots, and read-only state assertions. Production code must not
+expose a test control that directly creates the Run/Event/Artifact/Receipt the test later calls
+success.
 
 ## Reviews
 

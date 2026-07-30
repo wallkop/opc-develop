@@ -186,7 +186,7 @@
   <rect x="250" y="760" width="1230" height="130" rx="10" fill="#fff8ec" stroke="#b26a00" stroke-width="2.5"/>
   <text x="865" y="798" text-anchor="middle" font-size="23" font-weight="bold" fill="#7a4a00">feedback — tune · revise · park</text>
   <text x="865" y="832" text-anchor="middle" font-size="19" fill="#7a4a00">revise → earliest broken layer, downstream approvals go SHA-stale, replay forward</text>
-  <text x="865" y="862" text-anchor="middle" font-size="19" fill="#7a4a00">test-acceptance triage: code defect → build (fix mode) · artifact defect → revise · new need → brainstorm (not rework)</text>
+  <text x="865" y="862" text-anchor="middle" font-size="19" fill="#7a4a00">test-acceptance triage: code defect → originating lite/build · artifact defect → revise · new need → brainstorm</text>
 
   <!-- revise arrows back -->
   <g stroke="#b26a00" stroke-width="2.5" fill="none" stroke-dasharray="7,5">
@@ -203,13 +203,13 @@
   <g font-size="18" fill="#365220" text-anchor="middle">
     <text x="1695" y="506">vibe: human accepts</text>
     <text x="1695" y="538">no verification</text>
-    <text x="1695" y="562">lite: stable E2E semantics</text>
-    <text x="1695" y="594">copy / style: no E2E</text>
+    <text x="1695" y="562">lite: bounded existing path</text>
+    <text x="1695" y="594">behavior change allowed</text>
     <text x="1695" y="618">targeted check + real entry</text>
-    <text x="1695" y="650">new behavior → build</text>
-    <text x="1695" y="674">release-bound → build</text>
+    <text x="1695" y="650">structural trigger → build</text>
+    <text x="1695" y="674">risk / release add checks</text>
     <text x="1695" y="706">independent journeys</text>
-    <text x="1695" y="730">→ decompose by semantics</text>
+    <text x="1695" y="730">→ decompose by outcome</text>
   </g>
 
   <!-- oncall skill box on right -->

@@ -12,11 +12,11 @@
   </defs>
   <rect width="1600" height="1000" fill="url(#bg)"/>
   <rect x="0" y="0" width="1600" height="134" fill="#102d36"/>
-  <text x="70" y="66" font-size="42" font-weight="750" fill="#fff">OPC Develop v0.6.0</text>
-  <text x="70" y="104" font-size="23" fill="#bfe7df">Human-approved cases · runner-derived evidence · semantics-routed delivery</text>
+  <text x="70" y="66" font-size="42" font-weight="750" fill="#fff">OPC Develop</text>
+  <text x="70" y="104" font-size="23" fill="#bfe7df">Focused Lite proof · human-approved Build cases · engineering-depth routing</text>
   <text x="1460" y="74" text-anchor="end" font-size="18" fill="#82cfc3">no duration gates</text>
 
-  <text x="70" y="184" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">ROUTE BY PRODUCT SEMANTICS + RISK</text>
+  <text x="70" y="184" font-size="19" font-weight="700" fill="#26434d" letter-spacing="1.6">DEFAULT LITE · BUILD ON AN EXPLICIT ENGINEERING TRIGGER</text>
   <g filter="url(#shadow)">
     <rect x="70" y="210" width="280" height="116" rx="18" fill="#fff" stroke="#d7e5e8"/>
     <rect x="370" y="210" width="280" height="116" rx="18" fill="#fff" stroke="#d7e5e8"/>
@@ -26,12 +26,12 @@
   <text x="98" y="247" font-size="24" font-weight="700" fill="#17333d">Vibe</text>
   <text x="98" y="279" font-size="18" fill="#536b73">Explicit human-only acceptance</text>
   <text x="98" y="304" font-size="16" fill="#82949a">No implied verification</text>
-  <text x="398" y="247" font-size="24" font-weight="700" fill="#17333d">Lite · stable semantics</text>
-  <text x="398" y="279" font-size="18" fill="#536b73">Localized change</text>
-  <text x="398" y="304" font-size="16" fill="#82949a">Copy / static style: no E2E</text>
-  <text x="704" y="241" font-size="28" font-weight="780" fill="#0f4b43">Build · behavior changes</text>
-  <text x="704" y="276" font-size="19" fill="#2b635b">After demo · PRD · testcase approval</text>
-  <text x="704" y="307" font-size="16" fill="#4e746f">Also covers release-bound work</text>
+  <text x="398" y="247" font-size="24" font-weight="700" fill="#17333d">Lite · bounded change</text>
+  <text x="398" y="279" font-size="18" fill="#536b73">Existing architecture</text>
+  <text x="398" y="304" font-size="16" fill="#82949a">Behavior change is allowed</text>
+  <text x="704" y="241" font-size="28" font-weight="780" fill="#0f4b43">Build · structural depth</text>
+  <text x="704" y="276" font-size="19" fill="#2b635b">Complete / refactor / breaking</text>
+  <text x="704" y="307" font-size="16" fill="#4e746f">Broad regression / coordinated rollout</text>
   <text x="1150" y="247" font-size="24" font-weight="700" fill="#6d4b08">Decompose by journey</text>
   <text x="1150" y="279" font-size="18" fill="#745f36">Independent outcomes</text>
   <text x="1150" y="304" font-size="16" fill="#927d52">Never by effort estimate</text>

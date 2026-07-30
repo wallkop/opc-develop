@@ -1,6 +1,6 @@
 ---
 name: testcase
-description: "Use after both demo and PRD are Approved to turn product intent into a separately reviewed, human-approved black-box testcase catalog and deterministic executable manifest. Required before build and before any E2E regression; defines success/failure oracles, data/provider provenance, Playwright actions, three-corner observations, and atomic Computer Use fallback."
+description: "Use after both demo and PRD are Approved to turn a Build increment's product intent into a separately reviewed, human-approved black-box testcase catalog and deterministic executable manifest. Required before Build and its E2E regressions; bounded Lite work may use focused project-native checks without creating this artifact chain. Defines success/failure oracles, data/provider provenance, Playwright actions, three-corner observations, and atomic Computer Use fallback."
 ---
 
 # testcase

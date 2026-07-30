@@ -1,6 +1,6 @@
 ---
 name: oncall
-description: "Use when something is wrong in production (or on the test environment): triages severity, investigates through the observe verbs (correlation-ID logs, read-only DB queries, traces, recent releases), produces a diagnostic report with root cause and blast radius, executes the chosen path — rollback, expedited hotfix through build/ship/deploy, or mitigation — and always leaves an error-ledger record plus a long-term fix proposal."
+description: "Use when something is wrong in production (or on the test environment): triages severity, investigates through correlation-ID logs, read-only DB queries, traces, and recent releases, produces a root-cause/blast-radius report, executes rollback, a Lite-or-Build hotfix through ship/deploy, or mitigation, and leaves an error-ledger record plus a long-term fix proposal."
 license: MIT
 ---
 
@@ -36,11 +36,11 @@ the log chain and state that prove it, no fix without a covering test.
    action; explain specialist terms beside their first occurrence.
 4. **Decide the path** (five-piece set to the human when contested):
    - **rollback** — hand to `deploy`'s rollback path; fastest when the trigger is a recent release;
-   - **hotfix (expedited path)** — minimal fix on a hotfix branch per project flow; route every
-     release-bound hotfix through `build` regardless of predicted duration, preserve RED/GREEN
-     evidence for the defect and targeted regression, then `ship` (test env, compressed) →
-     `deploy` with the incident referenced. Expedited ≠ unverified: the RED test and prod-safe
-     regression are not skippable;
+   - **hotfix (expedited path)** — minimal fix on a hotfix branch per project flow; classify it by
+     the same engineering triggers as ordinary work. A localized fix stays `lite`; a complete
+     capability, shared-core refactor, breaking evolution, broad regression surface, or coordinated
+     rollout uses `build`. Preserve RED/GREEN evidence and targeted regression, then `ship` →
+     `deploy` with the incident referenced. Expedited ≠ unverified;
    - **mitigation** — config/flag/scale change with its own evidence and a revert note.
 5. **Always, after stabilization**:
    - append the root cause to `docs/opc/error-ledger.jsonl` (tag it — incidents feed `retro`'s

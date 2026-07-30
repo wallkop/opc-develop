@@ -1,6 +1,6 @@
 ---
 name: build
-description: "Use after the mandatory Approved demo, PRD, and testcase phases for a product increment that creates or changes user-visible behavior. Routes by product semantics and risk, never by predicted duration; enforces approved-case-driven E2E, a one-page feature-plan.md, serial runnable slices, trusted runner evidence, and convergent reviews."
+description: "Use after mandatory Approved demo, PRD, and testcase phases only when an increment hits an explicit engineering trigger: a net-new complete capability or lifecycle, structural shared-core refactor, breaking/destructive evolution, broad multi-consumer regression surface, or coordinated rollout. Do not use merely because behavior, billing, permissions, providers, APIs, databases, or release intent changed. Enforces approved-case-driven E2E, a one-page feature-plan.md, runnable slices, trusted evidence, and convergent reviews."
 license: MIT
 ---
 
@@ -25,12 +25,15 @@ protect it. Never estimate or enforce an elapsed-time or implementation-cost bud
 ## Process
 
 1. Read project rules and inspect the real entry, runtime assembly, target data, and harness before
-   asking questions. Run `opc_testcase.py check --require-approved`; missing/stale demo, PRD,
-   testcase review, compiled manifest, or product approval blocks build and routes to that phase.
-2. Route by semantics and risk only. Localized non-semantic changes and changes that reuse an
-   already approved oracle unchanged may use `lite`; new or changed user journeys, state, data,
-   permissions, cross-module contracts, or release evidence use `build`. Decompose independent
-   journeys when that improves reviewability, but never block work based on a duration estimate.
+   asking questions. First name the exact Build trigger from `core-contract.md`. If none applies,
+   route to `lite`. For a real Build increment, run `opc_testcase.py check --require-approved`;
+   missing/stale demo, PRD, testcase review, compiled manifest, or product approval routes to that
+   phase.
+2. Route by engineering depth and change radius. Localized behavior, state, data, billing,
+   permissions, provider, API, persistence, UI, or release changes remain `lite` when they reuse
+   existing architecture and focused proof is sufficient. Keep `build` only for the named trigger.
+   Decompose independent outcomes when that improves reviewability, but never block work based on a
+   duration estimate or generic risk label.
 3. Use the current authorized feature branch. Write `feature-plan.md`, choose `Core-Case` from the
    approved manifest, map PRD constraints and every demo mock to replacement slices, and make both
    core/regression commands invoke the project testcase runner. Validate and initialize
