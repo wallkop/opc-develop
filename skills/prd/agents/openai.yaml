@@ -1,6 +1,0 @@
-interface:
-  display_name: "prd"
-  short_description: "Turn an approved demo into the mandatory gated PRD"
-  default_prompt: "Use $prd after the approved demo to define durable PD/AC product truth only, then hand off to the separate testcase phase."
-policy:
-  allow_implicit_invocation: false

@@ -1,6 +1,0 @@
-interface:
-  display_name: "harness"
-  short_description: "Assess or build run/reset/observe/drive capabilities"
-  default_prompt: "Use $harness to score each harness verb by executing it, then build missing capabilities as verified scripts, seeds, log conventions, and E2E scaffolding."
-policy:
-  allow_implicit_invocation: true

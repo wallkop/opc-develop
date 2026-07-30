@@ -1,52 +1,39 @@
 ---
 name: demo
-description: "Use as the mandatory first product-definition phase before PRD, testcase, and build. Builds a human-approved experienceable prototype in the real frontend (or runnable non-UI skeleton), inventories every mock, and fixes interaction meaning before black-box cases are written."
+description: "brief.md 就绪后的纯 vibe-coding 原型环节：基于 Harness 的 Mock 能力，在真实项目前端里用捏泥人的方式快速构建可交互、可体验、功能完整模拟闭环的 Demo，支持独立部署；不做任何门禁与测试，完全由人体感验收。产出是确认的产品决策，代码随缘。"
 license: MIT
 ---
 
 # demo
 
-Data fake, feeling real. Taste is verified by experience, not by reading — this phase exists so
-that `revise` happens at its cheapest possible moment.
+捏泥人：数据是假的，手感是真的。**Demo 的价值 ∝ 未定产品决策的数量**——
+产品行为能用文字无歧义写清就跳过本环节；不要把发现机制变成仪式。
 
-## Load
+## 前置
 
-- `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/mock-retirement.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/feedback-routing.md`
-- For the gate: `${CLAUDE_PLUGIN_ROOT}/shared/packs/gate-protocol.md` +
-  `${CLAUDE_PLUGIN_ROOT}/shared/rubrics/demo.md`
+- 加载 `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`；必须已有 `brief.md`。
+- Mock 走 Harness 探索面：Port 上的 Fake Adapter、`run --mock` 一键纯前端闭环
+  （见 `docs/harness.zh-CN.md` 第 5 章）。项目还没有该能力时就地搭最薄的假后端，
+  缺口留给 `harness-retrofit`，不在本环节建框架。
 
-## Process
+## 做法
 
-1. Verify a result card or `requirement.md` exists on the feature branch. Demo is mandatory for a
-   build flow because testcase semantics need an experienceable reference. Decide the variant:
-   - **UI surface exists** → prototype in the real frontend codebase, reachable through the real
-     app shell. No detached playgrounds, no query-param-only roots.
-   - **No UI surface** (API/CLI/job/migration) → runnable skeleton: one real request/response or
-     command chain with production-shaped stub data. Skip nothing else; the inventory and gate
-     apply the same way.
-2. Build fast and shallow-but-honest: frontend-only mocks for missing backend data, every mock
-   entered in `docs/features/<slug>/demo/mock-inventory.md` as you create it (id, file, type,
-   scenario, replacement). Restart local services per the project runbook; get a preview URL or
-   run command.
-3. **Vibe-loop (the main work):** hand the human the preview. Their feedback is `tune` by
-   default — iterate freely, no records, no re-gates. Watch for the tune/revise boundary: feedback
-   that changes *what is true* (wrong audience, wrong core flow) is a `revise` to the source result
-   card or `requirement.md` — say so, route it, cascade staleness.
-4. Record demo run notes in `docs/features/<slug>/demo/prototype.md`: entry path, preview
-   command/URL, which source-card/requirement key paths it demonstrates, known placeholder areas.
-5. When the human says the feel is right, gate it: fresh reviewer, `rubrics/demo.md`, reviewer
-   must exercise the running prototype. Ledger the gate result.
+1. 纯 vibe-coding：不写测试、不设门禁、不跑验证，速度优先。Demo 落在真实项目前端里
+   （真组件、真路由、真请求层，只有数据是假的），通过真实应用壳可达——不做孤立 HTML。
+2. 必须支持独立部署/预览：给人一个能打开的 URL 或一条能跑的命令。
+3. Mock 至少可注入延迟、错误、空态、极端数据四类条件——不注入延迟的 Demo，
+   等于替用户决定了"这个产品没有加载态设计"。体感验收至少过一遍非正常路径。
+4. 体感循环是主体：人随口反馈、随手改，不留记录。只警惕一条边界——
+   改变"什么是真的"（人群错了、主流程错了）属于 revise，回 brief.md。
 
-## Fail-open
+## 收口（唯一的硬要求）
 
-Missing local runbook: get it running anyway, record a `gap` (verb: run) with what you had to
-discover by hand. If ≥80% fidelity is genuinely unreachable (missing design system, dead frontend
-build), record the gap, show the closest reachable fidelity, and let the human decide park vs
-proceed-with-cap — do not silently lower the bar.
+1. 待确认决策清单在看 Demo 之前列出（人裁判同样先锁 Oracle）；
+   人逐条给出 确认 / 修改 / 否决——不许一句"感觉不错"。
+   留痕带上 Mock 配置摘要：0ms 延迟下确认的决策和 300ms 注入下确认的，是两个事实。
+2. 显式决定 Demo 代码哪些保留、哪些重写——不允许默认全部转正。
+3. 确认的产品决策带进 design，成为 PD 的直接来源。
 
-## Output
+## 产出
 
-Running prototype in the real codebase, `mock-inventory.md`, `prototype.md`, demo gate Approved,
-ledger entries. Next: `prd`; do not skip directly to testcase or build.
+可体验、可独立部署的 Demo + 确认的产品决策清单。下一步：`design`。

@@ -1,33 +1,26 @@
 ---
 name: vibe
-description: "Use when the human explicitly wants the fastest possible implementation and will personally accept the result. Write code directly with no planning artifacts, no tests, no automated or browser verification, and no acceptance evidence. Stop only for missing requirements that make implementation impossible or for destructive, security-sensitive, permission, schema, or production actions that require human approval."
+description: "最快出代码：直接 vibe-coding，不做任何自动验收、测试或验证工作，交给人类自主验收。仅在破坏性 / 生产 / 权限 / 不可逆操作前停下请求批准。"
 ---
 
 # vibe
 
-Optimize for a directly human-reviewable implementation. The human owns all acceptance.
+人类拥有全部验收权。优化目标只有一个：一份人类能直接读懂并亲自验收的实现。
 
-## Process
+## 做法
 
-1. Read the request, the applicable `AGENTS.md`, and only the code needed to locate the change.
-2. Make reasonable assumptions and edit the code immediately. Do not create plans, requirements,
-   design records, contracts, ledgers, reports, or other workflow artifacts.
-3. Do not write, update, run, or repair tests. Do not run linters, type checks, builds, syntax
-   checks, browser flows, application smoke checks, or any other automated or manual verification.
-4. Review the diff only to catch obvious unintended edits. Do not expand this into verification.
-5. Hand the changed code to the human with a concise summary of what changed, the assumptions made,
-   and the exact areas that require manual acceptance. State plainly that no tests were run.
+1. 读请求、AGENTS.md 和定位改动所需的最少代码；合理假设，立即动手。
+2. 不写不跑任何测试、lint、构建、浏览器流程或冒烟检查；不产生任何流程工件。
+3. 只看一遍 diff 防误伤，不把它扩大成验证。
+4. 交付：改了什么、做了哪些假设、哪些地方需要人工验收——并明说"未做任何验证"。
 
-## Boundaries
+## 边界
 
-- Preserve unrelated user changes and keep the patch scoped to the request.
-- Do not broaden scope for cleanup, refactoring, documentation, or speculative edge cases.
-- Do not claim the change works, passes, or is production-ready; it is unverified until the human
-  accepts it.
-- Human approval remains mandatory before destructive operations, force pushes, publication,
-  production changes, permission/security changes, or irreversible data/schema changes.
-- If the request cannot be implemented without one of those actions, stop at that boundary and ask.
+- 补丁限定在请求范围内：不顺手重构、不做投机性边界处理。
+- 不宣称"能用 / 通过 / 可上线"——人类接受之前它就是未验证的。
+- 破坏性操作、生产变更、权限/安全变更、不可逆 schema/数据操作、force-push、
+  对外发布：停在边界处问人。
 
-## Output
+## 产出
 
-Changed code ready for human acceptance, plus a no-tests disclosure. No evidence or process artifacts.
+待人类验收的代码改动 + 未验证声明。

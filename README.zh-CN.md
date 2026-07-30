@@ -2,49 +2,116 @@
 
 [English](README.md)
 
-opc-develop 是一套面向 Claude Code / Codex 的产品开发 skill。它不是要求每次改字都跑重流程：
-不改变 E2E 产品语义的小改用 `lite`；标准或可发布增量必须走
-`demo → prd → testcase → build`；只有公共/单向技术边界变化时才增加 `architect`。
+opc-develop 是一套面向 Claude Code 与 Codex 的产品开发 skill 套件。它不是把每次修改都塞进同一条
+重流水线，而是一组路由：日常不动产品真相的小改走 `lite`；标准 / 可发布的产品增量走
+`design -> build`；人类明确要"最快出码、自己验收"时走 `vibe`；发布与故障各有独立的安全流程。
 
-它的核心承诺是：**实现前先让人批准黑盒测试语义，再用 runner 自动产出的版本绑定证据证明
-这条旅程。**
-人类继续负责产品判断、设计品味和架构方向；agent 负责在明确边界内实现、验证并留下可复核证据。
+它的核心承诺是：**实现之前，让人类拍板产品真相（PTA）；实现之后，由项目 Harness——而不是
+Agent 自己——用独立证据裁决结果。** 人类持有产品判断、体验品味与难以回头的技术决策；
+Agent 在这些边界之内实现，并接受裁决。
 
-> 0.6 把 testcase 从 PRD 中独立出来，并把 demo、PRD、testcase 设为 build 的必经前置。
-> Playwright 只负责驱动已批准的用例，不再负责临场发明测试语义。
+> 0.7 版为 Fable-5 级模型全面重构：退役 demo → prd → testcase → architect 长链，产品真相收敛为
+> 一份 PTA 文档，验证从 Agent 自评清单转为 Harness 裁决。
+
+## 0.7 重构：改了什么，为什么
+
+这一版是一次做减法。精髓可以浓缩为六条：
+
+1. **流程重量本质上是对弱模型的补偿。** 步步审批、自评清单、approval-json 链条，都是为了看住
+   一个不可靠的实现者。前沿模型需要的恰恰相反：清晰的边界、锁死的 Oracle、独立的裁判——
+   然后把路线还给模型。凡是只用来监督"怎么做"的环节，一律删除。
+2. **SPEC 是副作用，只有决策才是真相。** PRD、技术设计、E2E 测试用例本是同一批决策的三种
+   渲染，现收敛为一份 PTA（Product Truth Assets）：**PD** 产品底线、**TD** 难以回头的技术
+   决策、**AC** 黑盒验收标准。准入规则只有一条：*只写决策，不写实现*——模型能自行安全决定
+   或推翻的内容，不进 PTA。
+3. **AC 兼任可执行 Oracle。** 不再有独立的 testcase 工件去起草、编译、评审、审批；每条 AC
+   机械展开为机器可读 Case，实现之前 commit 锁死——裁判与运动员分离。
+4. **信任反转：裁决取代自证。** 完成结论不再来自 Agent 给自己开的回执。项目 Harness 驱动
+   真实入口，返回 PASS / FAIL / INCONCLUSIVE 与证据；棘轮保证已绿的 Case 不许悄悄变红。
+   INCONCLUSIVE 意味着 harness 有缺口，永远不是临场发明新 Oracle 的借口。
+5. **流程与 Harness 解耦但互相配合。** Harness 有自己的权威文档
+   （[docs/harness.zh-CN.md](docs/harness.zh-CN.md)）；`harness-init` 与 `harness-retrofit`
+   是流程伸向它的两只手。架构立项——全景图、领域划分、奠基 ADR——都在那里完成，由架构师拍板。
+6. **拉动式建设。** 任何能力、文档、Mock 层都不提前建。下一个真实需求用不到的，这一轮不建。
 
 ## 适合谁
 
-opc-develop 主要为亲自承担产品与工程判断的人设计：OPC（一人公司）创始人、独立 Builder、
-小型产品团队，以及由 PM 与架构师/Builder 组成的紧密搭档。你需要能判断“用户价值是否成立、
-交互是否对、架构是否值得长期承担”；skill 帮你保护和执行这些判断，不替你假装拥有品味。
+opc-develop 面向亲自持有产品与工程判断的人：OPC（一人公司）创始人、独立 Builder、小型产品
+团队，以及紧密协作的 PM + 架构师/工程师搭档。你必须能自己判断用户价值是否真实、交互是否
+对味、架构是否值得长期背负。这套套件保护并执行这些判断，而不是假装替代品味。
 
-它尤其适合以下情况：
+当你想要以下能力时，它非常合适：
 
-- 想让 agent 不只是写代码，还能从真实入口证明用户结果；
-- 希望日常小改轻量、产品增量有证据、生产发布默认谨慎；
-- 想看见命令、评审、Provider、返工和故障的真实成本，并逐步裁剪流程；
-- 团队已有工具和 runbook，希望渐进接入，而不是换掉整套工程系统。
+- 让 Agent 从真实入口证明用户结果，而不是只写完代码；
+- 日常小改保持轻量、产品增量有证据背书、生产发布 fail-closed；
+- 把人类时间集中在判断点上（PTA 定案、ADR、验收），而不是流程监工；
+- 围绕既有工具与 runbook 渐进接入，而不是推翻现有工程体系。
 
-它不适合把所有产品判断外包给 agent，也不擅长主要难点是跨团队路线图、组织审批和资源谈判的
-工作。没有人对产品和架构方向负责时，更多门禁只会制造形式感。
+它不为"把产品判断全部外包给 Agent"设计，也不适合被跨团队路线图、组织审批与资源谈判主导的
+工作。没有人类为产品与架构方向兜底时，更多关卡只会制造仪式感，而非杠杆。
 
 ## 全景架构
 
-![OPC-Develop 全景架构](assets/opc-develop-skills.zh-CN.png)
+```mermaid
+flowchart TB
+    REQ(["需求"]) --> ROUTE{"是否创建或改变<br/>产品真相（PTA）？"}
+    ROUTE -->|"一次性代码<br/>人类自主验收"| VIBE
+    ROUTE -->|"否——单个<br/>局部结果"| LITE
+    ROUTE -->|"是——标准<br/>产品增量"| BS
 
-从上到下读这张图：
+    subgraph DAILY["⚡ 日常路由"]
+        VIBE["<b>vibe</b><br/>最快出码，零验证"]
+        LITE["<b>lite</b><br/>对改动本身做 TDD"]
+    end
 
-1. **Harness 层**让 agent 真正具备 `run`、`reset`、`observe`、`drive` 四种可执行能力。
-2. **交付层**按范围选择 `vibe`、`lite`，或标准链
-   `demo → prd → testcase → build`；`brainstorm` 可放在 demo 前，`architect` 按需放在
-   testcase 后；之后由 `ship` 和 `deploy` 进入测试与生产。
-3. **反馈层**把人类意见分为 `tune`、`revise`、`park`，在最早出错的层修复，而不是一直在
-   代码末端打补丁。
-4. **度量层**由 feature 账本、验收收据、错误账本和 `retro` 组成，把高价值失败压成
-   Benchmark，并把有效规则下沉到脚本、hook 或结构化工件。
+    subgraph PTA["📐 产品真相 — pta.md"]
+        BS["<b>brainstorm</b><br/>brief.md"] --> DEMO["<b>demo</b> <i>(可选)</i><br/>体验决策"]
+        DEMO --> DESIGN["<b>design</b><br/>PD + TD + AC<br/>AC = 可执行 Oracle"]
+    end
 
-右侧的 `oncall` 处理线上故障；`harness` 补齐被交付过程暴露出来的运行能力缺口。
+    DESIGN ==>|"🧑‍⚖️ 人类定案 PTA"| BUILD
+
+    subgraph DELIVER["🔨 被裁决的交付"]
+        BUILD["<b>build</b><br/>锁 Case → RED → 实现 → GREEN<br/>→ 真实环境冒烟"] --> SHIP["<b>ship</b><br/>测试发布"]
+        SHIP --> DEPLOY["<b>deploy</b><br/>生产发布"]
+    end
+
+    subgraph HARNESS["🛠 Harness — 权威：docs/harness.zh-CN.md"]
+        VERBS["run · observe · drive"] --- VERDICT["PASS / FAIL / INCONCLUSIVE<br/>证据 + 棘轮"]
+    end
+
+    BUILD <-->|"drive → 裁决"| HARNESS
+    HINIT["<b>harness-init</b><br/>新项目"] --> HARNESS
+    HRETRO["<b>harness-retrofit</b><br/>存量项目"] --> HARNESS
+
+    subgraph LOOP["🔁 反馈与改进"]
+        ONCALL["<b>oncall</b> — 故障"]
+        RETRO["<b>retro</b> — 回路压缩"]
+    end
+    DEPLOY -.-> ONCALL
+    ONCALL -.->|"tune / revise"| DESIGN
+    RETRO -.->|"验证过的规则下沉为<br/>脚本 · hook · ADR"| HARNESS
+
+    classDef daily fill:#fdf6e3,stroke:#b58900,color:#333
+    classDef truth fill:#e8f4fd,stroke:#268bd2,color:#333
+    classDef deliver fill:#e9f7ef,stroke:#2aa198,color:#333
+    classDef harness fill:#f4ecf7,stroke:#6c3483,color:#333
+    classDef loop fill:#fdedec,stroke:#c0392b,color:#333
+    class VIBE,LITE daily
+    class BS,DEMO,DESIGN truth
+    class BUILD,SHIP,DEPLOY deliver
+    class VERBS,VERDICT,HINIT,HRETRO harness
+    class ONCALL,RETRO loop
+```
+
+这张图分四层读：
+
+1. **路由层**只问一个问题——这次改动是否触碰产品真相？——永远不按预计工时路由。
+2. **真相层**每个增量只产出一份长期工件：定案的 `pta.md`。
+3. **交付层**面向锁死的 Case 实现，由 **Harness 层**裁决——它持有 `run` / `observe` /
+   `drive` 三个动词，返回带证据的裁决。
+4. **反馈层**把异常（`oncall`）与回路改进（`retro`）路由回最早出错的层；验证过的规则
+   下沉为脚本、hook 与 ADR。
 
 ## 5 分钟上手
 
@@ -57,308 +124,273 @@ codex plugin marketplace add wallkop/opc-develop --ref main
 codex plugin add opc-develop@opc-develop
 ```
 
-Claude Code 本地加载：
+Claude Code 本地 clone：
 
 ```bash
 git clone https://github.com/wallkop/opc-develop.git ~/plugins/opc-develop
 claude --plugin-dir ~/plugins/opc-develop
 ```
 
-Claude Marketplace 的完整配置见 [docs/claude-code.md](docs/claude-code.md)。安装或更新后，
-请新开一个 Codex / Claude Code 会话，让新的 skill 定义进入上下文。
+Claude Marketplace 配置见 [docs/claude-code.md](docs/claude-code.md)。安装或更新后请开启新
+会话，让新的 skill 定义进入上下文。
 
-### 2. 明确调用方式
+### 2. 显式调用 skill
 
-Codex 使用 `$opc-develop:<skill>`；Claude Code 使用 `/opc-develop:<skill>`。自然语言也可以
-触发 skill，但新人和关键任务建议显式指定，避免选路含糊。
+Codex 用 `$opc-develop:<skill>`；Claude Code 用 `/opc-develop:<skill>`。自然语言触发也可用，
+但显式调用更适合上手期与高风险任务。
 
 ```text
 # Codex：日常小改
-$opc-develop:lite 修复设置页保存按钮的重复提交，只改这个问题。
+$opc-develop:lite 修复设置页保存按钮的重复提交问题，只改这一个问题。
 
 # Codex：标准产品增量
-$opc-develop:demo 在真实应用壳中做出“用户导出本月账单”的可体验原型。
-$opc-develop:prd 基于已批准 demo 固化 AC 产品真相。
-$opc-develop:testcase 把黑盒用例展示给我审阅并编译成可执行清单。
-$opc-develop:build 实现已批准的 Core-Case，并由 runner 自动产证。
+$opc-develop:design 就"用户可以导出本月发票"拷问我，产出 pta.md（PD/TD/AC）。
+$opc-develop:build 实现已定案的 PTA，每条 Case 走 harness drive 裁决。
 
-# Codex：先评估项目工作台能力
-$opc-develop:harness 评估这个项目的 run/reset/observe/drive，只给证据和前三个缺口。
+# Codex：初始化或改造工作台
+$opc-develop:harness-init 引导我为这个新项目初始化 Harness。
+$opc-develop:harness-retrofit 先盘点这个仓库，给我看差距表，然后分步迁移。
 ```
 
-Claude Code 中把 `$` 调用改为 `/`：
+Claude Code 中把 `$` 换成 `/` 即可：
 
 ```text
-/opc-develop:lite 修复设置页保存按钮的重复提交，只改这个问题。
-/opc-develop:testcase 在 demo 和 PRD 批准后编译并签署黑盒用例。
-/opc-develop:build 实现已批准的 Core-Case，并由 runner 自动产证。
+/opc-develop:lite 修复设置页保存按钮的重复提交问题，只改这一个问题。
+/opc-develop:design 为导出流程产出并锁定 PTA。
+/opc-develop:build 实现已定案的 PTA，证据由 harness 裁决。
 ```
 
-### 3. 按语义和风险选路
+### 3. 按语义与风险路由
 
-先问两个问题：**它是否新增或改变产品 E2E 语义？它是否需要进入测试/生产发布？**
-禁止用预计耗时给需求选路、阻断开发或强制拆分。
+先问两个问题：**这次改动是否创建或改变产品真相？是否要进入测试/生产发布？**
+永远不用预计工时来路由或拦截。
 
-| 路径 | 什么时候用 | 会做什么 | 不会做什么 |
+| 路由 | 何时使用 | 它做什么 | 它不做什么 |
 | --- | --- | --- | --- |
-| `vibe` | 你明确只要最快代码，并亲自验收 | 直接修改，交给人看 diff | 不测试、不运行、不生成证据，不能声称可发布 |
-| `lite` | 局部改动，且不新增或改变 E2E 语义 | 按比例做定向检查和轻量真实入口证据 | 纯文案、静态样式、文档默认不跑 E2E |
-| `build` | 新增/改变产品行为，或必须发布的改动 | 已批准 Core-Case、可运行切片、评审、新鲜收据 | 实现时不能临场发明或改写 E2E 语义 |
-| 按旅程拆分 | 包含多个可独立使用的结果 | 为清晰度和独立验收拆开旅程 | 不以预计工时作为停止门禁 |
+| `vibe` | 明确要最快出码、自己验收 | 立即修改并交出 diff，附"未做任何验证"声明 | 不做测试、运行检查或证据；不能宣称可发布 |
+| `lite` | 单个局部结果；PD/TD/AC 语义不动 | 对改动本身 TDD、棘轮回归、诚实证据 | 疑似触碰 PTA 时提醒一次——绝不悄悄改写已锁 Oracle |
+| `design` → `build` | 新增/改变产品行为，或发布相关 | 一次 PTA 定案（PD/TD/AC）+ 人类审批 + harness 裁决的实现 | `build` 实现期间不许发明或修改 Oracle |
+| 拆分 | 多个互相独立有用的结果 | 拆开旅程，独立证明 | 永远不拿工时估算当停止闸门 |
 
-![OPC-Develop 语义选路图](assets/opc-develop-routing.zh-CN.png)
+### 4. 产品真相必经；架构住在 `design` 里
 
-这张图只是**选路图和单次增量流程**，不是全景架构图。
-
-### 4. 产品定义必经，架构仍按需
-
-| 仍然不确定的事情 | 先用哪个 skill | 何时可以跳过 |
+| 未解决的问题 | 先用 | 何时可跳过 |
 | --- | --- | --- |
-| 产品价值、用户、非目标或核心行为还说不清 | `brainstorm` | 已经能清楚写出用户动作、可见结果和非目标 |
-| 体验应该是什么样 | `demo` | build 不可跳过；非 UI 用可运行 skeleton |
-| 哪些长期行为必须成立 | `prd` | build 不可跳过；必须基于已批准 demo |
-| 用什么外部实验证明 | `testcase` | build/E2E 不可跳过；必须同时具备 demo + PRD |
-| 公共 API/事件/schema 边界或单向技术决定发生变化 | `architect` | 实现沿用现有架构，决定可逆且局部 |
+| 产品价值、用户、非目标或核心行为不清 | `brainstorm` | 你已能在 `brief.md` 里说清用户动作、可见结果与非目标 |
+| 体验应该长什么样 | `demo` | 非 UI 工作用可运行骨架；体验已有定论 |
+| 什么必须长期为真、哪些技术选择难以回头、用什么黑盒实验证明 | `design` | 标准增量永不跳过——PD、TD、AC 在这一步一次定案 |
 
-标准路径是 `demo → prd → testcase → build`；`brainstorm` 可选放在最前，`architect` 只在
-公共/单向边界变化时插入。`lite` 只有在复用既有语义且不产生新 E2E/发布声明时保持轻量。
+标准路径是 `design -> build`；意图或体验未定时前置 `brainstorm` 与 `demo`。TD 首条永远是从
+项目全景图裁剪的架构位置图；图上出现新节点或新依赖边就强制产出 ADR 并更新全景——这就是
+架构闸门，不再需要独立的 `architect` 环节。`lite` 只有在复用既有语义时才保持轻量。
 
 ## 哪个 skill 在什么场景做什么
 
 ### 日常交付
 
-| Skill | 典型场景 | 主要结果 | 下一步 |
+| Skill | 典型场景 | 主要产出 | 下一步 |
 | --- | --- | --- | --- |
-| `vibe` | 一次性实验、你明确接受未验证代码 | 代码 diff + “未运行测试”说明 | 人工检查；若要发布，重新走 `build` |
-| `lite` | bug、文案/布局、配置、小行为调整 | 修改、最小回归、真实入口前后对比 | 完成；若范围扩成多切片，转 `build` |
-| `build` | 已批准的新行为/语义变化；发布型修复 | case 驱动实现、`feature-plan.md`、`acceptance.json`、评审记录 | 本地完成后进入 `ship` |
+| `vibe` | 一次性实验；人类明确接受未验证代码 | 代码 diff + 未验证声明 | 人工审阅；发布前经 `build` 重走 |
+| `lite` | Bug、文案/布局、配置、不动 PTA 的小行为 | 先红后绿的修复、棘轮回归、before/after 证据 | 完成；触碰 PTA 的范围转 `design` |
+| `build` | PTA 已定案，进入实现 | 锁死的 Case、RED → GREEN 裁决、一次现实评审、真实环境冒烟 | 全 PASS 后 `ship` |
 
-### 产品定义与按需架构
+### 产品真相
 
-| Skill | 典型场景 | 主要结果 | 下一步 |
+| Skill | 典型场景 | 主要产出 | 下一步 |
 | --- | --- | --- | --- |
-| `brainstorm` | 原始想法模糊，需要逐个问题拷打 | `requirement.md`、风险画像、非目标、feature 分支 | `demo` |
-| `demo` | 实现前把体验具体化 | 真实应用壳中的原型、`prototype.md`、`mock-inventory.md` | `prd` |
-| `prd` | 把已批准 demo 固化为长期产品真相 | `prd.md`、编号 AC/PD、demo alignment | `testcase` |
-| `testcase` | 把黑盒 oracle 变成人可审、机器可执行的契约 | `testcases.md/json`、独立评审、产品签署 | 按需 `architect`，否则 `build` |
-| `architect` | 公共边界、不可逆技术选择、跨角色架构交接 | intake、风险 spike、`technical.md`、编号 TD、签署报告 | `build` |
+| `brainstorm` | 原始想法需要一次一问的拷问 | `brief.md`、风险画像、非目标 | `demo` 或 `design` |
+| `demo` | 在锁定真相前把体验做具体 | 真实应用壳里的原型、体验决策清单 | `design` |
+| `design` | 把 brief + Demo 决策沉淀为长期真相 | 定案的 `pta.md`（PD/TD/AC、架构位置图、Core-Case），动架构时附 ADR | `build` |
 
-### 发布、故障和改进
+### 工作台
 
-| Skill | 典型场景 | 主要结果 | 下一步 |
+| Skill | 典型场景 | 主要产出 | 下一步 |
 | --- | --- | --- | --- |
-| `ship` | `build` 已达到新鲜的真实服务核心旅程 | 测试环境部署、同一核心旅程回归、人工验收、合并主干 | 人类选择是否 `deploy` |
-| `deploy` | 已人工验收并合入主干，需要生产发布 | fail-closed 预检、备份/回滚、生产回归、观察窗口、MD/HTML 交接 | 稳定后关闭；异常转 `oncall` |
-| `oncall` | 测试或生产出故障 | 严重度分诊、证据链、诊断报告、回滚/热修/缓解、错误账本 | 长期修复按 `lite` / `build` / 决策 skill 重新进入 |
-| `harness` | agent 无法稳定启动、清状态、追踪请求或执行 E2E | 四动词评分、可执行脚本/seed/日志约定、薄 `AGENTS.md` 索引 | 关闭最高杠杆缺口后回到交付 |
-| `retro` | 已积累多次增量/故障，想减少返工和流程成本 | 成本与复发报告、Benchmark 证据、待批准规则/裁剪建议 | 人工批准后在最低层执行 |
+| `harness-init` | 新项目需要可运行、可观测、可驱动的工作台 | 分轮引导、架构师拍板决策；验证用例全绿证明环境可用；奠基 ADR 与全景图 | `brainstorm` / `design` |
+| `harness-retrofit` | 存量项目；Agent 反复摸索命令、伪平替、无 drive | 盘点 → 差距表 → 拉动式迁移，验证用例逐步点亮 | 回到交付 |
+
+### 发布、故障与回路改进
+
+| Skill | 典型场景 | 主要产出 | 下一步 |
+| --- | --- | --- | --- |
+| `ship` | `build` 拿到新鲜绿裁决 | 测试部署、Core-Case 冒烟投影、人类验收、合入主干 | 人类决定是否 `deploy` |
+| `deploy` | 已验收增量合入主干、准备上生产 | fail-closed 预检、备份/回滚、生产安全冒烟、观察窗口 | 关闭，或异常转 `oncall` |
+| `oncall` | 测试或生产环境出了问题 | 严重度分级、证据链、回滚/热修/缓解、错误台账 | 长期修复经 `lite`、`design` 或 `build` 重入 |
+| `retro` | 已积累若干增量/故障，回路需要改进 | 成本/复发报告、基准证据、规则与裁剪提案 | 人类在最低有效层批准变更 |
 
 ## 常见需求的推荐组合
 
-| 需求 | 推荐组合 | 原因 |
+| 需求 | 推荐路由 | 原因 |
 | --- | --- | --- |
-| 改一个按钮文案或修一个局部 bug | `lite` | 单一结果，不值得创建 feature 工件 |
-| 热修必须当天发布 | `build` → `ship` → `deploy` | 无论耗时，发布都需要版本绑定的证据 |
-| 新增一个边界清楚的导出功能 | `demo` → `prd` → `testcase` → `build` | 即使意图清楚，E2E 前也要让人看见 oracle |
-| “做一个 AI 学习教练”，用户和价值还不清 | `brainstorm` → `demo` → `prd` → `testcase` → `build` | 依次解决意图、体验、真相和证明 |
-| 新结算页的交互还没定 | `demo` → `prd` → `testcase` → `build` | 先批准体验，再编码其测试语义 |
-| 新权限模型 + 公共 API | `demo` → `prd` → `testcase` → `architect` → `build` | 产品 oracle 在按需架构设计之前确定 |
-| 一个需求包含后台、移动端、运营台三个独立结果 | 拆分 → 第一个 `build` | 多个可独立交付旅程不能塞进一次增量 |
-| 线上错误率突然上升 | `oncall` | 先证据化诊断和稳定系统，不直接猜修复 |
-| agent 每次都在猜启动命令和测试数据 | `harness` | 问题是工作台能力，不是 feature 实现 |
+| 改一个文案、修一个局部 Bug | `lite` | 单个结果不值得产生真相工件 |
+| 今天必须上线的热修 | `lite` 或 `build` → `ship` → `deploy` | 发布需要 harness 裁决的证据，与耗时无关 |
+| 增加一条清晰的导出流程 | `design` → `build` | 意图再清晰，也要先定案 Oracle 再实现 |
+| "做一个 AI 学习教练"，用户/价值不清 | `brainstorm` → `demo` → `design` → `build` | 依次解决意图、体验、真相 |
+| 新的结算交互还没定 | `demo` → `design` → `build` | 先定体验，再锁它的 Oracle |
+| 新权限模型 + 对外 API | `design`（TD + ADR）→ `build` | 难回头的边界是 TD 条目 + ADR，不是独立环节 |
+| 一个需求包含管理端、移动端、运营端旅程 | 拆分 → 逐个 `design` → `build` | 互相独立有用的旅程不共享一个增量 |
+| 生产错误率飙升 | `oncall` | 先带证据诊断与止血，再谈修复 |
+| 每个 Agent 都在重新摸索启动命令与测试数据 | `harness-retrofit` | 问题在工程工作台，不在某个功能 |
+| 全新空仓库 | `harness-init` → `brainstorm` → `design` → `build` | 先让系统可运行、可裁决，再做第一个功能 |
 
 ## 最佳实践
 
-1. **从用户动作写起。** 请求里说清“谁从哪个真实入口做什么，看到什么结果”，不要只给
-   “做完某模块”这种内部任务名。
-2. **按语义和风险选路，禁止按预计耗时选路。** 复用已有 oracle 的局部改动可用 `lite`；
-   新行为和可发布增量必须先走 demo、PRD、testcase。纯文案、静态外观、文档默认不跑 E2E。
-3. **一个增量保护一条核心旅程。** 多条可独立使用的旅程可为清晰度拆分；第一片穿过
-   正式 router/service/页面组装，后续切片保持前一片可运行。
-4. **分开四种真相。** `demo` 负责体验，`prd` 负责长期产品真相，`testcase` 负责经人批准的
-   黑盒实验，`architect` 负责公共/单向技术边界。
-5. **验证从便宜到昂贵。** 逻辑/build → 本地正式服务 + scratch 状态 → UI 浏览器核心旅程 →
-   Provider 离线回放 → 一次真实 canary → 人工验收。
-6. **UI 必须由项目 testcase runner 执行关键动作。** runner 预先监听成功/失败信号，以
-   Playwright 为主驱动并自动产证；裸 Playwright 命令不是准出门禁。
-7. **不要拿真实 Provider 当调试循环。** 先稳定本地与离线回放，同一版本默认只做一次真实调用。
-8. **把反馈路由到最早错误层。** `tune` 是同一意图的执行调整；`revise` 是上游事实错了并使
-   下游证据失效；`park` 是干净停止。
-9. **以收据状态而不是测试数量宣称完成。** 代码、测试、结果卡、seed 或配置改变后，旧命令
-   结论会自动变旧。
-10. **有数据再跑 `retro`。** 建议先积累 3～5 个标准增量或一次高价值故障；没有采集数据时，
-    `retro` 应报告缺口，而不是编造效率结论。
+1. **从用户动作出发。** 说清谁、从哪个入口、做什么动作、看到什么结果；避免"完成导出模块"
+   这类内部任务名。
+2. **按语义与风险路由，永不按预计工时。** 不动 PTA 的局部改动可走 `lite`；新行为与可发布
+   增量先在 `design` 定案真相再 `build`。
+3. **每个增量保护一条 Core-Case。** 每份 PTA 恰好指定一条 F0 正向主链路及其测试/生产冒烟
+   投影；互相独立有用的旅程要拆分。
+4. **一份真相，三个维度。** `pta.md` 只写决策——PD 底线、TD 难回头选择、AC 黑盒标准；
+   模型能安全推翻的内容不进。
+5. **裁判与运动员分离。** 实现*之前*把 AC 展开为机器可读 Case 并 commit 锁死；改 Oracle
+   即作废全部绿灯，并必须说明理由。
+6. **先 RED 再实现。** 所有 Case 必须先有意义地失败。INCONCLUSIVE 说明 harness 驱动不到或
+   观测不到——去修 harness，严禁临场发明 Oracle。
+7. **永不把真实 Provider 当调试循环。** 先在本地与回放路径上稳定；那一次真实调用落在
+   真实环境冒烟里，不落在迭代里。
+8. **反馈路由到最早出错的层。** `tune` 在同一真相下改执行；`revise` 修正 PTA 并作废下游
+   裁决；`park` 干净收线。
+9. **用裁决宣称完成，不用测试数量。** 绿灯不跨环境迁移：本地全 PASS 仍需在真实环境跑
+   Core-Case 冒烟投影。
+10. **有证据之后再 `retro`。** 实践上首个节奏是 3-5 个标准增量或一次高价值故障之后；
+    验证过的规则下沉为脚本、hook 与 ADR。
 
 ## 独立 Builder 和 PM 搭档怎么用
 
-**独立 Builder** 也必须显式批准产品语义。标准增量由自己走完 demo/PRD/testcase、审阅报告，
-再进入 build；只有复用既有语义且不做 E2E/发布声明的小改才直接用 `lite`。
+**独立 Builder** 依然要显式拍板产品真相：诚实回答 `design` 的拷问，读一遍渲染出的
+`pta.md`，定案，然后放手让 `build` 跑。只有复用既有语义时 `lite` 才可跳过这条链。
 
-**PM + 架构师/Builder** 可以沿判断边界交接：
+**PM + 架构师/工程师搭档**可以在判断边界处交接：
 
-1. 产品负责人批准 demo，用 PRD 固化 PD/AC，再逐条审查 testcase 的对象、动作、成功/失败
-   oracle 和数据来源；
-2. `testcase` 编译 `testcases.json`，完成独立评审和产品签署，再提交推送 feature 分支；
-3. Builder 拉取并检查 testcase 链；只有公共边界或单向技术决定变化时运行 `architect`，
-   否则进入 `build`；
-4. Builder 不替产品负责人静默回答缺失的产品判断，问题以 `revise` 返回最早责任层；
-5. `ship` 的测试环境验收是双方重新看见真实结果的共同触点。
+1. 产品负责人拍板 Demo 决策，并逐条 review PD 与 AC——对象、动作、成败判据、数据来源。
+2. 架构师持有 TD：架构位置图、ADR、动边界时的全景图更新。
+3. 工程师把 AC 展开为锁死的 Case 并实现；路线（切片、顺序、并行）完全归工程师与模型。
+4. 没人替缺失的产品判断擅自作答；问题以 `revise` 回到最早持有它的层。
+5. `ship` 测试验收是双方再次共同看到真实结果的交汇点。
 
 ## 新项目怎么落地
 
-新项目不需要先建立完整文档体系。第一目标是让 agent 能稳定地运行、清状态、观察和驱动系统。
+新项目不需要先建完整文档体系。第一目标是让系统对 Agent 可运行、可观测、可驱动——并且让
+奠基性架构决策由架构师拍板，而不是替他拍板。
 
-### 第 0 天：建立最小 Harness
-
-在仓库的新会话中执行：
+### 第 0 天：初始化 Harness
 
 ```text
-$opc-develop:harness 初始化这个新项目的最小 Harness。先补 run 和 reset，再建立一个具名 seed，
-然后证明一次 observe 链和一条 drive 旅程；AGENTS.md 只做命令索引，不堆说明。
+$opc-develop:harness-init 引导我为这个项目初始化 Harness。
 ```
 
-最小可用标准：
+`harness-init` 分轮引导提问（技术栈、操作面、同构基础设施、文档最小集 + 立项决策、裁决面），
+把难以回头的选择记为奠基 ADR，并且在环境验证用例全绿之前拒绝宣称完成：全栈起停带健康检查、
+一条 trace-id 链路端到端可观测、空库全量 Migration、一条 seed Case 走完 clone → 裁决 →
+销毁、破坏性保护硬校验生效。
 
-- 一条命令启动目标栈并能检查健康状态；
-- 一条幂等 reset 命令和至少一个具名 seed；
-- 一次用户动作可以通过 correlation ID 串起日志，并能只读检查状态；
-- 至少一条从真实入口执行的 Tier-1 核心旅程；
-- 凭据、生产数据和 `.env` 不进入仓库。
+### 第一个功能：交付一条旅程
 
-空仓库也可以从 `run` / `reset` 开始；opc-develop 不替你决定框架和产品方向，必要时先用
-`brainstorm` 明确第一条用户价值，再走 demo/PRD/testcase 后创建第一个 build 切片。
-
-### 第 1 个功能：只交付一条旅程
-
-- 意图清楚：从 `demo` 开始，再走 `prd → testcase → build`。
-- 产品意图不清：先 `brainstorm`，再走标准链。
-- 非 UI 功能：demo 用可运行、生产形状一致的 skeleton。
-- 架构文档仍只在公共/单向边界变化时增加。
+- 意图清晰：`design`，然后 `build`。
+- 产品意图不清：先 `brainstorm`（体验未定再加 `demo`）。
+- 非 UI 功能：design 之前由 demo 提供可运行的生产形态骨架。
 
 ### 第一次发布
 
-准备好测试环境 runbook 后使用 `ship`；只有 `ship` 的人工验收和主干合并完成，才进入
-`deploy`。生产发布必须有回滚路径、备份和观察窗口，缺任何一项都停止而不是临场发明。
+有测试环境 runbook 后用 `ship`；测试验收并合入主干后才进 `deploy`。生产需要回滚、备份与
+观察窗口；缺 runbook 时流程停下，而不是即兴发明发布机制。
 
-### 稳定后的节奏
+### 稳态节奏
 
 - 日常小改：`lite`；
-- 产品增量：`build`；
-- 测试验收：`ship`；
-- 生产发布：`deploy`；
-- 3～5 个增量后：`retro`；
-- 交付暴露出 run/reset/observe/drive 缺口时：回到 `harness`。
+- 产品增量：`design` → `build`；
+- 测试验收：`ship`；生产：`deploy`；
+- 每 3-5 个增量：`retro`；
+- 交付暴露 run/observe/drive 缺口时：`harness-retrofit`。
 
 ## 老项目怎么接入
 
-老项目应渐进接入，**不要大爆炸迁移**现有文档、CI、测试和发布系统。
+渐进接入。**不要大爆炸迁移**既有文档、CI、测试或发布体系。
 
-### 第一步：只评估，不先重建
-
-```text
-$opc-develop:harness 只评估现有项目的 run/reset/observe/drive。实际执行已有命令，
-不要先修改项目；列出证据、真实性上限和前三个最高杠杆缺口。
-```
-
-保留已有 Makefile、npm scripts、Docker Compose、测试框架、CI 和 runbook。`harness` 应把它们
-组织成稳定入口，只有能力缺失时才补脚本，不另造一套平行工具。
-
-### 第二步：从日常 `lite` 开始
-
-选择一周内真实发生的小改，验证 opc-develop 能否：保持范围、跑定向测试、从真实入口检查
-结果、诚实报告证据。此阶段不要求创建 `docs/features/`。
-
-### 第三步：选一个低风险功能试点 `build`
-
-选择一条清楚、可回滚的核心旅程，试点完整产品定义链并生成：
+### 第 1 步：先盘点，不要重建
 
 ```text
-docs/features/<slug>/feature-plan.md
-docs/features/<slug>/testcases.md
-docs/features/<slug>/testcases.json
-docs/features/<slug>/testcase-approval.json
-docs/features/<slug>/acceptance.json
-docs/features/<slug>/ledger.jsonl
+$opc-develop:harness-retrofit 先盘点这个仓库，改任何东西之前先给我看差距表。
 ```
 
-观察 testcase 人工审阅、首条真实纵向切片和收据新鲜度是否减少假绿；不要回填全部历史功能，
-只对新功能或 E2E 语义变化应用新链路。
+`harness-retrofit` 先看代码——仓库里能查到的不问人——然后产出差距表（现状 → harness 要求 →
+差距 → 风险），与架构师确认迁移决策。保留既有 Makefile、npm scripts、Docker Compose、测试
+框架、CI 与 runbook；改造只是在外面包一层稳定入口，缺什么补什么——按反馈回路价值排序：
+先操作面包壳，再结构化日志与 trace-id，然后消灭伪平替（SQLite 顶 MySQL、内存 mock 顶对象
+存储），再受保护资源与第一条真实入口 drive Case，最后文档补课与"既成事实 ADR"。
 
-### 第四步：发布流程单独接入
+### 第 2 步：从真实的日常 `lite` 开始
 
-现有测试/生产 runbook 可直接被 `ship` / `deploy` 使用。先在一个低风险增量上接入测试环境，
-再决定是否让生产发布进入 opc-develop。没有明确 runbook 和回滚能力时，不要启用 `deploy`。
+选本周一个真实小改。确认 opc-develop 守住范围、跑定向棘轮回归、检查真实入口、诚实标注证据。
 
-### 兼容原则
+### 第 3 步：试点一个低风险 `design -> build`
 
-- 旧 requirement/demo/PRD/technical 可作为输入，但新 build 仍要形成新鲜的 demo、PRD、
-  testcase 编译/评审与产品签署链。
-- 旧 E2E 可在映射到已批准 testcase 后接入项目 runner；裸测试代码不会自动变成产品真相。
-- 历史 v2 账本仍可读取；新标准增量使用 v3 账本与生成式 `acceptance.json`。
-- 不回填历史 feature，不替换已有测试，不要求一次性安装 hook；是否把门禁接进 CI 由人明确决定。
+选一条清晰、可逆的核心旅程试点完整链路，判断 PTA 评审、锁死的 Oracle 与 harness 裁决是否
+真的为你减少假绿。不要回填历史功能；只对新增或语义变化的行为使用这条链。
+
+### 第 4 步：发布单独接入
+
+既有测试/生产 runbook 可继续作为 `ship` 与 `deploy` 的执行来源。先在一个低风险增量上试点
+测试部署，再决定生产是否进入套件。没有明确 runbook 与回滚能力时不启用 `deploy`。
+
+### 兼容规则
+
+- 既有需求/PRD/技术文档仍是素材；新增量依然要在新的 `pta.md` 里定案真相。
+- 既有 E2E 测试映射到已定案 Case 后可挂在项目 harness 之下；裸测试不自动成为产品真相。
+- 不要一次性回填历史、替换既有测试或安装项目 hook；CI/hook 强制是人类显式决策。
 
 ## `build` 到底会做什么
 
 ```mermaid
 flowchart LR
-  A["已批准 demo + PRD + testcase"] --> B["语义范围 + 一页结果卡"]
-  B --> C["已批准 Core-Case 先真实失败"]
-  C --> D["真实纵向切片"]
-  D --> E["现实评审"]
-  E --> F["可运行切片"]
-  F --> G["由便宜到昂贵验证"]
-  G --> H["最终评审"]
-  H --> I["新鲜验收收据"]
+  A["定案的<br/>pta.md"] --> B["AC 展开 →<br/>cases/*.yaml<br/><i>commit 锁死 Oracle</i>"]
+  B --> C["RED<br/>harness drive：<br/>全部 FAIL"]
+  C --> D["实现<br/><i>路线归模型</i>"]
+  D --> E["现实评审<br/><i>仅一次，Core-Case<br/>首次转绿时</i>"]
+  E --> F["GREEN<br/>全部 PASS，<br/>棘轮保证"]
+  F --> G["真实环境冒烟<br/>Core-Case 投影"]
+
+  classDef red fill:#fdedec,stroke:#c0392b,color:#333
+  classDef green fill:#e9f7ef,stroke:#229954,color:#333
+  classDef neutral fill:#f8f9f9,stroke:#7f8c8d,color:#333
+  class C red
+  class F,G green
+  class A,B,D,E neutral
 ```
 
-`build` 消费已批准的 `testcases.json`，再创建 `feature-plan.md`，记录 Core-Case、真实入口、
-数据来源、安全条件、切片和项目 case-runner 命令。`opc_increment.py` 根据 runner 证据推导
-真实性标签，生成 `acceptance.json` 并把结论绑定到当前内容树。
+契约是 PTA，裁判是 Harness，路线归模型。`build` 把已定案的 AC 展开为机器可读 Case 并锁死，
+先证明 RED 基线成立，然后走生产装配实现（白盒测试按 TD 风险随代码写），在 Core-Case 首次
+转绿时做仅有的一次冷上下文现实评审，最后在棘轮保证下把全部 Case 推到 PASS。完成 = 全 PASS
++ 判定四件套留痕，再加必经的真实环境 Core-Case 冒烟投影——绿灯不跨环境迁移。
 
-完成等级只有四级：
-
-1. `code-build`：当前版本通过构建/逻辑层；
-2. `automated-core-journey`：自动化核心旅程通过；
-3. `real-service-core-journey`：通过本地正式服务组装和真实入口；
-4. `human-accepted`：人类对当前候选版本明确验收。
-
-标准增量有两个代码评审点：首条纵向切片后的现实评审，以及全部范围集成后的最终评审。
-持续修复并复审，直到批准，或遇到必须由用户、外部状态或重新设计解决的真实阻断；不设固定轮次。
-
-常用机械检查：
-
-```bash
-python3 shared/scripts/validate_artifacts.py docs/features/<slug>/feature-plan.md
-python3 shared/scripts/opc_testcase.py check \
-  --feature-dir docs/features/<slug> --require-approved
-python3 shared/scripts/opc_increment.py check \
-  --receipt docs/features/<slug>/acceptance.json \
-  --require real-service-core-journey
-python3 shared/scripts/opc_ledger.py audit --require-increment-complete \
-  --ledger docs/features/<slug>/ledger.jsonl
-```
+FAIL 的 Case 就是重入点。人类验收拒绝按 `tune`（实现缺陷，回实现）或 `revise`（PTA 本身
+错了，回 `design`，下游裁决作废）分类。没有 feature-plan、没有 acceptance 文档、没有
+ledger——过程状态由 Git 历史与 run 记录承载。
 
 ## 发布与故障边界
 
-- `ship` 只负责测试环境：预检、变更清单、部署、同一核心旅程回归、人工验收、合并主干。
-- `deploy` 只负责生产：固定 release set、在最终主干刷新收据、备份/回滚、部署、prod-safe 回归、
-  观察窗口；每个破坏性步骤都需要人类确认。
-- `oncall` 先分诊和证据化诊断。回滚、热修复和缓解由人选择；发布型热修仍需
-  `build` → `ship` → `deploy`，加速不等于不验证。
+- `ship` 只管测试环境：预检、清单、部署、Core-Case 冒烟投影、人类验收、合入主干。
+- `deploy` 只管生产：锁定发布集、备份与回滚、部署、生产安全冒烟、观察窗口；每个破坏性
+  步骤都需人类批准。
+- `oncall` 先分级与诊断，人类选择回滚、热修或缓解。发布相关的热修依然走被裁决的交付——
+  加急不等于未验证。
 
 ## 仓库与项目工件
 
 插件仓库：
 
-- `skills/`：13 个用户入口；
-- `shared/core-contract.md`：语义选路、证据、完成等级、反馈和安全底线；
-- `shared/packs/`：按需加载的实现、风险、评审、发布、Harness 规则；
-- `shared/formats/`：结果卡、收据、PRD、技术、测试、账本格式；
-- `shared/rubrics/`：独立评审清单；
-- `shared/scripts/`：标准库 Python 的结构校验、收据、账本、Benchmark 和报告工具；
-- `agents/`、`shared/prompts/`：冷上下文 reviewer 与例外 implementer 角色。
+- `skills/`：12 个用户入口；
+- `docs/harness.zh-CN.md`：Harness 权威文档（操作面、同构基础设施、文档体系、裁决面、
+  探索面、立项决策、拉动式建设）；
+- `shared/core-contract.md`：语义路由、证据、完成、反馈与安全不变量；
+- `shared/packs/`、`shared/formats/`、`shared/rubrics/`、`shared/prompts/`、`agents/`：
+  按需加载的规则、格式、评审清单与评审角色；
+- `shared/scripts/`：benchmark/retro 工具与保留兼容的 v0.6 校验器——它们不再是交付闸门；
+  裁决属于项目 Harness。
 
-项目工件永远写入目标项目的 `docs/features/<slug>/` 和 `docs/opc/`，不写回插件仓库。
+生成的工件存放在目标项目里——`brief.md`、`pta.md` 与 `cases/` 在项目功能目录下，ADR 与
+全景图在其架构文档下——永远不进本插件仓库。
 
 ## 更新
 
@@ -376,22 +408,21 @@ cd ~/plugins/opc-develop
 git pull --ff-only
 ```
 
-更新后新开会话。
+更新后请开启新会话。
 
 ## 开发与验证
 
 ```bash
 python3 shared/scripts/test_opc_scripts.py
 python3 shared/scripts/opc_benchmark.py validate shared/fixtures/opc-benchmark/registry.json
-python3 shared/scripts/opc_benchmark.py run shared/fixtures/opc-benchmark/registry.json --repo .
 ```
 
 ## 安全与语言
 
-项目 `AGENTS.md` 的目标语言规则约束对话、工件、评审和报告；解析器要求的 key、token、ID
-和命令保持固定拼写。插件仓库不得包含业务数据、凭据、私有日志、`.env` 或项目生成工件。
+适用项目的 `AGENTS.md` 语言规则约束对话、工件、评审与报告；解析器要求的键名、令牌、ID 与
+命令保持原拼写。插件仓库永远不包含业务数据、凭据、私有日志、`.env` 文件或生成的项目工件。
 
-破坏性操作、生产变更、权限/安全变更、不可逆 schema/数据操作、force-push 和对外发布，
+破坏性操作、生产变更、权限/安全变更、不可逆 schema/数据操作、force-push 与对外发布，
 始终需要人类显式批准。
 
 ## License

@@ -1,69 +1,45 @@
 ---
 name: build
-description: "Use after the mandatory Approved demo, PRD, and testcase phases for a product increment that creates or changes user-visible behavior. Routes by product semantics and risk, never by predicted duration; enforces approved-case-driven E2E, a one-page feature-plan.md, serial runnable slices, trusted runner evidence, and convergent reviews."
+description: "pta.md 定案后的自主开发环节：AC 展开为机器可读 Case 并锁死 Oracle，先跑 RED 再实现（TDD，模型自主规划路线），harness drive 全量裁决转 GREEN，仅一次现实评审，最终以 Core-Case 冒烟投影在真实环境收口。裁决全部由项目 Harness 执行，本 skill 不携带任何裁决脚本。"
 license: MIT
 ---
 
 # build
 
-Deliver one useful increment through a real working path, then add coverage and evidence that
-protect it. Never estimate or enforce an elapsed-time or implementation-cost budget.
+契约是 PTA，裁判是 Harness，路线归模型。产出是证据，不是文档。
 
-## Load
+## 前置
 
-- `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/increment.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/formats/feature-plan-format.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/formats/acceptance-receipt-format.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/formats/testcase-format.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/evidence.md`
-- When `demo/mock-inventory.md` exists: `${CLAUDE_PLUGIN_ROOT}/shared/packs/mock-retirement.md`
-- On matching risk: `packs/risk-readiness.md`
-- On branch/worktree questions: `packs/branch-worktree.md`
-- For reviews: `packs/gate-protocol.md` + `rubrics/increment.md`
+加载 `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`。`pta.md` 已定案；
+项目 harness 的 run / observe / drive 可用——缺口先走 `harness-retrofit`，
+不在 build 里临时凑合裁决方式。
 
-## Process
+## 协议
 
-1. Read project rules and inspect the real entry, runtime assembly, target data, and harness before
-   asking questions. Run `opc_testcase.py check --require-approved`; missing/stale demo, PRD,
-   testcase review, compiled manifest, or product approval blocks build and routes to that phase.
-2. Route by semantics and risk only. Localized non-semantic changes and changes that reuse an
-   already approved oracle unchanged may use `lite`; new or changed user journeys, state, data,
-   permissions, cross-module contracts, or release evidence use `build`. Decompose independent
-   journeys when that improves reviewability, but never block work based on a duration estimate.
-3. Use the current authorized feature branch. Write `feature-plan.md`, choose `Core-Case` from the
-   approved manifest, map PRD constraints and every demo mock to replacement slices, and make both
-   core/regression commands invoke the project testcase runner. Validate and initialize
-   `acceptance.json`; initialization independently rechecks the mandatory chain.
-4. Execute the approved Core-Case before implementation and confirm a meaningful product failure.
-   For UI, the testcase runner performs the Playwright action and atomically observes success and
-   failure. Repair a broken runner/harness before feature breadth; never improvise a new oracle.
-5. Implement Slice-1 through the production assembly. Use targeted lower-level tests while coding,
-   then run the real core journey once. If the path cannot run or be observed, route the harness
-   gap before depending on that missing evidence.
-6. Run the independent reality review. Then implement remaining independently runnable slices serially,
-   preserving the previous core journey and adding one valuable regression per slice. The main
-   executor implements by default; subagents are exceptional and receive cold one-page context.
-7. Verify in cost order through `opc_increment.py`: build/logic, local service + scratch state,
-   approved testcase runner for every E2E, provider replay, one external canary when applicable.
-   Browser/core/provider commands must attach fresh `opc-case-evidence-v1`; authenticity labels are
-   derived from its axes, not caller flags. Never use the canary as a debug loop.
-8. Run one final independent integration review. Repair and re-review until it passes or a genuine
-   blocker requires user input or redesign; there is no fixed repair-round quota. When an inventory
-   exists, prove every mock is retired from production runtime. Audit with
-   `opc_ledger.py audit --require-increment-complete` so missing review records cannot pass.
-9. Run `opc_increment.py check --require real-service-core-journey`. Report its exact completion
-   level and remaining caps. Do not claim completion when the receipt is stale or the core journey
-   is below real-service level.
+1. **展开**：AC → `cases/*.yaml`（must / must_not / 超时 / 必需证据 / budget），
+   标注 Core-Case，commit 锁死 Oracle（裁判与运动员分离）。
+2. **RED**：`harness drive` 全量执行——必须全 FAIL 才算基线成立。出现 INCONCLUSIVE
+   说明 harness 有缺口（驱动不到入口、取不到证据），先修 harness 再开工；
+   严禁临场发明新 Oracle。
+3. **实现**：模型自主规划路线——切片顺序、是否并行、内循环节奏都不是契约。
+   走生产装配；白盒测试按 TD 风险随代码写，与代码同放，不进长期文档。
+   编码期间用最便宜的定向检查内循环，浏览器全量裁决留给 drive。
+4. **现实评审（仅此一次）**：Core-Case 首次转绿时做一次冷上下文评审，只查一类问题——
+   可逆但铺开就贵的结构性别扭（坏抽象即将被复制八遍）。结论回写 rules / ADR，
+   不保留评审文档。
+5. **GREEN**：铺开剩余 AC；每次 drive 全量跑——棘轮由 harness 保证：已绿的不许变红。
+   全 PASS + 判定四件套留痕即完成。改 Oracle = 作废全部绿灯、说明理由、回到第 2 步。
+6. **真实冒烟（必经）**：部署到真实环境后执行 Core-Case 冒烟投影——同一条 Case、
+   must 子集裁决、非破坏、数据可识别，Playwright + 必要时 Computer Use。
+   绿灯不跨环境迁移，本地全绿不能代替这一步；真实外部 Provider 的一次真实调用
+   也落在这里，严禁把它当调试循环。
 
-## Re-entry
+## 重入
 
-Test/human rejection of the same intent re-enters the affected slice: invalidate stale receipt
-results, add a covering regression, fix, rerun cheap checks, then the core journey and targeted
-final review. If the user says the target object or intended journey is wrong, invalidate all
-downstream conclusions and rewrite the result card before continuing.
+FAIL 的 Case 就是重入点：修复 → 重跑受影响 Case + 全量棘轮。人类验收拒绝时按
+tune / revise 分类：实现缺陷回第 3 步；PTA 本身错了回 `design`，作废下游结论。
 
-## Output
+## 产出
 
-One runnable increment, `feature-plan.md`, generated `acceptance.json`, focused regressions, review
-records, and an honest completion level. Next: `ship` for test-environment acceptance.
+绿的 run 证据（本地全量 + 真实冒烟）+ pta.md 状态更新。
+无 feature-plan、无 acceptance 文档、无 ledger——过程状态由 Git 与 run 记录承载。

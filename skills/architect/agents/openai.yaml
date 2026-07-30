@@ -1,6 +1,0 @@
-interface:
-  display_name: "architect"
-  short_description: "Optionally gate a public-boundary or one-way technical decision"
-  default_prompt: "Use $architect after approved testcase artifacts when a public boundary or one-way decision changes; write the necessary TD records/contracts/evidence plan, then return to build."
-policy:
-  allow_implicit_invocation: false
