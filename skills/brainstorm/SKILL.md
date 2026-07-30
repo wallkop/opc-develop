@@ -1,60 +1,35 @@
 ---
 name: brainstorm
-description: "Use only when product intent is genuinely uncertain or the human explicitly asks to be grilled before implementation. Sharpens durable product judgment, domain language, tradeoffs, and non-goals into requirement.md. It is optional and is not a prerequisite for work whose product intent is already clear."
+description: "需求进入开发前的价值拷问环节：用第一性原理和反常识视角发散讨论、击穿需求本质，逼提需者把价值想透、想清楚，平衡复杂度与 ROI；产出 brief.md（原话愿景），按项目标准拉 feature 分支并自动推送。产品意图已经清晰时可跳过。"
 license: MIT
 ---
 
 # brainstorm
 
-Capture the human's taste as a decision-dense requirement. Nothing downstream can recover
-judgment that is missing here.
+拷问的对象是需求价值本身，不是实现方案。这一环缺掉的判断，下游任何环节都补不回来。
 
-## Load
+## 前置
 
-- `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/formats/requirement-format.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/decision-protocol.md`
-- `${CLAUDE_PLUGIN_ROOT}/shared/packs/risk-readiness.md`
-- On branch questions: `${CLAUDE_PLUGIN_ROOT}/shared/packs/branch-worktree.md`
-- For the touchpoint: `${CLAUDE_PLUGIN_ROOT}/shared/formats/report-style.md`
+- 加载 `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`。
+- 读项目 AGENTS.md、产品地图与相关代码——代码里能查到的，不许问人。
+- 若用户装有 grilling / grill-me skill，直接以其方式驱动拷问；否则按下述原则自行执行。
 
-## Process
+## 拷问原则
 
-1. Read project AGENTS.md and enough code/docs to understand the product surface. Inspect before
-   asking — never ask the human something the codebase answers.
-2. Scope gate: if the request spans independently shippable subsystems, propose a split and let
-   the human pick the first slice.
-3. Grill: one question at a time, hardest-uncertainty first, every question carrying a
-   recommended answer with its reason. Walk value, users, non-goals, key paths, tradeoffs,
-   alternatives (2-3 when real choice exists), domain terms, constraints. Stop grilling when new
-   questions stop changing the shape — shared understanding, not exhaustion.
-4. Classify the risk profile (`risk-readiness.md` categories, or `none identified`). Unknowns
-   become open questions owned by the result card, or by `prd`/`architect` only when those optional
-   decisions are justified.
-5. Classify remaining open questions: any that could change scope, core behavior, or risk class
-   must be resolved now; the rest get trigger conditions.
-6. When ready to commit: run
-   `python3 "${CLAUDE_PLUGIN_ROOT}/shared/scripts/next_feature_slug.py" "<name>" --features-dir <root>/docs/features`,
-   create/enter `feature/<slug>` per `branch-worktree.md`, then write
-   `docs/features/<slug>/requirement.md` per the format (≤150 lines, decision summary first).
-7. Initialize `docs/features/<slug>/ledger.jsonl` with a risk-profile decision entry —
-   `{"type":"decision","id":"RISK-PROFILE","door":"two-way","note":"<categories or none identified>"}` —
-   and a `gap` entry for any harness verb already known missing.
-8. Gate the requirement per `${CLAUDE_PLUGIN_ROOT}/shared/packs/gate-protocol.md` with
-   `${CLAUDE_PLUGIN_ROOT}/shared/rubrics/requirement.md`.
-9. Human touchpoint: write the faithful plain-language summary `reports/requirement.md`, including
-   the requirement artifact SHA, then render/lint `reports/requirement.html` per `report-style.md`;
-   then
-   present the decision summary (≤1 page) for confirmation. Their feedback routes as tune (fix
-   wording/decisions here) or park; on tune, regenerate the report from the updated md.
+1. 一次一个问题，从最硬的不确定性问起；每个问题附带推荐答案与理由。
+2. 武器是第一性原理与反常识：这个需求解决的本质问题是什么？不做会怎样？
+   最简形态是什么？谁在什么场景下真的会用？现有能力组合能不能覆盖？
+   有没有一个便宜一个量级的方案覆盖 80% 的价值？
+3. 显式平衡复杂度与 ROI：给出"全量做 / 减配做 / 不做"的成本-价值对比，逼人选择。
+4. 停止条件：新问题不再改变需求的形状——目标是共识，不是穷尽。
 
-## Fail-open
+## 收口
 
-Too-early ideas end without a branch or file — a good conversation is a valid output; say so and
-stop. Never write requirement.md on the trunk. Never invent answers to taste questions: if the
-human defers, record the recommended answer as provisional with a trigger.
+1. 产出 `docs/features/<slug>/brief.md`：保留提需者原话愿景，不加工、不写约束与实现；
+   附拷问后确认的价值结论与非目标。
+2. 按项目分支标准创建 `feature/<slug>` 分支并推送远端。
+3. 太早的想法允许无产出结束——一次好对话是合法输出，直说并停下，不拉分支不写文件。
 
-## Output
+## 产出
 
-`requirement.md` (gated), feature branch, initialized ledger. Next: `demo`; the full build path is
-`demo -> prd -> testcase -> build`, with `architect` inserted only for a public/one-way boundary.
+`brief.md`、已推送的 feature 分支。下一步：存在未定交互决策则 `demo`，否则直接 `design`。

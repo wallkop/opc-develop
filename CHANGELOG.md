@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.7.0 - 2026-07-30
+
+- Full Fable-5-era simplification pass ("做减法"): retire the heavyweight
+  demo -> prd -> testcase -> architect pipeline. `prd`, `testcase`, `architect`, and the
+  monolithic `harness` skill are removed.
+- Add `design`: a single skill that produces the PTA (Product Truth Assets — PD/TD/AC) as the
+  only durable product-truth artifacts. AC doubles as the executable Oracle; no separate SPEC,
+  testcase manifests, or approval-json chain.
+- Rewrite `build` around harness adjudication: implement against locked AC Cases, evidence comes
+  from `harness drive` verdicts (PASS / FAIL / INCONCLUSIVE), ratchet regression, no
+  self-graded checklists.
+- Rewrite `lite` (TDD against the change itself, advisory-not-blocking scope reminder) and
+  `vibe` (zero-verification, human-adjudicated, destructive-op guard only).
+- Decouple process from harness: add `harness-init` (guided-question bootstrap for new projects,
+  architect-confirmed decisions, environment proven by lit verification cases) and
+  `harness-retrofit` (inventory -> gap table -> pull-driven incremental migration for existing
+  projects). Both defer to docs/harness.zh-CN.md as the authority.
+- Add `docs/harness.zh-CN.md`: the consolidated AI-Native Coding Harness reference (operations
+  surface, isomorphic infrastructure, doc system, adjudication surface, exploration surface,
+  project-inception decisions, pull-driven construction).
+
 ## 0.6.0 - 2026-07-13
 
 - Remove all predicted-duration and implementation-effort gates. `lite`/`build` now route only by

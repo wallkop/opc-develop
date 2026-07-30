@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "opc-develop",
-      "description": "Human-approved black-box semantics, executable testcase manifests, trusted runtime evidence, and semantics-routed product delivery",
-      "version": "0.6.0",
+      "description": "Fable-5-era product delivery: PTA product-truth assets, harness-adjudicated acceptance, and a slimmed brainstorm/design/build skill set",
+      "version": "0.7.0",
       "source": "./",
       "author": {
         "name": "wallkop",

@@ -1,54 +1,35 @@
 ---
 name: lite
-description: "Use for one localized change that does not create or alter product E2E semantics: bug fixes covered by an existing oracle, copy/static-style tweaks, docs, comments, formatting, and non-runtime config changes. Routes by semantics and risk, never duration. Uses proportional targeted checks and a lightweight real-entry check when relevant, with no feature documents or subagents. Works in bare repositories."
+description: "不动 PTA 的局部改动：无需 brief / demo / pta 任何前置输入与设计，直接 TDD 式实现并由 harness 自动验收（先红后绿、证据留痕）。改动复杂度看起来超出判定时仅提醒确认、不强制拦截，用户确认后仍可走 lite。"
 license: MIT
 ---
 
 # lite
 
-Finish one small result without workflow artifacts. Keep evidence honest and proportional.
+和 build 同一套裁决纪律，只是没有前置文档：契约就是"这一个改动本身"。
 
-## Load
+## 判定与提醒
 
-- `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`
-- On matching risk or worktree questions: `packs/risk-readiness.md`, `packs/branch-worktree.md`
-- On debugging: the failure-discipline section of `packs/tdd-implement.md`
+不动 PTA（不改 PD / TD / AC 语义）的改动走 lite。若发现改动实际会改变产品语义、
+领域边界或长期技术约束，**提醒一次**并给出理由，建议走 `design → build`；
+用户确认后仍可继续 lite，不强制拦截——但收尾时如实标注该风险。
+永远不按预计工时判定。
 
-## Process
+## 做法（TDD 验收）
 
-1. Read applicable project rules and inspect the touched code/runtime. Classify the change by
-   semantics, never by predicted duration. A change that creates or changes E2E product semantics
-   routes to `demo -> prd -> testcase -> build`; lite may only reuse an already approved oracle
-   unchanged.
-2. Choose the current branch by default or a lite worktree when isolation is genuinely useful.
-   Do not create requirement, demo, PRD, technical, contract, ledger, or report artifacts.
-3. Implement directly. For behavior covered by an existing oracle, write the narrowest useful
-   regression; for a bug, observe the failure before the fix when practical. Run targeted tests,
-   not the full suite after every edit.
-4. Apply the E2E applicability gate. Pure copy, static style, docs, comments, formatting, and
-   configuration with no runtime behavior change do not run testcase/E2E by default. Use the
-   relevant static, type, component, snapshot, or accessibility check plus a lightweight real-entry
-   visual/DOM before-and-after check when UI is touched. This check must not execute a full journey.
-   If runtime behavior changes under inspection, reclassify the work and use the approved testcase
-   runner; never invoke raw Playwright as an acceptance command.
-5. Add only the matching safety check: migration snapshot/rollback, permission denial path,
-   concurrency/idempotency, or provider replay. A real provider call, if needed, happens once after
-   offline checks are stable.
-6. Hand the human the diff, commands/exits, before/after evidence, and authenticity label. Say
-   plainly when the result stops below a real-service check. Route widened intent to `build`.
-7. Record a non-obvious resolved root cause in the project error ledger when one exists; clean a
-   worktree when used.
+1. 先为目标行为写出会失败的测试（bug 修复先复现失败），确认 RED 再实现。
+2. 行为已被既有 AC 覆盖时直接复用已锁的 Case，不新写第二份口径；
+   纯文案 / 静态样式 / 文档 / 注释等无运行时语义的改动，用对应的静态或
+   轻量真实入口 before/after 检查，不跑整条旅程。
+3. 转绿后跑受影响范围的回归（棘轮：已绿的不许变红）；触碰主链路时补跑 Core-Case。
+4. 收尾交付：diff、命令与退出码、before/after 证据；止步于哪一级验证，直说。
 
-## Boundaries
+## 边界
 
-- Use no implementation/reviewer subagents; dispatch overhead is not justified for this tier.
-- Preserve unrelated user changes. Destructive, production, permission/security, and irreversible
-  schema/data actions still require explicit approval.
-- Do not claim a behavior change complete for UI work when only an API or unit test was exercised.
-- Non-semantic UI work needs proportional visual/DOM evidence, not an E2E journey.
-- Lite cannot author or silently alter a product oracle. Missing approved E2E semantics routes to
-  the mandatory product-definition chain.
+- 不产生任何 feature 工件（brief / pta / 计划 / 报告），不派子代理。
+- 不许悄悄修改已定案的 Oracle——需要改就是在动 PTA，回 `design`。
+- 破坏性 / 生产 / 权限 / 不可逆操作仍需人类显式批准。
 
-## Output
+## 产出
 
-The scoped change, focused regression where valuable, one real-entry check, and concise evidence.
+已验收的改动 + 简洁证据。
