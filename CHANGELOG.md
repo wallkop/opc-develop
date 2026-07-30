@@ -2,6 +2,9 @@
 
 ## 0.7.0 - 2026-07-30
 
+- Supersedes the unreleased "engineering depth routing" experiment (b7e7c32): its
+  lite/build routing rules are replaced by PTA-touch routing in this release.
+
 - Full Fable-5-era simplification pass ("做减法"): retire the heavyweight
   demo -> prd -> testcase -> architect pipeline. `prd`, `testcase`, `architect`, and the
   monolithic `harness` skill are removed.

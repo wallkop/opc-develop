@@ -1,12 +1,12 @@
 ---
 name: ship
-description: "Use after a build increment reaches a fresh approved-testcase real-service core journey to deploy it to test, rerun the same approved cases, obtain human acceptance, and merge. Requires the mandatory demo/PRD/testcase chain, receipt, and two-review chain."
+description: "Use when a verified Lite or Build increment should deploy to test, be accepted, and merge. Build keeps its approved demo/PRD/testcase, receipt, and review gates. Lite instead uses focused regression evidence, matching risk checks, and the project's complete predeploy gate without manufacturing feature artifacts. Release intent alone never upgrades Lite to Build."
 license: MIT
 ---
 
 # ship
 
-Deploy one accepted increment to the test environment, obtain the human verdict, then merge.
+Deploy one verified increment to the test environment, obtain the human verdict, then merge.
 
 ## Load
 
@@ -19,28 +19,40 @@ Deploy one accepted increment to the test environment, obtain the human verdict,
 
 ## Stages
 
-Resume after the latest fresh `release` entry with `result: ok`; recollect the manifest whenever the
-content tree changes.
+When the project has a release ledger, resume after the latest fresh `release` entry with
+`result: ok`. Refresh evidence and recollect any applicable manifest whenever the content tree
+changes.
 
-1. **Precheck**: run `opc_increment.py check --require real-service-core-journey`,
-   `check_gate_chain.py docs/features/<slug>`, and
-   `opc_ledger.py audit --require-increment-complete`. Require the build plan,
-   generated receipt, approved demo/PRD/testcase artifacts, reality/final reviews, resolved rework,
-   and test-env runbook. Technical artifacts remain conditional.
-2. **manifest**: collect `release-manifest.md` from the actual diff per `release-ops.md`. Cross-check
-   optional technical records when present. Every DDL item has rollback; secret values never enter
-   artifacts; provider/dashboard changes have an owner.
+1. **Precheck and classify evidence**:
+   - **Build**: run `opc_increment.py check --require real-service-core-journey`,
+     `check_gate_chain.py docs/features/<slug>`, and
+     `opc_ledger.py audit --require-increment-complete`. Require the plan, receipt, approved
+     demo/PRD/testcase artifacts, reviews, resolved rework, and test-env runbook.
+   - **Lite**: confirm no exact Build trigger applies; run focused regressions, matching risk
+     checks, the smallest relevant real-entry check, and the project's complete predeploy/release
+     gate. Record commit/diff, commands, exits, and evidence through the project's native mechanism.
+     Do not create Build feature artifacts, approvals, reviews, or receipts solely for release.
+   Both routes require the real test-env runbook. Release intent does not change the route.
+2. **manifest**: inspect the actual diff per `release-ops.md`. Build writes its feature release
+   manifest. Lite uses the project's native release artifact or a concise release ledger/handoff
+   record only when operational changes exist; do not create a feature directory for an ordinary
+   code-only Lite release. Every DDL item has rollback; secret values never enter artifacts;
+   provider/dashboard changes have an owner.
 3. **env-test + deploy-test**: apply manifest items to test in order, back up shared data before DDL,
    and deploy per runbook.
-4. **regression-test**: execute the same approved Core-Case and regression suite through the project
-   testcase runner against test. Attach runner-generated evidence with build/origin/session/object/
-   trace/state facts. Raw Playwright or caller-authored labels are invalid. Do not rerun a real
-   provider to diagnose a harness failure.
-5. **acceptance-test**: present the real test entry, result-card scope, manifest, safety checks, and
-   highest completion level. Route the verdict:
-   - approved: run `opc_increment.py accept --actor <role>` and continue;
-   - implementation defect: re-enter the affected `build` slice, invalidate stale receipt commands,
-     fix, and resume at test deploy;
+4. **regression-test**:
+   - **Build**: execute the same approved Core-Case and regression suite through the project
+     testcase runner against test and attach runner-generated evidence.
+   - **Lite**: rerun the focused regression and matching real-entry check against test; use a
+     matching project testcase when one exists, without requiring a new testcase catalog.
+   In both routes attach honest build/origin/session/object/trace/state facts where available. Do
+   not rerun a real provider to diagnose a harness failure.
+5. **acceptance-test**: present the real test entry, scoped change or Build result card, applicable
+   manifest, safety checks, and highest supported completion claim. Route the verdict:
+   - approved: Build runs `opc_increment.py accept --actor <role>`; Lite records the human verdict
+     through the project release evidence/ledger, then continue;
+   - implementation defect: re-enter the originating Lite change or Build slice, invalidate stale
+     evidence, fix, and resume at test deploy;
    - wrong journey/object/plan: reject the candidate, revise the result card or earliest explicit
      artifact, and invalidate downstream evidence;
    - taste change: create a new increment; the human decides whether this one still ships.
@@ -55,5 +67,5 @@ deployment. Shared-data DDL and destructive actions remain approval-gated.
 
 ## Output
 
-Test deployment evidence, human-accepted fresh receipt, release manifest, and merged branch. Next:
-`deploy` when the human chooses production release.
+Test deployment evidence, human verdict, applicable release record, and merged branch. Build also
+returns its human-accepted fresh receipt. Next: `deploy` when the human chooses production release.

@@ -1,6 +1,6 @@
 interface:
   display_name: "lite"
-  short_description: "One localized non-semantic change with proportional checks"
-  default_prompt: "Use $lite for this localized change without new E2E semantics, with focused checks and proportional real-entry evidence, without feature documents or subagents."
+  short_description: "Default route for bounded changes through existing architecture"
+  default_prompt: "Use $lite for this bounded change through existing architecture, with focused checks and matching risk protection; upgrade only if an exact Build trigger is proven."
 policy:
   allow_implicit_invocation: true

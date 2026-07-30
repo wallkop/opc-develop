@@ -2,17 +2,15 @@
 
 ## Short description
 
-Human-approved black-box semantics for Codex and Claude Code: executable testcase manifests,
-runner-derived evidence, semantics-routed increments, and convergent reviews.
+Human-approved black-box semantics for Codex and Claude Code: fast bounded Lite delivery,
+engineering-depth Build routing, executable testcase manifests, and runner-derived evidence.
 
 ## Medium description
 
-opc-develop makes product test semantics visible before implementation. Small changes that reuse
-existing semantics use `lite`; standard/releasable increments follow
-`demo -> prd -> testcase -> build`. The human approves the prototype, durable AC truth, and exact
-Given/When/Then cases; a deterministic manifest drives Playwright and structured evidence. Builds
-route by changed product semantics and risk, reach a real vertical path, and do not enforce effort
-estimates or fixed repair quotas.
+opc-develop defaults bounded work through existing architecture to `lite`, including localized
+behavior changes. `build` is reserved for complete new capabilities, shared-core refactors,
+breaking evolution, broad regression surfaces, or coordinated rollouts, and follows
+`demo -> prd -> testcase -> build`. Risk adds matching protection instead of process ceremony.
 
 ## Long description
 
@@ -20,11 +18,12 @@ opc-develop is an opinionated, project-agnostic workflow suite for builders who 
 product and engineering judgment. Version 0.6 separates testcase from PRD and requires approved
 demo, PRD, and testcase artifacts before a standard or releasable build.
 
-The route is selected by semantics and risk: `vibe` for explicitly human-accepted unverified code,
-`lite` for localized changes that do not create or change E2E semantics, and `build` for approved
-new/changed behavior or release-bound work. Predicted duration never routes or blocks a request.
-Risk adds only its matching protection—migration snapshot/rollback, permission allow/deny,
-concurrency/idempotency, or provider replay/canary.
+The route is selected by engineering depth and change radius: `vibe` for explicitly human-accepted
+unverified code, `lite` by default for bounded changes through existing architecture, and `build`
+only for an explicitly named structural trigger. Behavior, billing, permissions, providers, APIs,
+databases, and release intent are not Build triggers by themselves. Predicted duration never routes
+or blocks a request. Risk adds only its matching protection—migration snapshot/rollback,
+permission allow/deny, money/idempotency/rollback, concurrency checks, or provider replay/canary.
 
 `testcase` compiles `testcases.md` into deterministic `testcases.json` only after fresh demo/PRD
 approval, then requires independent review and explicit product-owner approval. `build` selects an

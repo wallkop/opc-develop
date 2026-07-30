@@ -8,8 +8,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "opc_develop",
-    "shortDescription": "Approved testcase semantics and runner-derived delivery evidence",
-    "longDescription": "opc-develop separates product truth from test code. Standard and releasable increments follow demo, PRD, testcase, then build: the human first approves an experienceable prototype, durable ACs, and exact black-box cases; testcase compiles a deterministic manifest; build implements only those approved cases. Project runners use Playwright as the primary deterministic UI driver, limit Computer Use to an atomic fallback, pre-arm success and failure observers, and emit structured evidence whose assembly, data, provider, driver, observation, and product-outcome axes determine authenticity. CLI flags cannot upgrade a result. Vibe remains explicitly unverified; lite handles localized changes without new E2E semantics, and copy/static-style/docs changes do not run E2E by default. Routing never uses predicted duration. Architect remains conditional, and ship/deploy/oncall/harness/retro close the engineering loop.",
+    "shortDescription": "PTA product truth and harness-adjudicated delivery for Fable-5-class models",
+    "longDescription": "opc-develop routes by whether a change touches product truth (PTA). Daily localized changes use lite (TDD on the change itself); throwaway code uses vibe (explicitly unverified); standard increments settle truth once in design — PD product bottom lines, TD hard-to-reverse technical decisions, and AC black-box criteria that double as the executable Oracle — then build expands AC into locked cases, proves a RED baseline, implements with a model-owned route, and lets the project Harness adjudicate PASS/FAIL/INCONCLUSIVE with evidence and a ratchet; completion ends with a real-environment Core-Case smoke projection. harness-init and harness-retrofit bootstrap or retrofit the workbench under docs/harness.zh-CN.md. Routing never uses predicted duration; ship/deploy/oncall/retro close the engineering loop.",
     "developerName": "wallkop",
     "category": "Coding",
     "capabilities": [

@@ -4,21 +4,22 @@ Use this pack for `build` after demo, PRD, and testcase are approved: one cohere
 one plan, one approved core case, and runnable slices. The case oracle leads acceptance; cheap
 lower-level tests localize failures.
 
-## Semantic route
+## Engineering route
 
-Classify from the actual semantic surface and risk. Do not ask for, infer, record, or enforce an
-elapsed-time or implementation-cost budget:
+Use this pack only after naming an exact Build trigger from `core-contract.md`. Do not ask for,
+infer, record, or enforce an elapsed-time or implementation-cost budget:
 
-- localized non-semantic changes use `lite`;
-- behavior that reuses an approved oracle unchanged may use `lite` with proportional evidence;
-- new or changed journeys, state transitions, persistence, permissions, provider behavior,
-  cross-module contracts, or release evidence use `build`;
+- bounded changes through existing architecture use `lite`, including localized behavior, state,
+  persistence, billing, permissions, providers, APIs, UI, and release work;
+- net-new complete capabilities, shared-core structural refactors, breaking/destructive evolution,
+  broad multi-consumer regression, or coordinated rollouts use `build`;
 - independent outcomes may be decomposed for clarity, but uncertainty about duration never blocks
   implementation.
 
-Risk adds only its matching protection. A migration adds snapshot/rollback checks; permission work
-adds authn/authz checks; an external provider adds replay + one canary. Architecture and contracting
-remain conditional; demo/PRD/testcase are already the mandatory product-definition chain.
+Risk adds only its matching protection and never selects Build by itself. A migration adds
+snapshot/rollback checks; permission work adds authn/authz checks; an external provider adds replay
++ one canary. Architecture and contracting remain conditional; demo/PRD/testcase are already the
+mandatory product-definition chain for a real Build increment.
 
 ## Result card and core journey
 

@@ -13,11 +13,14 @@ Harness capability is not a requirement to run E2E on every change.
   does not change runtime behavior. Use targeted static/type/component/snapshot/accessibility
   checks as relevant; UI changes also get one lightweight real-entry visual/DOM before-and-after
   check that does not execute a complete journey.
-- **Approved testcase E2E required:** changes to a user action or result, state transition,
-  persistence, permissions, routing, provider behavior, concurrency, or a cross-module/runtime
-  contract.
-- If a supposedly non-semantic change alters behavior during verification, reclassify it before
-  claiming completion. Do not author a new testcase merely to validate copy or static appearance.
+- **Proportional behavior check:** a bounded Lite behavior change gets the narrowest useful
+  black-box or real-entry regression. Use the approved testcase runner when a matching case exists,
+  but do not create the full Build artifact chain solely because behavior changed.
+- **Approved testcase E2E required for Build:** execute the approved cases for the complete
+  capability, shared-core refactor, breaking evolution, broad regression surface, or coordinated
+  rollout that triggered Build.
+- If verification exposes an exact Build trigger, reclassify before claiming completion. Do not
+  author a new testcase merely to validate copy or static appearance.
 
 ## L1 — run
 
@@ -60,7 +63,7 @@ Harness capability is not a requirement to run E2E on every change.
   `npm run case -- TC-1` consumes `testcases.json` and drives the interface the feature exposes —
   HTTP/API for services, CLI for tools, Playwright for UI. Raw test-framework commands stay behind
   this adapter. It emits `opc-case-evidence-v1` with per-step results, manifest hash, correlations,
-  and hashed artifacts. Deterministic gates run approved cases on every semantically relevant change.
+  and hashed artifacts. Build gates run approved cases; Lite uses matching cases when applicable.
 - **Tier 2 — agentic exploration:** the agent may investigate gaps and demo parity, but it cannot
   silently change product expectations. An important discovery routes back to the testcase phase
   for human review, then compiles into Tier 1.

@@ -3,7 +3,12 @@
 Manifest collection, environment-change safety, and regression rules shared by `ship` (test
 environment), `deploy` (production), and standard increments with local environment changes.
 
-## Release Manifest — `docs/features/<slug>/release-manifest.md`
+## Release Manifest
+
+Build increments use `docs/features/<slug>/release-manifest.md`. Lite releases first use the
+project's native release artifact or ledger. Do not create a feature directory for a code-only Lite
+change; write a concise manifest only when the diff contains migrations, environment/config,
+services/jobs, provider/dashboard operations, or backfills.
 
 ```
 # Release Manifest: <feature>            (commit range: <base>..<head>)
@@ -27,7 +32,8 @@ environment), `deploy` (production), and standard increments with local environm
 ## Collection Rules
 
 - Source of truth is the **actual diff** (migrations dir, config files, env references, service
-  definitions), cross-checked against `feature-plan.md` and any optional technical decision record.
+  definitions), cross-checked against `feature-plan.md` for Build and any optional technical
+  decision record.
 - Diff outside the result-card scope is either removed/split or explicitly added before release.
 - When technical.md exists, compare the diff to the `TD-n` records mapped into this increment's
   result card. Contradiction or an unmapped changed public boundary is drift; unrelated technical

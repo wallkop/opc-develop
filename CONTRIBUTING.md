@@ -7,8 +7,11 @@ opc-develop is a workflow suite for controlled AI-assisted product development. 
 - Do not add project-specific business context, private runbooks, customer data, credentials, logs, `.env` files, or generated feature artifacts.
 - Do not hard-code a product, company, cloud provider, database, frontend framework, CI system, or deployment platform as a required default.
 - Preserve language-adaptive behavior. User-visible output should follow `shared/core-contract.md`.
-- Preserve semantics-first routing: `lite` handles localized changes without new E2E semantics;
-  `build` handles new/changed behavior and release evidence. Never add predicted-duration gates.
+- Preserve engineering-depth routing: `lite` is the default for bounded changes through existing
+  architecture, including localized behavior changes; `build` requires an explicit complete-
+  capability, shared-core-refactor, breaking-evolution, broad-regression, or coordinated-rollout
+  trigger. Risk and release intent add checks but do not select Build. Never add predicted-duration
+  gates.
 - Keep brainstorm/demo/PRD/technical artifacts opt-in. Risk adds the matching check rather than
   activating the complete artifact chain.
 - Preserve receipt freshness, browser-driven UI acceptance, and provider safety as machine-enforced
