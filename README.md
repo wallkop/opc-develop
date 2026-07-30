@@ -3,17 +3,46 @@
 [简体中文](README.zh-CN.md)
 
 opc-develop is a product-development skill suite for Claude Code and Codex. It is not one heavy
-pipeline for every edit. It is a set of routes: use `lite` for a daily change that does not create
-or alter E2E product semantics; use the mandatory `demo -> prd -> testcase -> build` chain for a
-standard or releasable product increment; add `architect` only for public/one-way boundaries; and
-enter separate safety flows for release and incidents.
+pipeline for every edit. It is a set of routes: use `lite` for a daily change that does not touch
+product truth; use `design -> build` for a standard or releasable product increment; use `vibe`
+when a human explicitly wants unverified speed; and enter separate safety flows for release and
+incidents.
 
-Its core promise is: **make the human approve the black-box oracle before implementation, then prove
-that exact journey with runner-generated evidence bound to the current revision.** The human owns product judgment, design
-taste, and architecture direction. The agent implements and verifies inside those boundaries.
+Its core promise is: **make the human approve product truth (the PTA) before implementation, then
+let the project Harness — not the agent — adjudicate the result with independent evidence.** The
+human owns product judgment, design taste, and irreversible technical decisions. The agent
+implements and is judged inside those boundaries.
 
-> Version 0.6 separates testcase from PRD and makes demo, PRD, and testcase mandatory before build.
-> This closes the false-oracle gap: Playwright drives an approved case; it does not invent the case.
+> Version 0.7 rebuilds the suite for Fable-5-class models. The demo → prd → testcase → architect
+> chain is retired; product truth collapses into one PTA document; verification moves from
+> agent-graded checklists to harness adjudication.
+
+## The 0.7 rebuild: what changed and why
+
+This release is a subtraction pass. Its essence, in six ideas:
+
+1. **Process weight was a compensation for weak models.** Step-by-step ceremony, self-graded
+   checklists, and approval-json chains existed to keep an unreliable implementer honest.
+   Frontier models need the opposite: crisp boundaries, locked oracles, and an independent judge —
+   then freedom of route. Everything that only supervised the *how* was deleted.
+2. **SPEC is a side effect; only decisions are truth.** PRD, technical design, and E2E testcases
+   were three renderings of one batch of decisions. They collapse into a single PTA
+   (Product Truth Assets): **PD** product bottom lines, **TD** hard-to-reverse technical
+   decisions, **AC** black-box acceptance criteria. Admission rule: *decisions only, never
+   implementation* — anything the model can safely decide or reverse on its own stays out.
+3. **AC doubles as the executable Oracle.** There is no separate testcase artifact to draft,
+   compile, review, and approve. Each AC expands mechanically into a machine-readable case;
+   locking the cases by commit before implementation separates referee from player.
+4. **Trust is inverted: adjudication replaces self-report.** Completion claims no longer come
+   from receipts the agent generates about itself. The project Harness drives the real entry and
+   returns PASS / FAIL / INCONCLUSIVE with evidence; the ratchet guarantees a green case never
+   silently turns red. INCONCLUSIVE is a harness gap, never an excuse to invent a new oracle.
+5. **Process and Harness are decoupled but cooperating.** The Harness has its own authority
+   document ([docs/harness.zh-CN.md](docs/harness.zh-CN.md)); `harness-init` and
+   `harness-retrofit` are the process's hands reaching into it. Architecture inception —
+   panorama diagram, domain maps, founding ADRs — lives there, with the architect deciding.
+6. **Construction is pull-driven.** No capability, document, or mock layer is built ahead of a
+   real need. Whatever the next feature does not use, this round does not build.
 
 ## Who it is for
 
@@ -27,7 +56,8 @@ It is a strong fit when you want to:
 
 - make an agent prove a user result from the real entry instead of merely writing code;
 - keep daily changes light, product increments evidence-backed, and production fail-closed;
-- measure command, review, provider, rework, and incident cost so the process can shrink;
+- concentrate human time at judgment points (PTA approval, ADRs, acceptance) instead of process
+  supervision;
 - adopt around existing tools and runbooks rather than replacing the engineering system.
 
 It is not designed to outsource all product judgment to an agent, or for work dominated by
@@ -36,22 +66,67 @@ product and architecture direction, more gates create ceremony rather than lever
 
 ## System architecture
 
-![OPC-Develop system architecture](assets/opc-develop-skills.png)
+```mermaid
+flowchart TB
+    REQ(["Request"]) --> ROUTE{"Does it create or change<br/>product truth (PTA)?"}
+    ROUTE -->|"throwaway,<br/>human-adjudicated"| VIBE
+    ROUTE -->|"no — one<br/>localized result"| LITE
+    ROUTE -->|"yes — standard<br/>increment"| BS
 
-Read the map from top to bottom:
+    subgraph DAILY["⚡ Daily routes"]
+        VIBE["<b>vibe</b><br/>fastest code, zero verification"]
+        LITE["<b>lite</b><br/>TDD on the change itself"]
+    end
 
-1. The **Harness layer** makes `run`, `reset`, `observe`, and `drive` executable for the agent.
-2. The **delivery layer** routes by scope to `vibe`, `lite`, or the standard chain
-   `demo -> prd -> testcase -> build`. `brainstorm` is optional before demo; `architect` is
-   conditional after testcase. `ship` and `deploy` own test and production release.
-3. The **feedback layer** classifies human feedback as `tune`, `revise`, or `park`, so work returns
-   to the earliest broken layer instead of accumulating patches at the code layer.
-4. The **measurement layer** combines feature ledgers, acceptance receipts, the error ledger, and
-   `retro`. High-value failures become executable benchmark cases; proven rules move down into
-   scripts, hooks, or structured artifacts.
+    subgraph PTA["📐 Product truth — pta.md"]
+        BS["<b>brainstorm</b><br/>brief.md"] --> DEMO["<b>demo</b> <i>(optional)</i><br/>experience decisions"]
+        DEMO --> DESIGN["<b>design</b><br/>PD + TD + AC<br/>AC = executable Oracle"]
+    end
 
-`oncall` handles test/production incidents. `harness` closes run/reset/observe/drive gaps exposed
-by delivery work.
+    DESIGN ==>|"🧑‍⚖️ human approves PTA"| BUILD
+
+    subgraph DELIVER["🔨 Adjudicated delivery"]
+        BUILD["<b>build</b><br/>lock cases → RED → implement → GREEN<br/>→ real-environment smoke"] --> SHIP["<b>ship</b><br/>test release"]
+        SHIP --> DEPLOY["<b>deploy</b><br/>production"]
+    end
+
+    subgraph HARNESS["🛠 Harness — authority: docs/harness.zh-CN.md"]
+        VERBS["run · observe · drive"] --- VERDICT["PASS / FAIL / INCONCLUSIVE<br/>evidence + ratchet"]
+    end
+
+    BUILD <-->|"drive → verdicts"| HARNESS
+    HINIT["<b>harness-init</b><br/>new project"] --> HARNESS
+    HRETRO["<b>harness-retrofit</b><br/>existing project"] --> HARNESS
+
+    subgraph LOOP["🔁 Feedback & improvement"]
+        ONCALL["<b>oncall</b> — incidents"]
+        RETRO["<b>retro</b> — loop compression"]
+    end
+    DEPLOY -.-> ONCALL
+    ONCALL -.->|"tune / revise"| DESIGN
+    RETRO -.->|"proven rules sink into<br/>scripts · hooks · ADR"| HARNESS
+
+    classDef daily fill:#fdf6e3,stroke:#b58900,color:#333
+    classDef truth fill:#e8f4fd,stroke:#268bd2,color:#333
+    classDef deliver fill:#e9f7ef,stroke:#2aa198,color:#333
+    classDef harness fill:#f4ecf7,stroke:#6c3483,color:#333
+    classDef loop fill:#fdedec,stroke:#c0392b,color:#333
+    class VIBE,LITE daily
+    class BS,DEMO,DESIGN truth
+    class BUILD,SHIP,DEPLOY deliver
+    class VERBS,VERDICT,HINIT,HRETRO harness
+    class ONCALL,RETRO loop
+```
+
+Read the map in four layers:
+
+1. The **routing layer** asks one question — does this change product truth? — and never routes by
+   predicted duration.
+2. The **truth layer** produces exactly one durable artifact per increment: an approved `pta.md`.
+3. The **delivery layer** implements against locked cases and is adjudicated by the **Harness
+   layer**, which owns `run` / `observe` / `drive` and returns verdicts with evidence.
+4. The **feedback layer** routes anomalies (`oncall`) and loop improvements (`retro`) back to the
+   earliest broken layer; proven rules sink downward into scripts, hooks, and ADRs.
 
 ## Five-minute quick start
 
@@ -84,52 +159,47 @@ triggering also works, but explicit invocation is easier for onboarding and high
 $opc-develop:lite Fix duplicate submission on the settings save button. Change only this issue.
 
 # Codex: a standard product increment
-$opc-develop:demo Prototype “a user can export this month's invoice” in the real app shell.
-$opc-develop:prd Turn the approved demo into durable AC product truth.
-$opc-develop:testcase Define and obtain my approval for the executable black-box cases.
-$opc-develop:build Implement the approved Core-Case with runner-derived evidence.
+$opc-develop:design Grill me and produce pta.md (PD/TD/AC) for "a user can export this month's invoice".
+$opc-develop:build Implement the approved PTA; adjudicate every case through harness drive.
 
-# Codex: assess the project workbench
-$opc-develop:harness Assess run/reset/observe/drive. Return evidence and the top three gaps only.
+# Codex: bootstrap or retrofit the workbench
+$opc-develop:harness-init Guide me through initializing the Harness for this new project.
+$opc-develop:harness-retrofit Inventory this repo, show me the gap table, then migrate step by step.
 ```
 
 In Claude Code, replace `$` with `/`:
 
 ```text
 /opc-develop:lite Fix duplicate submission on the settings save button. Change only this issue.
-/opc-develop:testcase Compile and approve the cases after demo and PRD.
-/opc-develop:build Implement the approved Core-Case with runner-derived evidence.
+/opc-develop:design Produce and lock the PTA for the export flow.
+/opc-develop:build Implement the approved PTA with harness-adjudicated evidence.
 ```
 
 ### 3. Route by semantics and risk
 
-Ask two questions first: **does this create or change product E2E semantics, and must it enter a
+Ask two questions first: **does this create or change product truth, and must it enter a
 test/production release?** Never route or block work using a predicted duration.
 
 | Route | Use when | What it does | What it does not do |
 | --- | --- | --- | --- |
-| `vibe` | You explicitly want the fastest code and will accept it yourself | Edits immediately and hands over the diff | No tests, runtime check, or evidence; cannot claim releasable |
-| `lite` | One localized result with no new or changed E2E semantics | Proportional targeted checks plus lightweight real-entry evidence | Pure copy/static style/docs do not run E2E by default |
-| `build` | New/changed behavior or release-bound work after product-definition approval | Approved Core-Case, runnable slices, reviews, fresh receipt | Cannot invent or change E2E semantics during implementation |
+| `vibe` | You explicitly want the fastest code and will accept it yourself | Edits immediately and hands over the diff with a no-verification disclosure | No tests, runtime check, or evidence; cannot claim releasable |
+| `lite` | One localized result; PD/TD/AC semantics untouched | TDD against the change itself, ratchet regression, honest evidence | If scope looks like it touches PTA, it reminds once — and never silently rewrites a locked Oracle |
+| `design` → `build` | New/changed product behavior or release-bound work | One PTA pass (PD/TD/AC), human approval, then harness-adjudicated implementation | `build` cannot invent or change the Oracle during implementation |
 | decompose | Several independently useful outcomes | Separates journeys for clarity and independent proof | Never uses an effort estimate as a stop gate |
 
-![OPC-Develop semantics routing](assets/opc-develop-routing.png)
-
-This is a **routing and single-increment diagram**, not the system architecture map.
-
-### 4. Product definition is mandatory; architecture remains conditional
+### 4. Product truth is mandatory; architecture lives inside `design`
 
 | Unresolved question | Use first | Skip it when |
 | --- | --- | --- |
-| Product value, user, non-goals, or core behavior is unclear | `brainstorm` | You can already state the user action, visible result, and non-goals |
-| What the experience should be | `demo` | Never for build; non-UI work uses a runnable skeleton |
-| What durable behavior must remain true | `prd` | Never for build; PRD follows the approved demo |
-| What exact external experiment proves it | `testcase` | Never for build or E2E; it requires approved demo + PRD |
-| A public API/event/schema boundary or one-way technical choice changes | `architect` | The change follows existing architecture and is local/reversible |
+| Product value, user, non-goals, or core behavior is unclear | `brainstorm` | You can already state the user action, visible result, and non-goals in `brief.md` |
+| What the experience should be | `demo` | Non-UI work uses a runnable skeleton; experience is already decided |
+| What must stay true, which technical choices are hard to reverse, and what exact black-box experiment proves it | `design` | Never for a standard increment — PD, TD, and AC are settled in this one pass |
 
-The standard path is `demo -> prd -> testcase -> build`. `brainstorm` is optional before demo;
-`architect` is inserted after testcase only for a changed public/one-way boundary. `lite` stays
-small only while it reuses existing semantics and makes no new E2E/release claim.
+The standard path is `design -> build`, with `brainstorm` and `demo` in front when intent or
+experience is unsettled. TD's first entry is always the architecture position diagram cut from the
+project panorama; a new node or edge there forces an ADR and a panorama update — that is the
+architecture gate, no separate `architect` phase required. `lite` stays small only while it reuses
+existing semantics.
 
 ## Which skill does what
 
@@ -137,119 +207,116 @@ small only while it reuses existing semantics and makes no new E2E/release claim
 
 | Skill | Typical use | Primary result | Next |
 | --- | --- | --- | --- |
-| `vibe` | Disposable experiment; explicitly human-accepted unverified code | Code diff plus a no-tests disclosure | Human review; rerun through `build` before release |
-| `lite` | Bug, copy/layout, config, minor behavior | Scoped change, narrow regression, real-entry before/after evidence | Done; route widening scope to `build` |
-| `build` | Approved new/changed product behavior or release-bound fix | `feature-plan.md`, case-driven implementation, `acceptance.json`, reviews | `ship` after local completion |
+| `vibe` | Disposable experiment; explicitly human-accepted unverified code | Code diff plus a no-verification disclosure | Human review; rerun through `build` before release |
+| `lite` | Bug, copy/layout, config, minor behavior with PTA untouched | RED-first fix, ratchet regression, before/after evidence | Done; route PTA-touching scope to `design` |
+| `build` | Approved PTA ready for implementation | Locked cases, RED → GREEN drive verdicts, one reality review, real-environment smoke | `ship` after all cases PASS |
 
-### Product definition and conditional architecture
+### Product truth
 
 | Skill | Typical use | Primary result | Next |
 | --- | --- | --- | --- |
-| `brainstorm` | Raw idea needs one-question-at-a-time grilling | `requirement.md`, risk profile, non-goals, feature branch | `demo` |
-| `demo` | Make the experience concrete before product/test semantics | Prototype in the real app shell, `prototype.md`, `mock-inventory.md` | `prd` |
-| `prd` | Turn the approved demo into durable product truth | `prd.md`, numbered AC/PD records, demo alignment | `testcase` |
-| `testcase` | Make the black-box oracle human-reviewable and executable | `testcases.md`, compiled `testcases.json`, review, product approval | `architect` when needed; otherwise `build` |
-| `architect` | Public boundary, irreversible technical choice, or architecture handoff | Intake, risk spike, `technical.md`, numbered TD records, sign-off report | `build` |
+| `brainstorm` | Raw idea needs one-question-at-a-time grilling | `brief.md`, risk profile, non-goals | `demo` or `design` |
+| `demo` | Make the experience concrete before locking truth | Prototype in the real app shell, experience decision list | `design` |
+| `design` | Turn brief + demo decisions into durable truth | Approved `pta.md` (PD/TD/AC, architecture position diagram, Core-Case), ADRs when architecture moves | `build` |
+
+### Workbench
+
+| Skill | Typical use | Primary result | Next |
+| --- | --- | --- | --- |
+| `harness-init` | New project needs a runnable, observable, driveable workbench | Guided rounds of architect-confirmed decisions; environment proven by lit verification cases; founding ADRs and panorama | `brainstorm` / `design` |
+| `harness-retrofit` | Existing project; agents rediscover commands, fake parity, no drive | Inventory → gap table → pull-driven migration, verification cases lit step by step | Return to delivery |
 
 ### Release, incidents, and loop improvement
 
 | Skill | Typical use | Primary result | Next |
 | --- | --- | --- | --- |
-| `ship` | `build` has a fresh real-service core journey | Test deploy, same-journey regression, human acceptance, trunk merge | Human chooses whether to `deploy` |
-| `deploy` | Human-accepted increments are merged and ready for production | Fail-closed preflight, backup/rollback, prod-safe regression, watch, MD/HTML handoff | Close or route anomalies to `oncall` |
-| `oncall` | Something is wrong on test or production | Severity triage, evidence chain, diagnostic report, rollback/hotfix/mitigation, error-ledger entry | Re-enter through `lite`, `build`, or a decision skill for the long-term fix |
-| `harness` | The agent cannot reliably start, reset, trace, or drive the system | Four-verb scores, executable scripts/seeds/log conventions, thin `AGENTS.md` index | Return to delivery after the highest-leverage gap closes |
+| `ship` | `build` finished with fresh green verdicts | Test deploy, Core-Case smoke projection, human acceptance, trunk merge | Human chooses whether to `deploy` |
+| `deploy` | Human-accepted increments are merged and ready for production | Fail-closed preflight, backup/rollback, prod-safe smoke, watch | Close or route anomalies to `oncall` |
+| `oncall` | Something is wrong on test or production | Severity triage, evidence chain, rollback/hotfix/mitigation, error-ledger entry | Re-enter through `lite`, `design`, or `build` for the long-term fix |
 | `retro` | Several increments/incidents exist and the loop needs improvement | Cost/recurrence report, benchmark evidence, rule/pruning proposals | Human approves changes at the lowest useful layer |
 
 ## Recommended combinations by scenario
 
 | Request | Recommended route | Why |
 | --- | --- | --- |
-| Change one label or fix one local bug | `lite` | One result does not justify feature artifacts |
-| A hotfix must ship today | `build` → `ship` → `deploy` | Release requires revision-bound evidence regardless of duration |
-| Add a clear export flow | `demo` → `prd` → `testcase` → `build` | Even clear intent needs an inspectable oracle before E2E |
-| “Build an AI study coach,” but user/value is unclear | `brainstorm` → `demo` → `prd` → `testcase` → `build` | Resolve intent, experience, truth, and proof in order |
-| A new checkout interaction is not decided | `demo` → `prd` → `testcase` → `build` | Approve the experience before encoding its oracle |
-| New permission model plus a public API | `demo` → `prd` → `testcase` → `architect` → `build` | Product oracle precedes the conditional public-boundary design |
-| One request contains admin, mobile, and operations journeys | split → first `build` | Independently useful journeys should not share one increment |
+| Change one label or fix one local bug | `lite` | One result does not justify truth artifacts |
+| A hotfix must ship today | `lite` or `build` → `ship` → `deploy` | Release requires harness-adjudicated evidence regardless of duration |
+| Add a clear export flow | `design` → `build` | Even clear intent needs an approved Oracle before implementation |
+| "Build an AI study coach," but user/value is unclear | `brainstorm` → `demo` → `design` → `build` | Resolve intent, experience, and truth in order |
+| A new checkout interaction is not decided | `demo` → `design` → `build` | Approve the experience before locking its Oracle |
+| New permission model plus a public API | `design` (TD + ADR) → `build` | Hard-to-reverse boundaries are TD entries with ADRs, not a separate phase |
+| One request contains admin, mobile, and operations journeys | split → first `design` → `build` | Independently useful journeys should not share one increment |
 | Production error rate spikes | `oncall` | Diagnose and stabilize with evidence before guessing a fix |
-| Every agent rediscovers start commands and test data | `harness` | The problem is the engineering workbench, not a feature |
+| Every agent rediscovers start commands and test data | `harness-retrofit` | The problem is the engineering workbench, not a feature |
+| Brand-new empty repository | `harness-init` → `brainstorm` → `design` → `build` | Make the system runnable and adjudicable before the first feature |
 
 ## Best practices
 
 1. **Start from the user action.** State who enters where, performs what action, and sees what
-   result. Avoid an internal task name such as “finish the export module.”
-2. **Route by semantics and risk, never predicted duration.** Localized changes that reuse an
-   existing oracle may use `lite`; new behavior and releasable increments use demo/PRD/testcase
-   before build. Pure copy/static appearance/docs do not run E2E by default.
-3. **Protect one core journey per increment.** Decompose independently useful journeys when that
-   improves reviewability. Slice 1 crosses the production router/service/page assembly; later
-   slices keep the previous path runnable.
-4. **Separate four truths.** `demo` owns experienced behavior, `prd` durable product truth,
-   `testcase` the approved black-box experiment, and `architect` public/one-way technical boundaries.
-5. **Verify from cheap to expensive.** Logic/build → local production service + scratch state → UI
-   browser journey → provider replay → one real canary → human acceptance.
-6. **Make the project testcase runner perform the accepted UI action.** It pre-arms success and
-   failure observers, uses Playwright primarily, and emits evidence; raw Playwright is not a gate.
-7. **Never use a real provider as the debug loop.** Stabilize local and replay paths first; one
-   revision normally gets one real provider attempt.
-8. **Route feedback to the earliest broken layer.** `tune` changes execution under the same intent;
-   `revise` corrects upstream truth and stales downstream evidence; `park` closes the line cleanly.
-9. **Claim completion from the receipt, not test count.** Changing code, tests, the result card,
-   seed, or tracked config makes old command conclusions stale.
+   result. Avoid an internal task name such as "finish the export module."
+2. **Route by semantics and risk, never predicted duration.** Localized changes that leave PTA
+   untouched may use `lite`; new behavior and releasable increments settle truth in `design`
+   before `build`.
+3. **Protect one Core-Case per increment.** Every PTA names exactly one F0 positive main journey
+   and its test/production smoke projection; decompose independently useful journeys.
+4. **One truth, three dimensions.** `pta.md` holds decisions only — PD bottom lines, TD
+   irreversible choices, AC black-box criteria. Anything the model can safely reverse stays out.
+5. **Separate referee from player.** Expand AC into machine-readable cases and lock them by
+   commit *before* implementation; changing the Oracle voids every green light and requires a
+   stated reason.
+6. **RED before implement.** All cases must fail meaningfully first. INCONCLUSIVE means the
+   harness cannot reach or observe — fix the harness; never invent a bedside oracle.
+7. **Never use a real provider as the debug loop.** Stabilize local and replay paths first; the
+   one real call lands inside the real-environment smoke, not inside iteration.
+8. **Route feedback to the earliest broken layer.** `tune` changes execution under the same
+   truth; `revise` corrects the PTA and voids downstream verdicts; `park` closes the line cleanly.
+9. **Claim completion from verdicts, not test counts.** Green never migrates across
+   environments: local all-PASS still requires the Core-Case smoke projection in the real
+   environment.
 10. **Run `retro` after evidence exists.** A practical first cadence is after 3-5 standard
-    increments or one high-value incident. Missing capture must produce gaps, not invented metrics.
+    increments or one high-value incident; proven rules sink into scripts, hooks, and ADRs.
 
 ## Solo builder and PM handoff
 
-A **solo builder** still approves product semantics explicitly. For a standard increment, run the
-demo/PRD/testcase chain yourself, inspect the rendered cases, then build. `lite` avoids the chain
-only when it reuses existing semantics and makes no E2E/release claim.
+A **solo builder** still approves product truth explicitly. For a standard increment, answer the
+`design` grilling honestly, read the rendered `pta.md`, approve it, then let `build` run. `lite`
+avoids the chain only while it reuses existing semantics.
 
 A **PM + architect/builder pair** can hand off at the judgment boundary:
 
-1. The product owner approves the demo, records durable PD/AC truth in PRD, then reviews each
-   testcase's object, action, success/failure oracle, and data provenance.
-2. `testcase` compiles `testcases.json`, gets independent review and explicit product approval,
-   then commits/pushes the branch.
-3. The builder pulls and verifies the testcase chain. Use `architect` only when a public or one-way
-   technical decision changes; otherwise continue to `build`.
-4. The builder never silently answers missing product judgment. Questions return as `revise` to
-   the earliest owning layer.
+1. The product owner approves demo decisions and reviews each PD and AC — object, action,
+   success/failure oracle, data provenance.
+2. The architect owns TD: the architecture position diagram, ADRs, and the panorama update when a
+   boundary moves.
+3. The builder expands AC into locked cases and implements; the route (slices, order,
+   parallelism) is entirely the builder's and the model's.
+4. Nobody silently answers missing product judgment. Questions return as `revise` to the earliest
+   owning layer.
 5. `ship` test acceptance is the shared touchpoint where both roles see the real result again.
 
 ## New-project onboarding
 
 A new project does not need a complete documentation system first. The first goal is to make the
-system runnable, resettable, observable, and driveable by an agent.
+system runnable, observable, and driveable by an agent — and to make founding architecture
+decisions with the architect, not for them.
 
-### Day 0: establish the minimum Harness
-
-Start a new project session with:
+### Day 0: initialize the Harness
 
 ```text
-$opc-develop:harness Initialize the minimum Harness for this project. Close run and reset first,
-add one named seed, then prove one observe chain and one drive journey. Keep AGENTS.md a thin index.
+$opc-develop:harness-init Guide me through initializing the Harness for this project.
 ```
 
-Minimum useful state:
-
-- one command starts the target stack and checks health;
-- one idempotent reset command and at least one named seed;
-- one user action can be reconstructed through correlation-ID logs and read-only state checks;
-- at least one Tier-1 journey starts from the real external entry;
-- credentials, production data, and `.env` never enter the repository.
-
-A bare repository can begin with `run` and `reset`. opc-develop does not choose the framework or
-product direction for you. When necessary, use `brainstorm` to define the first user value, then
-run demo/PRD/testcase before the first build.
+`harness-init` runs guided question rounds (stack, operations surface, isomorphic infrastructure,
+doc minimum set + founding decisions, adjudication surface), records hard-to-reverse choices as
+founding ADRs, and refuses to declare completion until the environment verification cases are all
+lit: full-stack start with health checks, one trace-id chain observed end to end, migrations from
+empty, one seed case through clone → verdict → destroy, destructive-protection hard checks.
 
 ### First feature: deliver one journey
 
-- Clear intent: start at `demo`, then `prd -> testcase -> build`.
-- Unclear product intent: run `brainstorm`, then the standard chain.
-- Non-UI feature: demo supplies a runnable production-shaped skeleton before PRD.
-- Add architecture docs only when a public/one-way boundary requires them.
+- Clear intent: `design`, then `build`.
+- Unclear product intent: `brainstorm` (and `demo` when the experience is unsettled) first.
+- Non-UI feature: demo supplies a runnable production-shaped skeleton before design.
 
 ### First release
 
@@ -260,47 +327,39 @@ the flow instead of inviting improvised release mechanics.
 ### Steady-state cadence
 
 - daily small change: `lite`;
-- product increment: `build`;
-- test acceptance: `ship`;
-- production: `deploy`;
+- product increment: `design` → `build`;
+- test acceptance: `ship`; production: `deploy`;
 - after 3-5 increments: `retro`;
-- whenever delivery exposes run/reset/observe/drive gaps: `harness`.
+- whenever delivery exposes run/observe/drive gaps: `harness-retrofit`.
 
 ## Existing-project adoption
 
 Adopt gradually. **Do not big-bang migrate** existing documentation, CI, tests, or release systems.
 
-### Step 1: assess before rebuilding
+### Step 1: inventory before rebuilding
 
 ```text
-$opc-develop:harness Assess the existing run/reset/observe/drive capabilities by executing the
-current commands. Do not modify the project yet. Return evidence, label caps, and the top 3 gaps.
+$opc-develop:harness-retrofit Inventory this repo first. Show me the gap table before changing anything.
 ```
 
-Keep the existing Makefile, npm scripts, Docker Compose, test framework, CI, and runbooks. Harness
-should organize them into stable entries and add a script only where capability is missing.
+`harness-retrofit` inspects the code before asking anything a repo can answer, then produces a
+gap table (current state → harness requirement → gap → risk) and confirms migration decisions
+with the architect. Keep the existing Makefile, npm scripts, Docker Compose, test framework, CI,
+and runbooks; the retrofit wraps stable entries around them and only adds what is missing —
+ordered by feedback-loop value: operations shell first, structured logs and trace-id next, then
+killing fake parity (SQLite standing in for MySQL, in-memory mocks for object storage), then
+protected resources and the first real-entry drive case, then the doc catch-up with as-built ADRs.
 
 ### Step 2: start with real daily `lite` work
 
 Choose a real small change from the current week. Confirm that opc-develop preserves scope, runs a
-targeted regression, checks the real entry, and labels evidence honestly. No `docs/features/`
-directory is required yet.
+targeted ratchet regression, checks the real entry, and labels evidence honestly.
 
-### Step 3: pilot one low-risk `build`
+### Step 3: pilot one low-risk `design -> build`
 
-Choose one clear, reversible core journey. Pilot the full product-definition chain and create:
-
-```text
-docs/features/<slug>/feature-plan.md
-docs/features/<slug>/testcases.md
-docs/features/<slug>/testcases.json
-docs/features/<slug>/testcase-approval.json
-docs/features/<slug>/acceptance.json
-docs/features/<slug>/ledger.jsonl
-```
-
-Judge whether human testcase review, the first real vertical slice, and receipt freshness reduce false
-green. Do not backfill every historical feature; apply the chain to new or semantically changed E2E.
+Choose one clear, reversible core journey. Pilot the full chain and judge whether PTA review, the
+locked Oracle, and harness verdicts reduce false green for you. Do not backfill every historical
+feature; apply the chain to new or semantically changed behavior.
 
 ### Step 4: adopt release separately
 
@@ -310,12 +369,10 @@ Do not enable `deploy` without an explicit runbook and rollback capability.
 
 ### Compatibility rules
 
-- Existing requirement/demo/PRD/technical artifacts remain source material, but a new build still
-  needs fresh demo, PRD, testcase compilation/review, and product approval.
-- Existing E2E tests may sit behind the project testcase runner once mapped to approved cases; raw
-  tests are not automatically product truth.
-- Historical v2 ledgers remain readable; new standard increments use v3 ledgers and generated
-  `acceptance.json` receipts.
+- Existing requirement/PRD/technical artifacts remain source material; a new increment still
+  settles truth in a fresh `pta.md`.
+- Existing E2E tests may sit behind the project harness once mapped to approved cases; raw tests
+  are not automatically product truth.
 - Do not backfill history, replace existing tests, or install project hooks in one batch. CI/hook
   enforcement is an explicit human decision.
 
@@ -323,69 +380,61 @@ Do not enable `deploy` without an explicit runbook and rollback capability.
 
 ```mermaid
 flowchart LR
-  A["Approved demo + PRD + testcase"] --> B["Semantic scope + one-page result card"]
-  B --> C["Approved Core-Case fails meaningfully"]
-  C --> D["Real vertical slice"]
-  D --> E["Reality review"]
-  E --> F["Runnable slices"]
-  F --> G["Cheap-to-expensive verification"]
-  G --> H["Final review"]
-  H --> I["Fresh acceptance receipt"]
+  A["Approved<br/>pta.md"] --> B["Expand AC →<br/>cases/*.yaml<br/><i>Oracle locked by commit</i>"]
+  B --> C["RED<br/>harness drive:<br/>all cases FAIL"]
+  C --> D["Implement<br/><i>route owned by the model</i>"]
+  D --> E["Reality review<br/><i>once, at first<br/>Core-Case green</i>"]
+  E --> F["GREEN<br/>all PASS,<br/>ratchet enforced"]
+  F --> G["Real-environment smoke<br/>Core-Case projection"]
+
+  classDef red fill:#fdedec,stroke:#c0392b,color:#333
+  classDef green fill:#e9f7ef,stroke:#229954,color:#333
+  classDef neutral fill:#f8f9f9,stroke:#7f8c8d,color:#333
+  class C red
+  class F,G green
+  class A,B,D,E neutral
 ```
 
-`build` consumes the approved `testcases.json` and creates `feature-plan.md`. It records the chosen
-Core-Case, user action, real entry, data provenance, safety invariants, runnable slices, and project
-case-runner commands. `opc_increment.py` generates `acceptance.json`, derives authenticity from
-runner evidence, and binds conclusions to the current content tree.
+The contract is the PTA, the judge is the Harness, the route belongs to the model. `build` expands
+approved AC into machine-readable cases and locks them, proves the RED baseline, implements
+through production assembly (white-box tests ride with the code by TD risk), takes exactly one
+cold-context reality review at first Core-Case green, then drives everything to PASS under the
+ratchet. Completion is all-PASS plus the four adjudication artifacts, followed by the mandatory
+Core-Case smoke projection in the real environment — green never migrates across environments.
 
-There are four completion levels:
-
-1. `code-build`: the current revision passes the build/logic layer;
-2. `automated-core-journey`: the automated core journey passes;
-3. `real-service-core-journey`: the path crosses local production assembly and the real entry;
-4. `human-accepted`: a human explicitly accepts this candidate revision.
-
-A standard increment has two code-review points: a reality review after the first vertical slice
-and a final integration review after the scoped work. Repair and re-review until approved or a
-genuine blocker requires user input, external state, or redesign; no fixed round quota applies.
-
-Common mechanical checks:
-
-```bash
-python3 shared/scripts/validate_artifacts.py docs/features/<slug>/feature-plan.md
-python3 shared/scripts/opc_testcase.py check \
-  --feature-dir docs/features/<slug> --require-approved
-python3 shared/scripts/opc_increment.py check \
-  --receipt docs/features/<slug>/acceptance.json \
-  --require real-service-core-journey
-python3 shared/scripts/opc_ledger.py audit --require-increment-complete \
-  --ledger docs/features/<slug>/ledger.jsonl
-```
+FAIL cases are the re-entry points. Human rejection is classified `tune` (implementation defect,
+back to implement) or `revise` (the PTA itself is wrong, back to `design`, downstream verdicts
+voided). There is no feature-plan, no acceptance document, no ledger — Git history and run records
+carry the process state.
 
 ## Release and incident boundaries
 
-- `ship` owns test only: precheck, manifest, deploy, same-journey regression, human acceptance,
-  and trunk merge.
-- `deploy` owns production: fix the release set, refresh receipts on the final trunk, backup and
-  rollback, deploy, prod-safe regression, and watch. Every destructive step needs human approval.
+- `ship` owns test only: precheck, manifest, deploy, Core-Case smoke projection, human
+  acceptance, and trunk merge.
+- `deploy` owns production: fix the release set, backup and rollback, deploy, prod-safe smoke,
+  and watch. Every destructive step needs human approval.
 - `oncall` triages and diagnoses first. The human chooses rollback, hotfix, or mitigation. A
-  release-bound hotfix still routes through `build` → `ship` → `deploy`; expedited does not
-  mean unverified.
+  release-bound hotfix still routes through adjudicated delivery; expedited does not mean
+  unverified.
 
 ## Repository and project artifacts
 
 Plugin repository:
 
-- `skills/`: the 13 user entry points;
-- `shared/core-contract.md`: semantic routing, evidence, completion, feedback, and safety invariants;
-- `shared/packs/`: on-demand implementation, risk, review, release, and Harness rules;
-- `shared/formats/`: result-card, receipt, PRD, technical, testcase, and ledger formats;
-- `shared/rubrics/`: independent review checklists;
-- `shared/scripts/`: stdlib Python validation, receipts, ledgers, benchmark, and report tooling;
-- `agents/` and `shared/prompts/`: cold-context reviewer and exceptional implementer roles.
+- `skills/`: the 12 user entry points;
+- `docs/harness.zh-CN.md`: the Harness authority document (operations surface, isomorphic
+  infrastructure, doc system, adjudication surface, exploration surface, inception decisions,
+  pull-driven construction);
+- `shared/core-contract.md`: semantic routing, evidence, completion, feedback, and safety
+  invariants;
+- `shared/packs/`, `shared/formats/`, `shared/rubrics/`, `shared/prompts/`, `agents/`:
+  on-demand rules, formats, review checklists, and reviewer roles;
+- `shared/scripts/`: benchmark/retro tooling and legacy v0.6 validators kept for compatibility —
+  none of them gate delivery anymore; adjudication belongs to the project Harness.
 
-Generated feature artifacts live in the target project's `docs/features/<slug>/` and `docs/opc/`,
-never in this plugin repository.
+Generated artifacts live in the target project — `brief.md`, `pta.md`, and `cases/` under the
+project's feature directory, ADRs and the panorama under its architecture docs — never in this
+plugin repository.
 
 ## Update
 
@@ -410,7 +459,6 @@ Start a new session after updating.
 ```bash
 python3 shared/scripts/test_opc_scripts.py
 python3 shared/scripts/opc_benchmark.py validate shared/fixtures/opc-benchmark/registry.json
-python3 shared/scripts/opc_benchmark.py run shared/fixtures/opc-benchmark/registry.json --repo .
 ```
 
 ## Safety and language
