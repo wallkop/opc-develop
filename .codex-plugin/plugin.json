@@ -1,15 +1,15 @@
 {
   "name": "opc-develop",
   "version": "0.7.0",
-  "description": "Fable-5-era product delivery: PTA product-truth assets, harness-adjudicated acceptance, and a slimmed brainstorm/design/build skill set",
+  "description": "Fable-5-era product delivery: product definition product-truth assets, harness-adjudicated acceptance, and a slimmed brainstorm/design/build skill set",
   "author": {
     "name": "wallkop"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "opc_develop",
-    "shortDescription": "PTA product truth and harness-adjudicated delivery for Fable-5-class models",
-    "longDescription": "opc-develop routes by whether a change touches product truth (PTA). Daily localized changes use lite (TDD on the change itself); throwaway code uses vibe (explicitly unverified); standard increments settle truth once in design — PD product bottom lines, TD hard-to-reverse technical decisions, and AC black-box criteria that double as the executable Oracle — then build expands AC into locked cases, proves a RED baseline, implements with a model-owned route, and lets the project Harness adjudicate PASS/FAIL/INCONCLUSIVE with evidence and a ratchet; completion ends with a real-environment Core-Case smoke projection. harness-init and harness-retrofit bootstrap or retrofit the workbench under docs/harness.zh-CN.md. Routing never uses predicted duration; ship/deploy/oncall/retro close the engineering loop.",
+    "shortDescription": "product definition product definition and harness-adjudicated delivery for Fable-5-class models",
+    "longDescription": "opc-develop routes by whether a change touches product definition (product definition). Daily localized changes use lite (TDD on the change itself); throwaway code uses vibe (explicitly unverified); standard increments settle truth once in design — PD product bottom lines, TD hard-to-reverse technical decisions, and AC black-box criteria that double as the executable Oracle — then build expands AC into locked cases, proves a RED baseline, implements with a model-owned route, and lets the project Harness adjudicate PASS/FAIL/INCONCLUSIVE with evidence and a ratchet; completion ends with a real-environment Core-Case smoke projection. harness-init and harness-retrofit bootstrap or retrofit the workbench under docs/harness.zh-CN.md. Routing never uses predicted duration; ship/deploy/oncall/retro close the engineering loop.",
     "developerName": "wallkop",
     "category": "Coding",
     "capabilities": [

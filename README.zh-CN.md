@@ -3,15 +3,15 @@
 [English](README.md)
 
 opc-develop 是一套面向 Claude Code 与 Codex 的产品开发 skill 套件。它不是把每次修改都塞进同一条
-重流水线，而是一组路由：日常不动产品真相的小改走 `lite`；标准 / 可发布的产品增量走
+重流水线，而是一组路由：日常不动产品定义的小改走 `lite`；标准 / 可发布的产品增量走
 `design -> build`；人类明确要"最快出码、自己验收"时走 `vibe`；发布与故障各有独立的安全流程。
 
-它的核心承诺是：**实现之前，让人类拍板产品真相（PTA）；实现之后，由项目 Harness——而不是
+它的核心承诺是：**实现之前，让人类拍板产品定义；实现之后，由项目 Harness——而不是
 Agent 自己——用独立证据裁决结果。** 人类持有产品判断、体验品味与难以回头的技术决策；
 Agent 在这些边界之内实现，并接受裁决。
 
-> 0.7 版为 Fable-5 级模型全面重构：退役 demo → prd → testcase → architect 长链，产品真相收敛为
-> 一份 PTA 文档，验证从 Agent 自评清单转为 Harness 裁决。
+> 0.7 版为 Fable-5 级模型全面重构：退役 demo → prd → testcase → architect 长链，产品决策收敛为
+> 一份产品定义文档，验证从 Agent 自评清单转为 Harness 裁决。
 
 ## 0.7 重构：改了什么，为什么
 
@@ -21,9 +21,9 @@ Agent 在这些边界之内实现，并接受裁决。
    一个不可靠的实现者。前沿模型需要的恰恰相反：清晰的边界、锁死的 Oracle、独立的裁判——
    然后把路线还给模型。凡是只用来监督"怎么做"的环节，一律删除。
 2. **SPEC 是副作用，只有决策才是真相。** PRD、技术设计、E2E 测试用例本是同一批决策的三种
-   渲染，现收敛为一份 PTA（Product Truth Assets）：**PD** 产品底线、**TD** 难以回头的技术
+   渲染，现收敛为一份产品定义（Product Definition）：**PD** 产品底线、**TD** 难以回头的技术
    决策、**AC** 黑盒验收标准。准入规则只有一条：*只写决策，不写实现*——模型能自行安全决定
-   或推翻的内容，不进 PTA。
+   或推翻的内容，不进产品定义。
 3. **AC 兼任可执行 Oracle。** 不再有独立的 testcase 工件去起草、编译、评审、审批；每条 AC
    机械展开为机器可读 Case，实现之前 commit 锁死——裁判与运动员分离。
 4. **信任反转：裁决取代自证。** 完成结论不再来自 Agent 给自己开的回执。项目 Harness 驱动
@@ -44,7 +44,7 @@ opc-develop 面向亲自持有产品与工程判断的人：OPC（一人公司�
 
 - 让 Agent 从真实入口证明用户结果，而不是只写完代码；
 - 日常小改保持轻量、产品增量有证据背书、生产发布 fail-closed；
-- 把人类时间集中在判断点上（PTA 定案、ADR、验收），而不是流程监工；
+- 把人类时间集中在判断点上（产品定义定案、ADR、验收），而不是流程监工；
 - 围绕既有工具与 runbook 渐进接入，而不是推翻现有工程体系。
 
 它不为"把产品判断全部外包给 Agent"设计，也不适合被跨团队路线图、组织审批与资源谈判主导的
@@ -54,7 +54,7 @@ opc-develop 面向亲自持有产品与工程判断的人：OPC（一人公司�
 
 ```mermaid
 flowchart TB
-    REQ(["需求"]) --> ROUTE{"是否创建或改变<br/>产品真相（PTA）？"}
+    REQ(["需求"]) --> ROUTE{"是否创建或改变<br/>产品定义？"}
     ROUTE -->|"一次性代码<br/>人类自主验收"| VIBE
     ROUTE -->|"否——单个<br/>局部结果"| LITE
     ROUTE -->|"是——标准<br/>产品增量"| BS
@@ -64,12 +64,12 @@ flowchart TB
         LITE["<b>lite</b><br/>对改动本身做 TDD"]
     end
 
-    subgraph PTA["📐 产品真相 — pta.md"]
+    subgraph DEF["📐 产品定义 — definition.md"]
         BS["<b>brainstorm</b><br/>brief.md"] --> DEMO["<b>demo</b> <i>(可选)</i><br/>体验决策"]
         DEMO --> DESIGN["<b>design</b><br/>PD + TD + AC<br/>AC = 可执行 Oracle"]
     end
 
-    DESIGN ==>|"🧑‍⚖️ 人类定案 PTA"| BUILD
+    DESIGN ==>|"🧑‍⚖️ 人类定案产品定义"| BUILD
 
     subgraph DELIVER["🔨 被裁决的交付"]
         BUILD["<b>build</b><br/>锁 Case → RED → 实现 → GREEN<br/>→ 真实环境冒烟"] --> SHIP["<b>ship</b><br/>测试发布"]
@@ -106,8 +106,8 @@ flowchart TB
 
 这张图分四层读：
 
-1. **路由层**只问一个问题——这次改动是否触碰产品真相？——永远不按预计工时路由。
-2. **真相层**每个增量只产出一份长期工件：定案的 `pta.md`。
+1. **路由层**只问一个问题——这次改动是否触碰产品定义？——永远不按预计工时路由。
+2. **真相层**每个增量只产出一份长期工件：定案的 `definition.md`。
 3. **交付层**面向锁死的 Case 实现，由 **Harness 层**裁决——它持有 `run` / `observe` /
    `drive` 三个动词，返回带证据的裁决。
 4. **反馈层**把异常（`oncall`）与回路改进（`retro`）路由回最早出错的层；验证过的规则
@@ -144,8 +144,8 @@ Codex 用 `$opc-develop:<skill>`；Claude Code 用 `/opc-develop:<skill>`。自�
 $opc-develop:lite 修复设置页保存按钮的重复提交问题，只改这一个问题。
 
 # Codex：标准产品增量
-$opc-develop:design 就"用户可以导出本月发票"拷问我，产出 pta.md（PD/TD/AC）。
-$opc-develop:build 实现已定案的 PTA，每条 Case 走 harness drive 裁决。
+$opc-develop:design 就"用户可以导出本月发票"拷问我，产出 definition.md（PD/TD/AC）。
+$opc-develop:build 实现已定案的产品定义，每条 Case 走 harness drive 裁决。
 
 # Codex：初始化或改造工作台
 $opc-develop:harness-init 引导我为这个新项目初始化 Harness。
@@ -156,23 +156,23 @@ Claude Code 中把 `$` 换成 `/` 即可：
 
 ```text
 /opc-develop:lite 修复设置页保存按钮的重复提交问题，只改这一个问题。
-/opc-develop:design 为导出流程产出并锁定 PTA。
-/opc-develop:build 实现已定案的 PTA，证据由 harness 裁决。
+/opc-develop:design 为导出流程产出并锁定产品定义。
+/opc-develop:build 实现已定案的产品定义，证据由 harness 裁决。
 ```
 
 ### 3. 按语义与风险路由
 
-先问两个问题：**这次改动是否创建或改变产品真相？是否要进入测试/生产发布？**
+先问两个问题：**这次改动是否创建或改变产品定义？是否要进入测试/生产发布？**
 永远不用预计工时来路由或拦截。
 
 | 路由 | 何时使用 | 它做什么 | 它不做什么 |
 | --- | --- | --- | --- |
 | `vibe` | 明确要最快出码、自己验收 | 立即修改并交出 diff，附"未做任何验证"声明 | 不做测试、运行检查或证据；不能宣称可发布 |
-| `lite` | 单个局部结果；PD/TD/AC 语义不动 | 对改动本身 TDD、棘轮回归、诚实证据 | 疑似触碰 PTA 时提醒一次——绝不悄悄改写已锁 Oracle |
-| `design` → `build` | 新增/改变产品行为，或发布相关 | 一次 PTA 定案（PD/TD/AC）+ 人类审批 + harness 裁决的实现 | `build` 实现期间不许发明或修改 Oracle |
+| `lite` | 单个局部结果；PD/TD/AC 语义不动 | 对改动本身 TDD、棘轮回归、诚实证据 | 疑似触碰产品定义时提醒一次——绝不悄悄改写已锁 Oracle |
+| `design` → `build` | 新增/改变产品行为，或发布相关 | 一次产品定义定案（PD/TD/AC）+ 人类审批 + harness 裁决的实现 | `build` 实现期间不许发明或修改 Oracle |
 | 拆分 | 多个互相独立有用的结果 | 拆开旅程，独立证明 | 永远不拿工时估算当停止闸门 |
 
-### 4. 产品真相必经；架构住在 `design` 里
+### 4. 产品定义必经；架构住在 `design` 里
 
 | 未解决的问题 | 先用 | 何时可跳过 |
 | --- | --- | --- |
@@ -191,16 +191,16 @@ Claude Code 中把 `$` 换成 `/` 即可：
 | Skill | 典型场景 | 主要产出 | 下一步 |
 | --- | --- | --- | --- |
 | `vibe` | 一次性实验；人类明确接受未验证代码 | 代码 diff + 未验证声明 | 人工审阅；发布前经 `build` 重走 |
-| `lite` | Bug、文案/布局、配置、不动 PTA 的小行为 | 先红后绿的修复、棘轮回归、before/after 证据 | 完成；触碰 PTA 的范围转 `design` |
-| `build` | PTA 已定案，进入实现 | 锁死的 Case、RED → GREEN 裁决、一次现实评审、真实环境冒烟 | 全 PASS 后 `ship` |
+| `lite` | Bug、文案/布局、配置、不动产品定义的小行为 | 先红后绿的修复、棘轮回归、before/after 证据 | 完成；触碰产品定义的范围转 `design` |
+| `build` | 产品定义已定案，进入实现 | 锁死的 Case、RED → GREEN 裁决、一次现实评审、真实环境冒烟 | 全 PASS 后 `ship` |
 
-### 产品真相
+### 产品定义
 
 | Skill | 典型场景 | 主要产出 | 下一步 |
 | --- | --- | --- | --- |
 | `brainstorm` | 原始想法需要一次一问的拷问 | `brief.md`、风险画像、非目标 | `demo` 或 `design` |
 | `demo` | 在锁定真相前把体验做具体 | 真实应用壳里的原型、体验决策清单 | `design` |
-| `design` | 把 brief + Demo 决策沉淀为长期真相 | 定案的 `pta.md`（PD/TD/AC、架构位置图、Core-Case），动架构时附 ADR | `build` |
+| `design` | 把 brief + Demo 决策沉淀为长期真相 | 定案的 `definition.md`（PD/TD/AC、架构位置图、Core-Case），动架构时附 ADR | `build` |
 
 ### 工作台
 
@@ -237,11 +237,11 @@ Claude Code 中把 `$` 换成 `/` 即可：
 
 1. **从用户动作出发。** 说清谁、从哪个入口、做什么动作、看到什么结果；避免"完成导出模块"
    这类内部任务名。
-2. **按语义与风险路由，永不按预计工时。** 不动 PTA 的局部改动可走 `lite`；新行为与可发布
+2. **按语义与风险路由，永不按预计工时。** 不动产品定义的局部改动可走 `lite`；新行为与可发布
    增量先在 `design` 定案真相再 `build`。
-3. **每个增量保护一条 Core-Case。** 每份 PTA 恰好指定一条 F0 正向主链路及其测试/生产冒烟
+3. **每个增量保护一条 Core-Case。** 每份产品定义恰好指定一条 F0 正向主链路及其测试/生产冒烟
    投影；互相独立有用的旅程要拆分。
-4. **一份真相，三个维度。** `pta.md` 只写决策——PD 底线、TD 难回头选择、AC 黑盒标准；
+4. **一份真相，三个维度。** `definition.md` 只写决策——PD 底线、TD 难回头选择、AC 黑盒标准；
    模型能安全推翻的内容不进。
 5. **裁判与运动员分离。** 实现*之前*把 AC 展开为机器可读 Case 并 commit 锁死；改 Oracle
    即作废全部绿灯，并必须说明理由。
@@ -249,7 +249,7 @@ Claude Code 中把 `$` 换成 `/` 即可：
    观测不到——去修 harness，严禁临场发明 Oracle。
 7. **永不把真实 Provider 当调试循环。** 先在本地与回放路径上稳定；那一次真实调用落在
    真实环境冒烟里，不落在迭代里。
-8. **反馈路由到最早出错的层。** `tune` 在同一真相下改执行；`revise` 修正 PTA 并作废下游
+8. **反馈路由到最早出错的层。** `tune` 在同一真相下改执行；`revise` 修正产品定义并作废下游
    裁决；`park` 干净收线。
 9. **用裁决宣称完成，不用测试数量。** 绿灯不跨环境迁移：本地全 PASS 仍需在真实环境跑
    Core-Case 冒烟投影。
@@ -258,8 +258,8 @@ Claude Code 中把 `$` 换成 `/` 即可：
 
 ## 独立 Builder 和 PM 搭档怎么用
 
-**独立 Builder** 依然要显式拍板产品真相：诚实回答 `design` 的拷问，读一遍渲染出的
-`pta.md`，定案，然后放手让 `build` 跑。只有复用既有语义时 `lite` 才可跳过这条链。
+**独立 Builder** 依然要显式拍板产品定义：诚实回答 `design` 的拷问，读一遍渲染出的
+`definition.md`，定案，然后放手让 `build` 跑。只有复用既有语义时 `lite` 才可跳过这条链。
 
 **PM + 架构师/工程师搭档**可以在判断边界处交接：
 
@@ -326,7 +326,7 @@ $opc-develop:harness-retrofit 先盘点这个仓库，改任何东西之前先�
 
 ### 第 3 步：试点一个低风险 `design -> build`
 
-选一条清晰、可逆的核心旅程试点完整链路，判断 PTA 评审、锁死的 Oracle 与 harness 裁决是否
+选一条清晰、可逆的核心旅程试点完整链路，判断产品定义评审、锁死的 Oracle 与 harness 裁决是否
 真的为你减少假绿。不要回填历史功能；只对新增或语义变化的行为使用这条链。
 
 ### 第 4 步：发布单独接入
@@ -336,15 +336,15 @@ $opc-develop:harness-retrofit 先盘点这个仓库，改任何东西之前先�
 
 ### 兼容规则
 
-- 既有需求/PRD/技术文档仍是素材；新增量依然要在新的 `pta.md` 里定案真相。
-- 既有 E2E 测试映射到已定案 Case 后可挂在项目 harness 之下；裸测试不自动成为产品真相。
+- 既有需求/PRD/技术文档仍是素材；新增量依然要在新的 `definition.md` 里定案真相。
+- 既有 E2E 测试映射到已定案 Case 后可挂在项目 harness 之下；裸测试不自动成为产品定义。
 - 不要一次性回填历史、替换既有测试或安装项目 hook；CI/hook 强制是人类显式决策。
 
 ## `build` 到底会做什么
 
 ```mermaid
 flowchart LR
-  A["定案的<br/>pta.md"] --> B["AC 展开 →<br/>cases/*.yaml<br/><i>commit 锁死 Oracle</i>"]
+  A["定案的<br/>definition.md"] --> B["AC 展开 →<br/>cases/*.yaml<br/><i>commit 锁死 Oracle</i>"]
   B --> C["RED<br/>harness drive：<br/>全部 FAIL"]
   C --> D["实现<br/><i>路线归模型</i>"]
   D --> E["现实评审<br/><i>仅一次，Core-Case<br/>首次转绿时</i>"]
@@ -359,12 +359,12 @@ flowchart LR
   class A,B,D,E neutral
 ```
 
-契约是 PTA，裁判是 Harness，路线归模型。`build` 把已定案的 AC 展开为机器可读 Case 并锁死，
+契约是产品定义，裁判是 Harness，路线归模型。`build` 把已定案的 AC 展开为机器可读 Case 并锁死，
 先证明 RED 基线成立，然后走生产装配实现（白盒测试按 TD 风险随代码写），在 Core-Case 首次
 转绿时做仅有的一次冷上下文现实评审，最后在棘轮保证下把全部 Case 推到 PASS。完成 = 全 PASS
 + 判定四件套留痕，再加必经的真实环境 Core-Case 冒烟投影——绿灯不跨环境迁移。
 
-FAIL 的 Case 就是重入点。人类验收拒绝按 `tune`（实现缺陷，回实现）或 `revise`（PTA 本身
+FAIL 的 Case 就是重入点。人类验收拒绝按 `tune`（实现缺陷，回实现）或 `revise`（产品定义本身
 错了，回 `design`，下游裁决作废）分类。没有 feature-plan、没有 acceptance 文档、没有
 ledger——过程状态由 Git 历史与 run 记录承载。
 
@@ -389,7 +389,7 @@ ledger——过程状态由 Git 历史与 run 记录承载。
 - `shared/scripts/`：benchmark/retro 工具与保留兼容的 v0.6 校验器——它们不再是交付闸门；
   裁决属于项目 Harness。
 
-生成的工件存放在目标项目里——`brief.md`、`pta.md` 与 `cases/` 在项目功能目录下，ADR 与
+生成的工件存放在目标项目里——`brief.md`、`definition.md` 与 `cases/` 在项目功能目录下，ADR 与
 全景图在其架构文档下——永远不进本插件仓库。
 
 ## 更新

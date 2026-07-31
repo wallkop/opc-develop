@@ -15,7 +15,7 @@ source of truth for hashes, gates, diffs, and automation; HTML is the required r
 | ship/deploy human handoff | feature report or same-basename HTML under `docs/opc/deploy/` |
 
 JSONL, manifests, status tokens, IDs, and machine-only evidence are not converted to HTML.
-Feature report markdown is a faithful human summary, not a second product truth: it cites the
+Feature report markdown is a faithful human summary, not a second product definition: it cites the
 artifact SHA and may simplify wording but may not add decisions or claims absent from the artifact.
 
 ## Plain-language contract

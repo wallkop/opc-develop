@@ -1,14 +1,14 @@
 ---
 name: design
-description: "PTA 设计环节：基于 brief.md 与 Demo 决策，深度整合 grill-me，从产品、技术、测试三个维度批量拷问（每轮 5-10 个问题），编写 pta.md（PD 产品底线 + TD 技术决策 + AC 验收标准，TD 首条为架构位置图）与可选的宏观架构图，交人类 review 定案后方可进入 build。取代原 prd / testcase / architect 三个环节。"
+description: "产品定义设计环节：基于 brief.md 与 Demo 决策，深度整合 grill-me，从产品、技术、测试三个维度批量拷问（每轮 5-10 个问题），编写 definition.md（PD 产品底线 + TD 技术决策 + AC 验收标准，TD 首条为架构位置图）与可选的宏观架构图，交人类 review 定案后方可进入 build。取代原 prd / testcase / architect 三个环节。"
 license: MIT
 ---
 
 # design
 
-PRD / 技术设计 / E2E TestCase 三件套本是同一批决策的三种视角——本环节一次定案为 PTA。
+PRD / 技术设计 / E2E TestCase 三件套本是同一批决策的三种视角——本环节一次定案为产品定义。
 格式与粒度以 `docs/harness.zh-CN.md` 第 7.5 节为权威，判据只有一条：**只写决策，不写实现**——
-模型可以自己安全决定或推翻的内容，不进 PTA。
+模型可以自己安全决定或推翻的内容，不进产品定义。
 
 ## 前置
 
@@ -33,16 +33,16 @@ PRD / 技术设计 / E2E TestCase 三件套本是同一批决策的三种视角�
 
 - 只用到现有节点与现有边 ⇒ 架构未动，画完即决策背景；
 - 出现新节点 / 新依赖边 / 跨领域调用 ⇒ 本需求动了架构，必须同步产出或修订
-  ADR 与全景标色快照（宏观架构图），PTA 内只留决策一句话加链接。
+  ADR 与全景标色快照（宏观架构图），产品定义内只留决策一句话加链接。
 
 项目尚无全景图时，先补立项决策（走 `harness-init` / `harness-retrofit`）；
-不允许架构语义只存在于某个 feature 的 pta.md 里。
+不允许架构语义只存在于某个 feature 的 definition.md 里。
 
 ## 收口
 
-`pta.md`（+ 必要的 ADR / 全景快照）交人类 review：确认 → 状态置为已定案，进入 build；
+`definition.md`（+ 必要的 ADR / 全景快照）交人类 review：确认 → 状态置为已定案，进入 build；
 否则按反馈修改再审。定案后每一条都不许模型自行推翻。
 
 ## 产出
 
-已定案的 `pta.md`（含架构位置图、Core-Case 与冒烟投影声明）。下一步：`build`。
+已定案的 `definition.md`（含架构位置图、Core-Case 与冒烟投影声明）。下一步：`build`。

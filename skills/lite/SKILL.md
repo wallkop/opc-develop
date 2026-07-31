@@ -1,6 +1,6 @@
 ---
 name: lite
-description: "不动 PTA 的局部改动：无需 brief / demo / pta 任何前置输入与设计，直接 TDD 式实现并由 harness 自动验收（先红后绿、证据留痕）。改动复杂度看起来超出判定时仅提醒确认、不强制拦截，用户确认后仍可走 lite。"
+description: "不动产品定义的局部改动：无需 brief / demo / definition 任何前置输入与设计，直接 TDD 式实现并由 harness 自动验收（先红后绿、证据留痕）。改动复杂度看起来超出判定时仅提醒确认、不强制拦截，用户确认后仍可走 lite。"
 license: MIT
 ---
 
@@ -10,7 +10,7 @@ license: MIT
 
 ## 判定与提醒
 
-不动 PTA（不改 PD / TD / AC 语义）的改动走 lite。若发现改动实际会改变产品语义、
+不动产品定义（不改 PD / TD / AC 语义）的改动走 lite。若发现改动实际会改变产品语义、
 领域边界或长期技术约束，**提醒一次**并给出理由，建议走 `design → build`；
 用户确认后仍可继续 lite，不强制拦截——但收尾时如实标注该风险。
 永远不按预计工时判定。
@@ -26,8 +26,8 @@ license: MIT
 
 ## 边界
 
-- 不产生任何 feature 工件（brief / pta / 计划 / 报告），不派子代理。
-- 不许悄悄修改已定案的 Oracle——需要改就是在动 PTA，回 `design`。
+- 不产生任何 feature 工件（brief / definition / 计划 / 报告），不派子代理。
+- 不许悄悄修改已定案的 Oracle——需要改就是在动产品定义，回 `design`。
 - 破坏性 / 生产 / 权限 / 不可逆操作仍需人类显式批准。
 
 ## 产出

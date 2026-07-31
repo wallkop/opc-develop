@@ -18,7 +18,7 @@ part of this gate. End with one `**Status:**` line and a `Reviewed-SHA:` line fo
 8. **Decision honesty**: contested and one-way decisions follow the decision protocol.
 9. **Edge cases**: each maps to an AC or explicit non-goal.
 10. **Living-spec consistency**: contradictions declare supersession rather than silently forking
-    durable product truth.
+    durable product definition.
 
 ## Non-blocking
 

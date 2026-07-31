@@ -3,12 +3,12 @@
 ## 0.7.0 - 2026-07-30
 
 - Supersedes the unreleased "engineering depth routing" experiment (b7e7c32): its
-  lite/build routing rules are replaced by PTA-touch routing in this release.
+  lite/build routing rules are replaced by definition-touch routing in this release.
 
 - Full Fable-5-era simplification pass ("做减法"): retire the heavyweight
   demo -> prd -> testcase -> architect pipeline. `prd`, `testcase`, `architect`, and the
   monolithic `harness` skill are removed.
-- Add `design`: a single skill that produces the PTA (Product Truth Assets — PD/TD/AC) as the
+- Add `design`: a single skill that produces the product definition (Product Definition — PD/TD/AC) as the
   only durable product-truth artifacts. AC doubles as the executable Oracle; no separate SPEC,
   testcase manifests, or approval-json chain.
 - Rewrite `build` around harness adjudication: implement against locked AC Cases, evidence comes

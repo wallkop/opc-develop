@@ -1,16 +1,16 @@
 ---
 name: build
-description: "pta.md 定案后的自主开发环节：AC 展开为机器可读 Case 并锁死 Oracle，先跑 RED 再实现（TDD，模型自主规划路线），harness drive 全量裁决转 GREEN，仅一次现实评审，最终以 Core-Case 冒烟投影在真实环境收口。裁决全部由项目 Harness 执行，本 skill 不携带任何裁决脚本。"
+description: "definition.md 定案后的自主开发环节：AC 展开为机器可读 Case 并锁死 Oracle，先跑 RED 再实现（TDD，模型自主规划路线），harness drive 全量裁决转 GREEN，仅一次现实评审，最终以 Core-Case 冒烟投影在真实环境收口。裁决全部由项目 Harness 执行，本 skill 不携带任何裁决脚本。"
 license: MIT
 ---
 
 # build
 
-契约是 PTA，裁判是 Harness，路线归模型。产出是证据，不是文档。
+契约是产品定义，裁判是 Harness，路线归模型。产出是证据，不是文档。
 
 ## 前置
 
-加载 `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`。`pta.md` 已定案；
+加载 `${CLAUDE_PLUGIN_ROOT}/shared/core-contract.md`。`definition.md` 已定案；
 项目 harness 的 run / observe / drive 可用——缺口先走 `harness-retrofit`，
 不在 build 里临时凑合裁决方式。
 
@@ -37,9 +37,9 @@ license: MIT
 ## 重入
 
 FAIL 的 Case 就是重入点：修复 → 重跑受影响 Case + 全量棘轮。人类验收拒绝时按
-tune / revise 分类：实现缺陷回第 3 步；PTA 本身错了回 `design`，作废下游结论。
+tune / revise 分类：实现缺陷回第 3 步；产品定义本身错了回 `design`，作废下游结论。
 
 ## 产出
 
-绿的 run 证据（本地全量 + 真实冒烟）+ pta.md 状态更新。
+绿的 run 证据（本地全量 + 真实冒烟）+ definition.md 状态更新。
 无 feature-plan、无 acceptance 文档、无 ledger——过程状态由 Git 与 run 记录承载。

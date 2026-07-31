@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "opc-develop",
-      "description": "Fable-5-era product delivery: PTA product-truth assets, harness-adjudicated acceptance, and a slimmed brainstorm/design/build skill set",
+      "description": "Fable-5-era product delivery: 产品定义 product-truth assets, harness-adjudicated acceptance, and a slimmed brainstorm/design/build skill set",
       "version": "0.7.0",
       "source": "./",
       "author": {

@@ -7,10 +7,10 @@ Harness 的权威定义见 `${CLAUDE_PLUGIN_ROOT}/docs/harness.zh-CN.md`（本�
 
 ## 路由：一条判据
 
-**这个改动需不需要动 PTA（pta.md：PD 产品底线 + TD 技术决策 + AC 验收标准）？**
+**这个改动需不需要动产品定义（definition.md：PD 产品底线 + TD 技术决策 + AC 验收标准）？**
 
-- 需要新建或修改 PTA → 标准链：`brainstorm → demo（可选）→ design → build`。
-- 不动 PTA、但需要自动验收 → `lite`：无前置文档，TDD 式实现 + harness 裁决。
+- 需要新建或修改产品定义 → 标准链：`brainstorm → demo（可选）→ design → build`。
+- 不动产品定义、但需要自动验收 → `lite`：无前置文档，TDD 式实现 + harness 裁决。
 - 人类亲自验收、只要最快代码 → `vibe`：不做任何自动验收。
 - 项目 harness 能力缺失或不足 → `harness-init`（新项目）/ `harness-retrofit`（存量项目）。
 - 复杂度看起来超出 lite 时，只做一次提醒确认，不强制拦截——用户确认后仍可走 lite。
@@ -24,7 +24,7 @@ Harness 的权威定义见 `${CLAUDE_PLUGIN_ROOT}/docs/harness.zh-CN.md`（本�
 3. **裁判与运动员分离**：Oracle 在实现前锁死（commit）；改 Oracle = 作废全部绿灯、
    说明理由、重走 RED。
 4. **结构即提示**：长期约束优先固化进脚手架与门禁，而不是写在流程文本里要求"遵守"。
-5. **语言约定**：一切约束性文本（skill、规则、PTA、报告）一律中文；仅解析用 token、
+5. **语言约定**：一切约束性文本（skill、规则、产品定义、报告）一律中文；仅解析用 token、
    命令、路径、代码标识保留原文。
 
 ## 判定与宣称
